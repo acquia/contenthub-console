@@ -1,0 +1,69 @@
+services:
+
+  http_client_factory.content_hub:
+    class: Acquia\Console\ContentHub\Client\ContentHubClientFactory
+    public: true
+
+  #  Commands
+  command.contenthub.subscription_set:
+    class: Acquia\Console\ContentHub\Command\ContentHubSubscriptionSet
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.audit:
+    class: Acquia\Console\ContentHub\Command\ContentHubAudit
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.drush.version:
+    class: Acquia\Console\ContentHub\Command\DrushVersionCheck
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.audit.config_uuid:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditCheckUuid
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.audit.tmp_files:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditTmpFiles
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.audit.clients:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditClients
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.audit.client-compare:
+    class: Acquia\Console\ContentHub\Command\ContentHubClientCompare
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.audit.ssl_cert:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditSslCertificate
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.module_checker:
+    class: Acquia\Console\ContentHub\Command\Helpers\ContentHubModuleChecker
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.audit.webhook_status:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditWebhookStatus
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.health_check.interest_list:
+    class: Acquia\Console\ContentHub\Command\ContentHubInterestListCheck
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.health_check.interest_diff:
+    class: Acquia\Console\ContentHub\Command\ContentHubInterestListDiff
+    public: true
+    tags:
+      - { name: common_console_command }

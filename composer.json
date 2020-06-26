@@ -1,0 +1,25 @@
+{
+    "name": "acquia/contenthub-console",
+    "description": "A package providing Acquia ContentHub commands for the CommonConsole command line interface.",
+    "type": "project",
+    "require": {
+        "acquia/cloud-console": "dev-master",
+        "ext-json": "*",
+        "eclipsegc/common-console": "dev-master",
+        "spatie/ssl-certificate": "^1.19"
+    },
+    "autoload": {
+        "psr-4": {
+            "Acquia\\Console\\ContentHub\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Acquia\\Console\\ContentHub\\Tests\\": "tests"
+        }
+    },
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    }
+}
