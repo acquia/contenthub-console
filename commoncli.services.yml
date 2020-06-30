@@ -67,3 +67,8 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.migrate.publisher_upgrade:
+    class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPublisherUpgrade
+    public: true
+    tags:
+      - { name: common_console_command }
