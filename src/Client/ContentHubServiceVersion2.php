@@ -17,7 +17,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   /**
    * Http client.
    *
-   * @var \GuzzleHttp\Client
+   * @var \Acquia\ContentHubClient\ContentHubClient
    */
   protected $client;
 
@@ -41,6 +41,13 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
       throw new \Exception("The client was not instantiated. Your credentials are likely missing. Please register this site with ContentHub before continuing.");
     }
     return new self($client);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getVersion(): int {
+    return 2;
   }
 
   /**
@@ -155,6 +162,25 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
    */
   public function removeWebhookSuppression(string $webhook_uuid) {
     $this->client->unSuppressWebhook($webhook_uuid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function purge() {
+    $response = $this->client->purge();
+    if (!(isset($response['success'])) || $response['success'] !== TRUE) {
+      throw new \Exception('Error trying to purge your subscription. You might require elevated keys to perform this operation.');
+    }
+
+    if (!empty($response['error']['code']) && !empty($response['error']['message'])) {
+      throw new \Exception(sprintf('Error trying to purge your subscription. Status code %s. %s',
+        $response['error']['code'],
+        $response['error']['message']
+      ));
+    }
+
+    return $response;
   }
 
 }

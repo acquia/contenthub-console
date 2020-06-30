@@ -51,6 +51,13 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function getVersion(): int {
+    return 1;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getWebhooks(): array {
     $webhooks = [];
     $settings = $this->client->getSettings();
@@ -59,6 +66,17 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
     }
 
     return $webhooks;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function purge() {
+    $response = \Drupal::service('acquia_contenthub.client_manager')->createRequest('purge');
+    if (!isset($response['success']) || $response['success'] !== TRUE) {
+      throw new \Exception("Purge failed. Reason: {$response['error']['message']}");
+    }
+    return $response;
   }
 
 }
