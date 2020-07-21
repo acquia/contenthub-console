@@ -32,9 +32,8 @@ class ContentHubModuleChecker extends Command implements PlatformBootStrapComman
    */
   protected function configure() {
     $this->setDescription('Checks if Content Hub Module is enabled');
-    // todo: Change default value to empty string as soon as remote argument passing becomes available.
     $this->addOption('module', 'm', InputOption::VALUE_OPTIONAL,
-      'Check for a specific module: publisher, subscriber, curation, moderation, preview, s3, unsubscribe.', 'subscriber');
+      'Check for a specific module: publisher, subscriber, curation, moderation, preview, s3, unsubscribe.', '');
     $this->setHidden(TRUE);
   }
 

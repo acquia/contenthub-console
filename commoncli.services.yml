@@ -72,3 +72,8 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.queue:
+    class: Acquia\Console\ContentHub\Command\ContentHubQueue
+    public: true
+    tags:
+      - { name: common_console_command }
