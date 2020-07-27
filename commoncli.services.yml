@@ -47,6 +47,11 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.audit.depcalc:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditDepcalc
+    public: true
+    tags:
+      - { name: common_console_command }
   command.contenthub.module_checker:
     class: Acquia\Console\ContentHub\Command\Helpers\ContentHubModuleChecker
     public: true

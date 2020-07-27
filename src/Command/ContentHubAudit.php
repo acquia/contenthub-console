@@ -48,6 +48,8 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     $this->executeCommand(ContentHubAuditTmpFiles::getDefaultName(), $input, $output);
     // Report webhook suppression
     $this->executeCommand(ContentHubAuditWebhookStatus::getDefaultName(), $input, $output);
+    // Check for depcalc module.
+    $this->executeCommand(ContentHubAuditDepcalc::getDefaultName(), $input, $output);
     // What stream wrappers exist on this site?
     // Problematic modules
     // Layout Builder defaults
