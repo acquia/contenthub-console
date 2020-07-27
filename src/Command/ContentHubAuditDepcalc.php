@@ -38,10 +38,16 @@ class ContentHubAuditDepcalc extends Command implements PlatformBootStrapCommand
    * {@inheritDoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
+    if (!\Drupal::getContainer()->get('extension.list.module')->exists('depcalc')) {
+      $output->writeln('<error>Depcalc module is missing from dependencies! Please run: composer require drupal/depcalc</error>');
+      return 2;
+    }
+
     if (!\Drupal::moduleHandler()->moduleExists('depcalc')) {
-      $output->writeln('<error>Depcalc module is missing from dependencies! please run `composer require drupal/depcalc`.</error>');
+      $output->writeln('<warning>Depcalc module is not enabled.</warning>');
       return 1;
     }
+
     return 0;
   }
 
