@@ -27,10 +27,14 @@ trait CommandExecutionTrait {
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Output interface.
    *
+   * @return int
+   *   The exit code of the command.
+   *
    * @throws \Exception
    */
-  protected function executeCommand(string $command_name, InputInterface $input, OutputInterface $output): void {
+  protected function executeCommand(string $command_name, InputInterface $input, OutputInterface $output): int {
     $args = [];
+    /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($command_name);
     $options = $command->getDefinition()->getOptions();
     foreach ($options as $option) {
@@ -40,7 +44,7 @@ trait CommandExecutionTrait {
       }
     }
 
-    $command->run(new ArrayInput($args), $output);
+    return $command->run(new ArrayInput($args), $output);
   }
 
 }
