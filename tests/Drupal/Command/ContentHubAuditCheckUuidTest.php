@@ -48,7 +48,7 @@ class ContentHubAuditCheckUuidTest extends EntityKernelTestBase {
   /**
    * @covers ::execute
    */
-  public function testDryRun() {
+  public function testWithFixOption() {
     $test1 = $this->createNodeType(['type' => 'test1']);
     $this->setConfig($test1->getConfigDependencyName(), 'uuid', NULL);
     // Reload node type.
@@ -56,12 +56,12 @@ class ContentHubAuditCheckUuidTest extends EntityKernelTestBase {
     $this->assertEmpty($test1->uuid(), 'Uuid is missing');
 
     $cmd_tester = $this->getCommandTester();
-    $cmd_tester->execute(['--dry-run' => TRUE]);
+    $cmd_tester->execute([]);
 
     $this->reload($test1);
     $this->assertEmpty($test1->uuid(), 'Uuid is still missing.');
 
-    $cmd_tester->execute([]);
+    $cmd_tester->execute(['--fix' => TRUE]);
     $this->reload($test1);
     $this->assertNotEmpty($test1->uuid(), 'New uuid has been generated.');
   }

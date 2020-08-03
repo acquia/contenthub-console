@@ -27,7 +27,7 @@ class ContentHubAuditCheckUuid extends Command implements PlatformBootStrapComma
    */
   public function configure(): void {
     $this->setDescription('Audit configuration entities and print the ones with missing uuids.');
-    $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Print configuration entities only, without fixing the uuids.');
+    $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Generating uuids.');
     $this->setAliases(['audit-uuid']);
   }
 
@@ -64,12 +64,12 @@ class ContentHubAuditCheckUuid extends Command implements PlatformBootStrapComma
     }
     $table->render();
 
-    if (!$input->getOption('dry-run')) {
+    if ($input->getOption('fix')) {
       $this->provideUuid($configs);
       $output->writeln('<info>Uuids have been generated for the entities listed above.</info>');
     }
     else {
-      $output->writeln("<comment>Uuids have not been generated yet, omit the option 'dry-run'.</comment>");
+      $output->writeln("<comment>Uuids have not been generated yet, add the option 'fix'.</comment>");
     }
 
     return 0;

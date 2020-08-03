@@ -26,7 +26,7 @@ class ContentHubAuditWebhookStatus extends ContentHubCommandBase {
    */
   protected function configure() {
     $this->setDescription('Prints webhook information and unsuppress disabled webhooks.');
-    $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Print webhooks information, without removing suppression.');
+    $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Print webhooks information and remove suppression.');
     $this->setAliases(['ach-ws']);
   }
 
@@ -43,7 +43,7 @@ class ContentHubAuditWebhookStatus extends ContentHubCommandBase {
     $output->writeln('Webhook status:');
     $this->getTableToRender($webhooks, $output);
 
-    if (!$input->getOption('dry-run')) {
+    if ($input->getOption('fix')) {
       foreach ($webhooks as $webhook) {
         if ($this->isSuppressed($webhook['suppressed_until'])) {
           $output->writeln("Removing suppression from webhook: {$webhook['client_name']}: {$webhook['uuid']}");

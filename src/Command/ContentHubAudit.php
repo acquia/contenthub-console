@@ -32,7 +32,7 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
    */
   protected function configure() {
     $this->setDescription('Audit an existing code base to determine of there are any ContentHub level concerns.');
-    $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Run audit command without making any changes.');
+    $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Run audit command and fix any errors found.');
   }
 
   /**
