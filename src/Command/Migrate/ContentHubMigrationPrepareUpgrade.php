@@ -59,7 +59,7 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     $this->handleModules($output, $input->getOption('uninstall-modules') ?? []);
     $this->removeRestResource($output);
     $this->purgeSubscription($output);
-    $output->writeln('<info>Upgrade preparation has been completed.</info>');
+    $output->writeln('<info>Upgrade preparation has been completed. Please build a branch with Content Hub 2.x and push it to origin.</info>');
     return 0;
   }
 
