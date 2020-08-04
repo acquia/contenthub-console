@@ -49,6 +49,7 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     // Check for depcalc module.
     $this->executeCommand(ContentHubAuditDepcalc::getDefaultName(), $input, $output);
     // What stream wrappers exist on this site?
+    $this->executeCommand(ContentHubAuditStreamWrappers::getDefaultName(), $input, $output);
     // Problematic modules
     // Layout Builder defaults
     // Active connection to Plexus

@@ -62,6 +62,11 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.audit.stream_wrappers:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditStreamWrappers
+    public: true
+    tags:
+      - { name: common_console_command }
   command.contenthub.health_check.interest_list:
     class: Acquia\Console\ContentHub\Command\ContentHubInterestListCheck
     public: true
