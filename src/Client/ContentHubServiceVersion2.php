@@ -161,7 +161,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
    *   Webhook UUID.
    */
   public function removeWebhookSuppression(string $webhook_uuid) {
-    $this->client->unSuppressWebhook($webhook_uuid);
+    return $this->client->unSuppressWebhook($webhook_uuid);
   }
 
   /**

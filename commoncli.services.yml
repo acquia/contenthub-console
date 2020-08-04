@@ -57,8 +57,8 @@ services:
     public: true
     tags:
       - { name: common_console_command }
-  command.contenthub.audit.webhook_status:
-    class: Acquia\Console\ContentHub\Command\ContentHubAuditWebhookStatus
+  command.contenthub.health_check.webhook_status:
+    class: Acquia\Console\ContentHub\Command\ContentHubHealthCheckWebhookStatus
     public: true
     tags:
       - { name: common_console_command }
