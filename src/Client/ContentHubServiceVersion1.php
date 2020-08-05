@@ -12,9 +12,9 @@ use GuzzleHttp\ClientInterface;
 class ContentHubServiceVersion1 implements ContentHubServiceInterface {
 
   /**
-   * Http client.
+   * The Content Hub client version 1.x.
    *
-   * @var \GuzzleHttp\Client
+   * @var \Acquia\ContentHubClient\ContentHub
    */
   protected $client;
 
@@ -22,6 +22,7 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
    * ContentHubServiceVer1 constructor.
    *
    * @param \GuzzleHttp\ClientInterface $client
+   *   The guzzle client.
    */
   public function __construct(ClientInterface $client) {
     $this->client = $client;
@@ -31,7 +32,22 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
    * {@inheritdoc}
    */
   public static function new(): ContentHubServiceInterface {
-    return new self(\Drupal::service('acquia_contenthub.client_manager')->getConnection());
+    /** @var \Drupal\acquia_contenthub\Client\ClientManagerInterface $client_manager */
+    $client_manager = \Drupal::service('acquia_contenthub.client_manager');
+    if (!$client_manager->getConnection()) {
+      $config = \Drupal::config('acquia_contenthub.admin_settings');
+      if ($config->isNew()) {
+        throw new \Exception('Client could not be instantiated. acquia_contenthub.admin_settings config is empty.');
+      }
+
+      $client_manager->resetConnection([
+        'api' => $config->get('api_key'),
+        'secret' => $config->get('secret_key'),
+        'hostname' => $config->get('hostname'),
+        'origin' => $config->get('origin'),
+      ]);
+    }
+    return new self($client_manager->getConnection());
   }
 
   /**
@@ -53,6 +69,42 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
    */
   public function getVersion(): int {
     return 1;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(string $name, string $api_key, string $secret_key, string $hostname) {
+    $client_manager = \Drupal::getContainer()
+      ->get('acquia_contenthub.client_manager');
+    $client_manager->resetConnection([
+      'hostname' => $hostname,
+      'api' => $api_key,
+      'secret' => $secret_key,
+    ]);
+    /** @var \Acquia\ContentHubClient\ContentHub $client */
+    $client = $client_manager->getConnection();
+    $client->register($name);
+    $this->client = $client;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getSettings(): Settings {
+    $settings = \Drupal::config('acquia_contenthub.admin_settings');
+    return new Settings(
+      $settings->get('client_name'),
+      $settings->get('hostname'),
+      $settings->get('api_key'),
+      $settings->get('secret_key'),
+      $settings->get('origin'),
+      '',
+      [
+        'webhook_uuid' => $settings->get('webhook_uuid') ?? '',
+        'webhook_url' => $settings->get('webhook_url') ?? '',
+      ]
+    );
   }
 
   /**

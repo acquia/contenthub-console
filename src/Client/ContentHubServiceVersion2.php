@@ -15,7 +15,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   use ContentHubModuleTrait;
 
   /**
-   * Http client.
+   * The Content Hub client version 2.x.
    *
    * @var \Acquia\ContentHubClient\ContentHubClient
    */
@@ -25,6 +25,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
    * ContentHubServiceVersion2 constructor.
    *
    * @param \GuzzleHttp\ClientInterface $client
+   *   The guzzle client.
    *
    * @throws \Exception
    */
@@ -53,13 +54,22 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function register(string $name, string $api_key, string $secret_key, string $hostname) {
+    /** @var \Drupal\acquia_contenthub\Client\ClientFactory $client_factory */
+    $client_factory = \Drupal::service('acquia_contenthub.client.factory');
+    $this->client = $client_factory->registerClient($name, $hostname, $api_key, $secret_key, 'v2');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getWebhooks(): array {
-    $webHooks = [];
-    foreach ($this->client->getWebHooks() as $webHook) {
-      $webHooks[] = $webHook->getDefinition();
+    $webhooks = [];
+    foreach ($this->client->getWebHooks() as $webhook) {
+      $webhooks[] = $webhook->getDefinition();
     }
 
-    return $webHooks;
+    return $webhooks;
   }
 
   /**
@@ -181,6 +191,25 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
     }
 
     return $response;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getSettings(): Settings {
+    $settings = $this->client->getSettings()->toArray();
+    return new Settings(
+      $settings['name'],
+      $settings['url'],
+      $settings['apiKey'],
+      $settings['secretKey'],
+      $settings['uuid'],
+      $settings['sharedSecret'],
+      [
+        'webhook_uuid' => $settings['webhook']['uuid'],
+        'webhook_url' => $settings['webhook']['url'],
+      ]
+    );
   }
 
 }

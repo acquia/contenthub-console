@@ -3,6 +3,8 @@
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
+use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
+use Acquia\Console\ContentHub\Exception\ContentHubVersionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Extension\MissingDependencyException;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
@@ -13,9 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ContentHubMigrationPrepareUpgrade.
  *
- * @package Acquia\ContentHubCli\Command\Migration
+ * @package Acquia\Console\ContentHub\Command\Migration
  */
 class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
+
+  use PlatformCommandExecutionTrait;
 
   /**
    * {@inheritdoc}
@@ -43,7 +47,7 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     parent::initialize($input, $output);
 
     if ($this->achClientService->getVersion() !== 1) {
-      throw new \Exception('Must be run a site using 1.x version of the module.');
+      throw new ContentHubVersionException(1);
     }
   }
 
@@ -59,6 +63,7 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     $this->handleModules($output, $input->getOption('uninstall-modules') ?? []);
     $this->removeRestResource($output);
     $this->purgeSubscription($output);
+    $this->execDrush(['cr']);
     $output->writeln('<info>Upgrade preparation has been completed. Please build a branch with Content Hub 2.x and push it to origin.</info>');
     return 0;
   }

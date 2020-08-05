@@ -2,6 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
+use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -12,11 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ContentHubMigrationPublisherUpgrade.
  *
- * @package Acquia\ContentHubCli\Command\Migration
+ * @package Acquia\Console\ContentHub\Command\Migration
  */
 class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBootStrapCommandInterface {
 
   use PlatformCommandExecutionTrait;
+  use ContentHubModuleTrait;
 
   /**
    * {@inheritdoc}
@@ -31,7 +33,7 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   protected function configure() {
     $this->setDescription('Upgrade sites to 2.x version.')
@@ -82,6 +84,7 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
   protected function updateDatabases(InputInterface $input, OutputInterface $output): void {
     $output->writeln('Running database updates...');
     $this->execDrush(['update-db', '-y', $input->getOption('uri')]);
+    $this->execDrush(['cr']);
   }
 
   /**
@@ -106,16 +109,13 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output stream to write to.
+   * @param string $uri
+   *   The uri of the site.
+   *
+   * @throws \Exception
    */
   protected function upgradePublishers(OutputInterface $output, $uri = ''): void {
-    $result = \Drupal::database()
-      ->select('acquia_contenthub_entities_tracking', 'exp')
-      ->fields('exp', ['status_export'])
-      ->condition('exp.status_export', '', '<>')
-      ->execute()
-      ->fetchField();
-    $publisher = $result ?? 0;
-    if ($publisher) {
+    if ($this->isPublisher()) {
       $output->writeln('The site is a publisher, enabling acquia_contenthub_publisher...');
       \Drupal::service('module_installer')->install(['acquia_contenthub_publisher']);
     }

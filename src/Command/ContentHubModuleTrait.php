@@ -46,4 +46,20 @@ trait ContentHubModuleTrait {
     return array_keys($entites);
   }
 
+  /**
+   * Checks if the given site can be considered as publisher.
+   *
+   * @return bool
+   *   TRUE if it is a publisher.
+   */
+  public function isPublisher(): bool {
+    $result = \Drupal::database()
+      ->select('acquia_contenthub_entities_tracking', 'exp')
+      ->fields('exp', ['status_export'])
+      ->condition('exp.status_export', '', '<>')
+      ->execute()
+      ->fetchField();
+    return (bool) $result;
+  }
+
 }

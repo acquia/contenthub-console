@@ -5,6 +5,7 @@ namespace Acquia\Console\ContentHub\Tests\Command;
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
 use Acquia\Console\Cloud\Tests\Command\PlatformCommandTestHelperTrait;
 use Acquia\Console\ContentHub\Command\ContentHubSubscriptionSet;
+use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateClientRegistrar;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use EclipseGc\CommonConsole\PlatformInterface;
 use PHPUnit\Framework\TestCase;
@@ -49,6 +50,12 @@ class ContentHubSubscriptionSetTest extends TestCase {
     $this->assertEquals('https://example.com', $hostname, 'Hostname has been stored');
     $this->assertEquals('api_key', $api_key, 'API key has been stored');
     $this->assertEquals('secret_key', $secret_key, 'Secret key has been stored');
+
+    $this->doRunCommand($command, ['https://example.com', 'api_key', 'secret_key', 'yes'], ['alias' => 'test', '--migration' => TRUE]);
+    $creds = $platform->get(ContentHubMigrateClientRegistrar::CONFIG_ACH_MIGRATION);
+    $this->assertEquals('https://example.com', $creds['hostname'], 'Hostname has been stored');
+    $this->assertEquals('api_key', $creds['api_key'], 'API key has been stored');
+    $this->assertEquals('secret_key', $creds['secret_key'], 'Secret key has been stored');
   }
 
   /**

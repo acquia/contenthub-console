@@ -58,7 +58,7 @@ trait PlatformCmdOutputFormatterTrait {
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output to write to.
    *
-   * @return array
+   * @return \stdClass|null
    *   The decoded json array.
    */
   public function fromJson(string $json, OutputInterface $output): ?\stdClass {

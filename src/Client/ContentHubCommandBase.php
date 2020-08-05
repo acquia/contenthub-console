@@ -27,10 +27,6 @@ abstract class ContentHubCommandBase extends Command implements PlatformBootStra
   protected function initialize(InputInterface $input, OutputInterface $output) {
     $factory = new ContentHubClientFactory();
     $this->achClientService = $factory->getClient();
-
-    if (!$this->achClientService) {
-      throw new \Exception('Could not connect to Content Hub, the client could not be instantiated.');
-    }
   }
 
   /**

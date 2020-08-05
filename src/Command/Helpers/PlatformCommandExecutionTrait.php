@@ -20,17 +20,19 @@ trait PlatformCommandExecutionTrait {
    *   The name of the command to execute.
    * @param array $input
    *   The input for the command.
+   * @param string $platform
+   *   The name of the key of where the desired platform resides.
    *
    * @return string
    *   The output of the command execution.
    */
-  protected function runWithMemoryOutput(string $cmd_name, array $input = []): string {
+  protected function runWithMemoryOutput(string $cmd_name, array $input = [], string $platform = 'source'): string {
+    /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($cmd_name);
-    $input = array_merge([
-      'command' => $cmd_name,
-    ], $input);
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
-    $this->getPlatform('source')->execute($command, new ArrayInput($input), $remote_output);
+    $bind_input = new ArrayInput($input);
+    $bind_input->bind($command->getDefinition());
+    $this->getPlatform($platform)->execute($command, $bind_input, $remote_output);
     rewind($remote_output->getStream());
     return stream_get_contents($remote_output->getStream()) ?: '';
   }
@@ -52,15 +54,13 @@ trait PlatformCommandExecutionTrait {
    * @param string $path_to_drush
    *   [Optional] Specify a path to drush.
    *
-   * @return \Acquia\Console\ContentHub\Command\Helpers\PlatformOutput
+   * @return \stdClass
    *   The command output, stderr and stdout.
-   *
-   * @todo revisit this. There is no PlatformOutput object and I don't think anything's calling this method.
    *
    * @throws \Exception
    */
-  protected function execDrush(array $args, string $uri = '', string $path_to_drush = ''): PlatformOutput {
-    $output = new PlatformOutput();
+  protected function execDrush(array $args, string $uri = '', string $path_to_drush = ''): \stdClass {
+    $output = new \stdClass();
     $paths_to_drush = [
       $path_to_drush ?: $this->getDrushExecFromPath(),
       './vendor/bin/drush',
