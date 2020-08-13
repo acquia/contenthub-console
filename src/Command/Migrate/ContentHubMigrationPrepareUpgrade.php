@@ -63,6 +63,7 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     $this->handleModules($output, $input->getOption('uninstall-modules') ?? []);
     $this->removeRestResource($output);
     $this->purgeSubscription($output);
+    $this->deleteWebhooks($output);
     $this->execDrush(['cr']);
     $output->writeln('<info>Upgrade preparation has been completed. Please build a branch with Content Hub 2.x and push it to origin.</info>');
     return 0;
@@ -138,6 +139,7 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
    *   The output stream to write status to.
    */
   protected function purgeSubscription(OutputInterface $output): void {
+    $output->writeln('Purging subscription...');
     try {
       $this->achClientService->purge();
     }
@@ -146,6 +148,27 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
       return;
     }
     $output->writeln('<info>Subscription has been successfully purged.</info>');
+  }
+
+  /**
+   * Deletes every webhook.
+   */
+  protected function deleteWebhooks(OutputInterface $output): void {
+    $output->writeln('Deleting webhooks...');
+    $webhooks = $this->achClientService->getWebhooks();
+    if (empty($webhooks)) {
+      $output->writeln('<warning>No webhooks to delete.</warning>');
+    }
+
+    foreach ($webhooks as $webhook) {
+      try {
+        $this->achClientService->deleteWebhook($webhook['uuid']);
+      }
+      catch (\Exception $e) {
+        $output->writeln("<error>Could not delete webhook with id {$webhook['uuid']}. Reason: {$e->getMessage()}</error>");
+      }
+    }
+    $output->writeln('<info>Webhook deletion process has been finished.</info>');
   }
 
 }

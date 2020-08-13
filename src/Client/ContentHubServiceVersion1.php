@@ -11,6 +11,8 @@ use GuzzleHttp\ClientInterface;
  */
 class ContentHubServiceVersion1 implements ContentHubServiceInterface {
 
+  use ContentHubServiceCommonTrait;
+
   /**
    * The Content Hub client version 1.x.
    *
@@ -29,7 +31,7 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public static function new(): ContentHubServiceInterface {
     /** @var \Drupal\acquia_contenthub\Client\ClientManagerInterface $client_manager */
@@ -51,28 +53,28 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function getClients(): array {
     return \Drupal::service('acquia_contenthub.acquia_contenthub_subscription')->getClients();
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function checkClient(): bool {
     return \Drupal::service('acquia_contenthub.client_manager')->isConnected();
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function getVersion(): int {
     return 1;
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function register(string $name, string $api_key, string $secret_key, string $hostname) {
     $client_manager = \Drupal::getContainer()
@@ -121,14 +123,25 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
-  public function purge() {
+  public function purge(): array {
     $response = \Drupal::service('acquia_contenthub.client_manager')->createRequest('purge');
     if (!isset($response['success']) || $response['success'] !== TRUE) {
       throw new \Exception("Purge failed. Reason: {$response['error']['message']}");
     }
     return $response;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @throws \Exception
+   */
+  public function deleteWebhook($uuid): array {
+    $response = $this->client->deleteWebhook($uuid);
+    $data = (array) json_decode($response->getBody(), TRUE);
+    return $this->checkResponseSuccess($data);
   }
 
 }

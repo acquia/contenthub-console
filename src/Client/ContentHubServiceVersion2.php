@@ -13,6 +13,7 @@ use GuzzleHttp\ClientInterface;
 class ContentHubServiceVersion2 implements ContentHubServiceInterface {
 
   use ContentHubModuleTrait;
+  use ContentHubServiceCommonTrait;
 
   /**
    * The Content Hub client version 2.x.
@@ -34,7 +35,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public static function new(): ContentHubServiceInterface {
     $client = \Drupal::service('acquia_contenthub.client.factory')->getClient();
@@ -45,14 +46,14 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function getVersion(): int {
     return 2;
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function register(string $name, string $api_key, string $secret_key, string $hostname) {
     /** @var \Drupal\acquia_contenthub\Client\ClientFactory $client_factory */
@@ -61,7 +62,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function getWebhooks(): array {
     $webhooks = [];
@@ -73,7 +74,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function getClients(): array {
     $clients = [];
@@ -85,7 +86,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   public function checkClient() :bool {
     return \Drupal::service('acquia_contenthub.connection_manager')->checkClient() ? TRUE : FALSE;
@@ -175,9 +176,9 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
-  public function purge() {
+  public function purge(): array {
     $response = $this->client->purge();
     if (!(isset($response['success'])) || $response['success'] !== TRUE) {
       throw new \Exception('Error trying to purge your subscription. You might require elevated keys to perform this operation.');
@@ -191,6 +192,17 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
     }
 
     return $response;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @throws \Exception
+   */
+  public function deleteWebhook($uuid): array {
+    $response = $this->client->deleteWebhook($uuid);
+    $data = (array) json_decode($response, TRUE);
+    return $this->checkResponseSuccess($data);
   }
 
   /**

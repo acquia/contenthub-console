@@ -76,9 +76,17 @@ interface ContentHubServiceInterface {
   /**
    * Purges Content Hub subscription.
    *
-   * @return mixed
+   * @return array
    *   The response of the purge operation.
    */
-  public function purge();
+  public function purge(): array;
+
+  /**
+   * Deletes a webhook by its uuid.
+   *
+   * @return array
+   *   The response of the operation.
+   */
+  public function deleteWebhook($uuid): array;
 
 }
