@@ -48,6 +48,8 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     $this->executeCommand(ContentHubAuditTmpFiles::getDefaultName(), $input, $output);
     // Check for depcalc module.
     $this->executeCommand(ContentHubAuditDepcalc::getDefaultName(), $input, $output);
+    // Synchronize Content Hub settings overwrites.
+    $this->executeCommand(ContentHubAuditChSettings::getDefaultName(), $input, $output);
     // What stream wrappers exist on this site?
     $this->executeCommand(ContentHubAuditStreamWrappers::getDefaultName(), $input, $output);
     // Problematic modules

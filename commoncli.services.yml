@@ -52,6 +52,11 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.audit.content_hub_settings:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditChSettings
+    public: true
+    tags:
+      - { name: common_console_command }
   command.contenthub.module_checker:
     class: Acquia\Console\ContentHub\Command\Helpers\ContentHubModuleChecker
     public: true
