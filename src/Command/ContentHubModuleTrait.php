@@ -2,6 +2,8 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
+use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
+
 /**
  * Trait ContentHubModuleTrait.
  *
@@ -53,6 +55,10 @@ trait ContentHubModuleTrait {
    *   TRUE if it is a publisher.
    */
   public function isPublisher(): bool {
+    if (ContentHubClientFactory::getModuleVersion() === 2) {
+      return \Drupal::moduleHandler()->moduleExists('acquia_contenthub_publisher');
+    }
+
     $result = \Drupal::database()
       ->select('acquia_contenthub_entities_tracking', 'exp')
       ->fields('exp', ['status_export'])
@@ -60,6 +66,16 @@ trait ContentHubModuleTrait {
       ->execute()
       ->fetchField();
     return (bool) $result;
+  }
+
+  /**
+   * Checks if the given site can be considered as subscriber.
+   *
+   * @return bool
+   *   TRUE if it is a subscriber.
+   */
+  public function isSubscriber(): bool {
+    return \Drupal::moduleHandler()->moduleExists('acquia_contenthub_subscriber');
   }
 
 }

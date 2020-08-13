@@ -121,3 +121,8 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.helper.with_queue:
+    class: Acquia\Console\ContentHub\Command\Helpers\ContentHubQueueCheck
+    public: true
+    tags:
+      - { name: common_console_command }
