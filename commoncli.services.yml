@@ -121,6 +121,17 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.module_exist:
+    class: Acquia\Console\ContentHub\Command\ContentHubModuleVersion
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.module_version:
+    class: Acquia\Console\ContentHub\Command\ContentHubVersion
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
   command.contenthub.helper.with_queue:
     class: Acquia\Console\ContentHub\Command\Helpers\ContentHubQueueCheck
     public: true
