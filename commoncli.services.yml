@@ -72,6 +72,11 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.audit.services:
+    class: Acquia\Console\ContentHub\Command\ContentHubAuditChServices
+    public: true
+    tags:
+      - { name: common_console_command }
   command.contenthub.health_check.interest_list:
     class: Acquia\Console\ContentHub\Command\ContentHubInterestListCheck
     public: true
