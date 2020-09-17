@@ -67,12 +67,11 @@ class ContentHubAuditCheckUuid extends Command implements PlatformBootStrapComma
     if ($input->getOption('fix')) {
       $this->provideUuid($configs);
       $output->writeln('<info>Uuids have been generated for the entities listed above.</info>');
+      return 0;
     }
-    else {
-      $output->writeln("<comment>Uuids have not been generated yet, add the option 'fix'.</comment>");
-    }
-
-    return 0;
+    // Errors were not fixed.
+    $output->writeln("<comment>Uuids have not been generated yet. Re-run this command with the '-fix' flag to automatically generate uuids for these entities.</comment>");
+    return 1;
   }
 
   /**

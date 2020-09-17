@@ -141,7 +141,7 @@ class ContentHubMigrateClientRegistrar extends Command implements PlatformComman
     $subscription_setter->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--migration' => TRUE]), $output);
 
     $this->sourceClients = $this->getProdClients($output);
-    $raw = $this->runWithMemoryOutput(ContentHubRegistrar::getDefaultName(), [
+    $raw = (string) $this->runWithMemoryOutput(ContentHubRegistrar::getDefaultName(), [
       '--hostname' => $platform->get(ContentHubSubscriptionSet::CONFIG_HOSTNAME),
       '--api-key' => $platform->get(ContentHubSubscriptionSet::CONFIG_API_KEY),
       '--secret-key' => $platform->get(ContentHubSubscriptionSet::CONFIG_SECRET_KEY),

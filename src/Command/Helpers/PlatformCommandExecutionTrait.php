@@ -3,6 +3,7 @@
 namespace Acquia\Console\ContentHub\Command\Helpers;
 
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Process\Process;
 
@@ -23,18 +24,32 @@ trait PlatformCommandExecutionTrait {
    * @param string $platform
    *   The name of the key of where the desired platform resides.
    *
-   * @return string
+   * @return object
    *   The output of the command execution.
    */
-  protected function runWithMemoryOutput(string $cmd_name, array $input = [], string $platform = 'source'): string {
+  protected function runWithMemoryOutput(string $cmd_name, array $input = [], string $platform = 'source'): object {
     /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($cmd_name);
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
     $bind_input = new ArrayInput($input);
     $bind_input->bind($command->getDefinition());
-    $this->getPlatform($platform)->execute($command, $bind_input, $remote_output);
+    $return_code = $this->getPlatform($platform)->execute($command, $bind_input, $remote_output);
     rewind($remote_output->getStream());
-    return stream_get_contents($remote_output->getStream()) ?: '';
+    $return = new class($return_code, stream_get_contents($remote_output->getStream()) ?? '') {
+      public function __construct($returnCode, string $result) {
+        $this->returnCode = $returnCode ?? -1;
+        $this->result = $result;
+      }
+
+      public function getReturnCode() {
+        return $this->returnCode;
+      }
+
+      public function __toString() {
+        return $this->result;
+      }
+    };
+    return $return;
   }
 
   /**
@@ -84,11 +99,47 @@ trait PlatformCommandExecutionTrait {
     }
 
     $process = new Process(array_merge([$match], $args));
-    $process->run();
+    $output->exitcode = $process->run();
     $output->stdout = trim($process->getOutput());
     $output->stderr = trim($process->getErrorOutput());
 
     return $output;
+  }
+
+  /**
+   * Executes an arbitrary drush command.
+   *
+   * By default this method tries 3 different paths to drush.
+   *  - drush (globally)
+   *  - ./vendor/bin/drush
+   *  - ../vendor/bin/drush (just in case)
+   * In case none of them works, there's still a possibility to specify the
+   * executable.
+   *
+   * @param OutputInterface $output
+   *  Output Interface.
+   * @param array $args
+   *   The arguments for the drush command.
+   * @param string $uri
+   *   [Optional] Specify an uri.
+   * @param string $path_to_drush
+   *   [Optional] Specify a path to drush.
+   *
+   * @return int
+   *   The status.
+   *
+   * @throws \Exception
+   */
+  protected function execDrushWithOutput(OutputInterface $output, array $args, string $uri = '', string $path_to_drush = ''): int {
+    $out = $this->execDrush($args, $uri, $path_to_drush);
+    if ($out->exitcode) {
+      $output->writeln(sprintf('<error>Error executing drush command "%s" (Exit code = %s):</error>', reset($args), $out->exitcode));
+      $output->writeln($out->stderr);
+      return 1;
+    }
+    $output->writeln($out->stdout);
+    $output->writeln($out->stderr);
+    return 0;
   }
 
   /**

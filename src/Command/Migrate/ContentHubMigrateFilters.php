@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
-use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use Acquia\Console\ContentHub\Exception\ContentHubVersionException;
@@ -46,11 +45,6 @@ class ContentHubMigrateFilters extends ContentHubCommandBase implements Platform
    */
   protected function initialize(InputInterface $input, OutputInterface $output) {
     parent::initialize($input, $output);
-    $module_handler = \Drupal::moduleHandler();
-    if (!$module_handler->moduleExists('acquia_contenthub_subscriber')) {
-      throw new \Exception('Content Hub module is not enabled!');
-    }
-
     if ($this->achClientService->getVersion() !== 2) {
       throw new ContentHubVersionException(2);
     }
@@ -60,14 +54,18 @@ class ContentHubMigrateFilters extends ContentHubCommandBase implements Platform
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
+    $module_handler = \Drupal::moduleHandler();
+    if (!$module_handler->moduleExists('acquia_contenthub_subscriber')) {
+      return 0;
+    }
     $output->writeln('Migrating filters...');
-    $res = $this->execDrush(['ach-subscriber-upgrade'], $input->getOption('uri') ?: '');
-    if ($res->stderr) {
-      $output->writeln(sprintf('<error>Error during filter migration: %s</error>', $res->stderr));
+    $res = $this->execDrushWithOutput($output, ['ach-subscriber-upgrade'], $input->getOption('uri') ?: '');
+    if ($res !== 0) {
+      $output->writeln('<error>Error during filter migration.</error>');
       return 1;
     }
 
-    $output->writeln(sprintf('<info>Successfully migrated filters: %s</info>', $res->stdout));
+    $output->writeln('<info>Successfully migrated filters.</info>');
     return 0;
   }
 

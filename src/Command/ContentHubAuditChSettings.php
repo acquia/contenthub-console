@@ -76,7 +76,7 @@ class ContentHubAuditChSettings extends Command implements PlatformBootStrapComm
       }
       $table->render();
       $output->writeln('<warning>Run `--fix` to synchronize Content Hub settings.');
-      return 0;
+      return 1;
     }
 
     if (!empty($diff) && $attempt_fix === TRUE) {

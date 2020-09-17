@@ -42,7 +42,7 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
         'lift-support',
         'ls',
         InputOption::VALUE_NONE,
-        'Enable acquia_lift_support module.'
+        'Enable acquia_lift_publisher module.'
       );
   }
 
@@ -53,24 +53,14 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln('Initiating module upgrade process...');
-    $this->setSchema($output);
+    $uri = $input->getOption('uri');
+    $this->execDrushWithOutput($output, ['cr'], $uri);
     $this->updateDatabases($input, $output);
+    $this->execDrushWithOutput($output, ['cr'], $uri);
     if ($input->getOption('lift-support')) {
-      $this->enableAcquiaLiftSupportModule($output);
+      $this->enableAcquiaLiftPublisherModule($output);
     }
-    $this->upgradePublishers($output, $input->getOption('uri'));
-  }
-
-  /**
-   * Sets the schema version to version 2.
-   *
-   * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   The output stream to write to.
-   */
-  protected function setSchema(OutputInterface $output): void {
-    $output->writeln('Schema version setup...');
-    drupal_set_installed_schema_version('acquia_contenthub', '8200');
-    $output->writeln('<info>Done</info>');
+    $this->upgradePublishers($output, $uri);
   }
 
   /**
@@ -83,20 +73,19 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
    */
   protected function updateDatabases(InputInterface $input, OutputInterface $output): void {
     $output->writeln('Running database updates...');
-    $this->execDrush(['update-db', '-y', $input->getOption('uri')]);
-    $this->execDrush(['cr']);
+    $this->execDrushWithOutput($output, ['updatedb', '-y'], $input->getOption('uri'));
   }
 
   /**
-   * Enables acquia_lift_support module.
+   * Enables acquia_lift_publisher module.
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output stream to write to.
    */
-  protected function enableAcquiaLiftSupportModule(OutputInterface $output): void {
-    $output->writeln('Installing acquia_lift_support module...');
+  protected function enableAcquiaLiftPublisherModule(OutputInterface $output): void {
+    $output->writeln('Installing acquia_lift_publisher module...');
     try {
-      \Drupal::service('module_installer')->install(['acquia_lift_support']);
+      \Drupal::service('module_installer')->install(['acquia_lift_publisher']);
     }
     catch (\Exception $e) {
       $output->writeln("<error>Module could not be installed. {$e->getMessage()}</error>");
@@ -112,9 +101,12 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
    * @param string $uri
    *   The uri of the site.
    *
+   * @return int
+   *   The return code.
+   *
    * @throws \Exception
    */
-  protected function upgradePublishers(OutputInterface $output, $uri = ''): void {
+  protected function upgradePublishers(OutputInterface $output, $uri = ''): int {
     if ($this->isPublisher()) {
       $output->writeln('The site is a publisher, enabling acquia_contenthub_publisher...');
       \Drupal::service('module_installer')->install(['acquia_contenthub_publisher']);
@@ -124,9 +116,14 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
     // sure if that is the case.
     if (\Drupal::moduleHandler()->moduleExists('acquia_contenthub_publisher')) {
       $output->writeln('Running publisher upgrades...');
-      $this->execDrush(['ach-publisher-upgrade'], $uri);
-      $output->writeln('Done');
+      $out = $this->execDrushWithOutput($output, ['ach-publisher-upgrade'], $uri);
+      if ($out === 0) {
+        $output->writeln('Done');
+        return 0;
+      }
+      return 1;
     }
+    return 0;
   }
 
 }

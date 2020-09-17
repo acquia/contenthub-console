@@ -5,6 +5,12 @@ services:
     public: true
 
   #  Commands
+  command.contenthub.migration_start:
+    class: Acquia\Console\ContentHub\Command\ContentHubMigrationStart
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
   command.contenthub.subscription_set:
     class: Acquia\Console\ContentHub\Command\ContentHubSubscriptionSet
     public: true
@@ -94,6 +100,11 @@ services:
       - { name: common_console_command }
   command.contenthub.helper.client_info_retriever:
     class: Acquia\Console\ContentHub\Command\Helpers\ClientInformationRetriever
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.helper.drush:
+    class: Acquia\Console\ContentHub\Command\Helpers\DrushWrapper
     public: true
     tags:
       - { name: common_console_command }

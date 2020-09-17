@@ -55,7 +55,7 @@ trait ContentHubModuleTrait {
    *   TRUE if it is a publisher.
    */
   public function isPublisher(): bool {
-    if (ContentHubClientFactory::getModuleVersion() === 2) {
+    if (ContentHubClientFactory::getModuleVersion() === 2 && !\Drupal::database()->schema()->tableExists('acquia_contenthub_entities_tracking')) {
       return \Drupal::moduleHandler()->moduleExists('acquia_contenthub_publisher');
     }
 

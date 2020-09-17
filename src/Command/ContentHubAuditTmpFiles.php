@@ -32,7 +32,7 @@ class ContentHubAuditTmpFiles extends Command implements PlatformBootStrapComman
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Audit an existing site to determine ContentHub concerning temporary files.');
+    $this->setDescription('Audit an existing site for problematic temporary files.');
   }
 
   /**
@@ -42,7 +42,7 @@ class ContentHubAuditTmpFiles extends Command implements PlatformBootStrapComman
     $files = $this->getTempFiles(\Drupal::entityTypeManager());
     if (!$files) {
       $output->writeln('Files are safe to export.');
-      return;
+      return 0;
     }
 
     $output->writeln('<bg=yellow;options=bold>The following files are registered as temporary:</>');
@@ -50,6 +50,7 @@ class ContentHubAuditTmpFiles extends Command implements PlatformBootStrapComman
     $table->setHeaders(['ID', 'Name', 'Uri']);
     $table->addRows($files);
     $table->render();
+    return 1;
   }
   
   /**

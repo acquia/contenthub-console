@@ -27,7 +27,7 @@ class ContentHubQueue extends Command implements PlatformBootStrapCommandInterfa
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Gather queue information');
+    $this->setDescription('Gather Content Hub Queue information');
     $this->setHidden(TRUE);
   }
 

@@ -31,25 +31,47 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Audit an existing code base to determine of there are any ContentHub level concerns.');
+    $this->setDescription('Audit an existing code base to determine if there are any ContentHub level concerns.');
     $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Run audit command and fix any errors found.');
+    $this->addOption('early-return', 'er', InputOption::VALUE_NONE, 'Run audit command and return early at first error.');
   }
 
   /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
+    $return_early = $input->getOption('early-return');
     // CH 1.x hook implementations
     $this->findDeprecatedHookImplementations($output);
     // Custom code that uses 1.x CH services.
     // Missing UUIDs
-    $this->executeCommand(ContentHubAuditCheckUuid::getDefaultName(), $input, $output);
+    $status_code = $this->executeCommand(ContentHubAuditCheckUuid::getDefaultName(), $input, $output);
+    if ($return_early && $status_code !== 0) {
+      $output->writeln('<error>Please fix the entities without UUIDs before proceeding.</error>');
+      return $status_code;
+    }
+
     // Tmp file bs
-    $this->executeCommand(ContentHubAuditTmpFiles::getDefaultName(), $input, $output);
+    $status_code = $this->executeCommand(ContentHubAuditTmpFiles::getDefaultName(), $input, $output);
+    if ($return_early && $status_code !== 0) {
+      $output->writeln('<error>Please fix the temporary files before proceeding.</error>');
+      return $status_code;
+    }
+
     // Check for depcalc module.
-    $this->executeCommand(ContentHubAuditDepcalc::getDefaultName(), $input, $output);
+    $status_code = $this->executeCommand(ContentHubAuditDepcalc::getDefaultName(), $input, $output);
+    if ($return_early && $status_code === 2) {
+      $output->writeln('<error>Using Composer, please add the Depcalc module to your codebase.</error>');
+      return $status_code;
+    }
+
     // Synchronize Content Hub settings overwrites.
-    $this->executeCommand(ContentHubAuditChSettings::getDefaultName(), $input, $output);
+    $status_code = $this->executeCommand(ContentHubAuditChSettings::getDefaultName(), $input, $output);
+    if ($return_early && $status_code !== 0) {
+      $output->writeln('<error>Settings do not match. Please rerun the audit command with "-fix" option before proceeding.</error>');
+      return $status_code;
+    }
+
     // What stream wrappers exist on this site?
     $this->executeCommand(ContentHubAuditStreamWrappers::getDefaultName(), $input, $output);
     // Problematic modules
@@ -58,11 +80,18 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     // Origin/domain mismatch (within Plexus)
     // SSL Check
     if ($input->getOption('uri')) {
-      $this->executeCommand(ContentHubAuditSslCertificate::getDefaultName(), $input, $output);
+      // $status_code = $this->executeCommand(ContentHubAuditSslCertificate::getDefaultName(), $input, $output);
+      // if ($return_early && $status_code !== 0) {
+        // $output->writeln('<error>Content Hub requires valid SSL certificates. Please fix the SSL certificate for this site before proceeding by running the audit command with "--fix" option.</error>');
+        // return $status_code;
+      // }
     }
     else {
       $output->writeln('<warning>No SSL check was run because the --uri option was not passed.</warning>');
     }
+
+    $output->writeln('Audit command executed successfully. Please proceed.');
+    return 0;
   }
 
   /**
