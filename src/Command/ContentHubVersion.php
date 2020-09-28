@@ -37,7 +37,11 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
   public function configure() {
     $this->setDescription('Checks if platform sites have the Content Hub module 2.x version.');
     $this->setAliases(['ach-mv']);
-    $this->addOption('clear-cache','cr',InputOption::VALUE_OPTIONAL,'Clear cache.');
+    $this->addOption(
+      'lift-support',
+      'ls',
+      InputOption::VALUE_NONE,
+      'Checks Acquia Lift as well.');
   }
 
 
@@ -71,15 +75,32 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
     $helper = $this->getHelper('question');
 
     while (!$ready) {
-      $sites_not_ready = $this->getNotUpToDateSites($input, $output);
+      $continue = FALSE;
 
-      if (!empty($sites_not_ready)) {
+      $result = $this->runWithMemoryOutput(DrushWrapper::$defaultName, ['cr']);
+      $output->writeln($result);
+
+      $sites_not_ready_ach = $this->getNotUpToDateSites($output, ContentHubModuleVersion::getDefaultName(), 2);
+
+      $sites_not_ready_lift = [];
+      if ($input->getOption('lift-support')) {
+        $sites_not_ready_lift = $this->getNotUpToDateSites($output, ContentHubLiftVersion::getDefaultName(), 4);
+      }
+
+      if (!empty($sites_not_ready_ach)) {
         $output->writeln('<error>The following sites do not have 2.x version of ContentHub</error>');
-        $table = new Table($output);
-        $table->setHeaders(['Url']);
-        $table->addRows($sites_not_ready);
-        $table->render();
+        $this->renderTable($output, $sites_not_ready_ach);
+        $continue = TRUE;
+      }
 
+      if (!empty($sites_not_ready_lift)) {
+        $output->writeln('<error>The following sites do not have 4.x version of Lift</error>');
+        $this->renderTable($output, $sites_not_ready_lift);
+        $output->writeln('Please include the up-to-date version of Acquia Lift (8.x-4.x) in the deploy!');
+        $continue = TRUE;
+      }
+
+      if ($continue) {
         $question = new Question('Please deploy and hit enter once the code is up-to-date!');
         $helper->ask($input, $output, $question);
         continue;
@@ -92,25 +113,37 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
   }
 
   /**
-   * Gathers sites which do not have ACH 2.x.
+   * Renders output with not up-to-date sites.
    *
-   * @param \Symfony\Component\Console\Output\InputInterface $input
-   *   The input.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output.
+   * @param array $rows
+   *   Rows of the table.
+   */
+  protected function renderTable(OutputInterface $output, array $rows) {
+    $table = new Table($output);
+    $table->setHeaders(['Url']);
+    $table->addRows($rows);
+    $table->render();
+  }
+
+  /**
+   * Gathers sites which do not have ACH 2.x.
+   *
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   The output.
+   * @param string
+   *   Command to get module version.
+   * @param int
+   *  Version to compare to
    *
    * @return array
    *   Array contains sites, which do not have ACH 2.x.
    */
-  protected function getNotUpToDateSites(InputInterface $input, OutputInterface $output): array {
+  protected function getNotUpToDateSites(OutputInterface $output, string $command_name, int $version): array {
     $sites_not_ready = [];
 
-    $params = [];
-
-    $result = $this->runWithMemoryOutput(DrushWrapper::$defaultName, ['cr']);
-    $output->writeln($result);
-
-    $raw = $this->runWithMemoryOutput(ContentHubModuleVersion::getDefaultName(), $params);
+    $raw = $this->runWithMemoryOutput($command_name, []);
 
     $lines = explode(PHP_EOL, trim($raw));
     foreach ($lines as $line) {
@@ -119,7 +152,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
         continue;
       }
 
-      if ($data->module_version !== 2) {
+      if ($data->module_version < $version) {
         $sites_not_ready[] = [
           $data->base_url,
         ];

@@ -137,8 +137,13 @@ services:
     public: true
     tags:
       - { name: common_console_command }
-  command.contenthub.module_exist:
+  command.contenthub.ach_module_version:
     class: Acquia\Console\ContentHub\Command\ContentHubModuleVersion
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.lift_module_version:
+    class: Acquia\Console\ContentHub\Command\ContentHubLiftVersion
     public: true
     tags:
       - { name: common_console_command }

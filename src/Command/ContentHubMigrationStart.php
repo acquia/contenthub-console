@@ -57,12 +57,6 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         'List of modules to uninstall as part of the preparation process.'
       )
       ->addOption(
-        'lift-support',
-        'ls',
-        InputOption::VALUE_NONE,
-        'Enable acquia_lift_publisher module.'
-      )
-      ->addOption(
         'restart',
         'res',
         InputOption::VALUE_NONE,
@@ -110,6 +104,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
 
     // Set Content Hub Credentials for Migration.
     $this->setContentHubCredentialsForMigration($application, $platform, $input, $output);
+    $this->setAcquiaLiftUsage($platform, $input, $output);
     $stage = $platform->get('acquia.content_hub.migration.stage');
 
     // Running Content Hub Audit in the current platform.
@@ -129,11 +124,15 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $this->executePrepareUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Make sure Content Hub version 2 is deployed in all sites.
+    $is_lift_customer = $platform->get(ContentHubLiftVersion::ACQUIA_LIFT_USAGE);
     $quest = new ConfirmationQuestion('Please deploy Content Hub 2.x in the environment, including the Diff module and press a key when ready..');
+    if ($is_lift_customer) {
+      $output->writeln('Please include the up-to-date version of Acquia Lift (8.x-4.x) in the deploy!');
+    }
     $helper->ask($input, $output, $quest);
     $version_checker = $application->find(ContentHubVersion::getDefaultName());
     $version_checker->addPlatform($input->getArgument('alias'), $platform);
-    $version_checker->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--clear-cache' => true]), $output);
+    $version_checker->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--lift-support' => $is_lift_customer]), $output);
 
     // Run Publisher Upgrade Command.
     $pass = $this->executeStage($stage, 4);
@@ -192,6 +191,34 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
       $subscription_setter = $application->find(ContentHubSubscriptionSet::getDefaultName());
       $subscription_setter->addPlatform($input->getArgument('alias'), $platform);
       $subscription_setter->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--migration' => TRUE]), $output);
+    }
+  }
+
+  /**
+   * Set information into configuration about Acquia Lift usage.
+   *
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
+   *   The Platform.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   The Input interface.
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   The Output interface.
+   */
+  protected function setAcquiaLiftUsage(PlatformInterface $platform, InputInterface $input, OutputInterface $output): void {
+    $platform->set(ContentHubLiftVersion::ACQUIA_LIFT_USAGE, FALSE);
+
+    $raw = $this->runWithMemoryOutput(ContentHubLiftVersion::getDefaultName());
+    $lines = explode(PHP_EOL, trim($raw));
+
+    foreach ($lines as $line) {
+      $data = $this->fromJson($line, $output);
+      if (!$data) {
+        continue;
+      }
+
+      if ($data->configured === TRUE) {
+        $platform->set(ContentHubLiftVersion::ACQUIA_LIFT_USAGE, TRUE);
+      }
     }
   }
 
@@ -371,7 +398,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     while (!$ready && $execute) {
       $quest = new ConfirmationQuestion('Starting publisher upgrade. Press a key when ready.');
       $helper->ask($input, $output, $quest);
-      $raw = $this->runWithMemoryOutput(ContentHubMigrationPublisherUpgrade::getDefaultName());
+      $raw = $this->runWithMemoryOutput(ContentHubMigrationPublisherUpgrade::getDefaultName(), ['--lift-support' => $platform->get(ContentHubLiftVersion::ACQUIA_LIFT_USAGE)]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);

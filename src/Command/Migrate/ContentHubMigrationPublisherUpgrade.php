@@ -59,6 +59,7 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
     $this->execDrushWithOutput($output, ['cr'], $uri);
     if ($input->getOption('lift-support')) {
       $this->enableAcquiaLiftPublisherModule($output);
+      $this->setAcquiaLiftCdfVersion();
     }
     $this->upgradePublishers($output, $uri);
   }
@@ -66,6 +67,8 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
   /**
    * Runs database schema updates.
    *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   The input.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output stream to write to.
    *
@@ -91,6 +94,14 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
       $output->writeln("<error>Module could not be installed. {$e->getMessage()}</error>");
       return;
     }
+  }
+
+  /**
+   * Sets cdf_version settings for Acquia Lift module.
+   */
+  protected function setAcquiaLiftCdfVersion(): void {
+    $config = \Drupal::configFactory()->getEditable('acquia_lift.settings');
+    $config->set('advanced.cdf_version', 2)->save();
   }
 
   /**
