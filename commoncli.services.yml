@@ -108,6 +108,21 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.panelizer:
+    class: Acquia\Console\ContentHub\Command\ContentHubPanelizer
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.custom_field:
+    class: Acquia\Console\ContentHub\Command\ContentHubCustomFields
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.layout_builder_defaults:
+    class: Acquia\Console\ContentHub\Command\ContentHubLayoutBuilderDefaults
+    public: true
+    tags:
+      - { name: common_console_command }
 
   # Migration commands
   command.contenthub.migrate.client_registrar:
