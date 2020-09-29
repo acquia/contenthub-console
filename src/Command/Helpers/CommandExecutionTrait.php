@@ -15,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 trait CommandExecutionTrait {
 
+  use CommandOptionsDefinitionTrait;
+
   /**
    * Runs an arbitrary command with given options.
    *
@@ -31,12 +33,14 @@ trait CommandExecutionTrait {
    *   The exit code of the command.
    *
    * @throws \Exception
+   * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
   protected function executeCommand(string $command_name, InputInterface $input, OutputInterface $output): int {
     $args = [];
     /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($command_name);
-    $options = $command->getDefinition()->getOptions();
+    $cmd_input = $this->getDefinitions($command);
+    $options = $cmd_input->getOptions();
     foreach ($options as $option) {
       $name = $option->getName();
       if ($input->hasOption($name)) {

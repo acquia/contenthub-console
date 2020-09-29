@@ -14,6 +14,8 @@ use Symfony\Component\Process\Process;
  */
 trait PlatformCommandExecutionTrait {
 
+  use CommandOptionsDefinitionTrait;
+
   /**
    * Executes a command on the given platform and returns the output.
    *
@@ -31,8 +33,9 @@ trait PlatformCommandExecutionTrait {
     /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($cmd_name);
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
+    $input['--bare'] = NULL;
     $bind_input = new ArrayInput($input);
-    $bind_input->bind($command->getDefinition());
+    $bind_input->bind($this->getDefinitions($command));
     $return_code = $this->getPlatform($platform)->execute($command, $bind_input, $remote_output);
     rewind($remote_output->getStream());
     $return = new class($return_code, stream_get_contents($remote_output->getStream()) ?? '') {
@@ -162,5 +165,4 @@ trait PlatformCommandExecutionTrait {
 
     return '';
   }
-
 }

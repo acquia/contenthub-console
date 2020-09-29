@@ -62,11 +62,9 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     $output->writeln('Initiating Upgrade Process...');
     $this->handleModules($output, $input->getOption('uninstall-modules') ?? []);
     $this->removeRestResource($output);
-    $this->purgeSubscription($output);
-    $ret = $this->deleteWebhooks($output);
     $this->execDrushWithOutput($output, ['cr'], $input->getOption('uri') ?? '');
     $output->writeln('<info>Upgrade preparation has been completed. Please build a branch with Content Hub 2.x and push it to origin.</info>');
-    return $ret;
+    return 0;
   }
 
   /**
@@ -130,46 +128,4 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     }
     $output->writeln('Content Hub Filter rest resource removal has been finished.');
   }
-
-  /**
-   * Purges entities from Content Hub subscription.
-   *
-   * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   The output stream to write status to.
-   */
-  protected function purgeSubscription(OutputInterface $output): void {
-    $output->writeln('Purging subscription...');
-    try {
-      $this->achClientService->purge();
-    }
-    catch (\Exception $e) {
-      $output->writeln("<error>{$e->getMessage()}</error>");
-    }
-    $output->writeln('<info>Subscription has been successfully purged.</info>');
-  }
-
-  /**
-   * Deletes every webhook.
-   */
-  protected function deleteWebhooks(OutputInterface $output): int {
-    $output->writeln('Deleting webhooks...');
-    $webhooks = $this->achClientService->getWebhooks();
-    if (empty($webhooks)) {
-      $output->writeln('<warning>No webhooks to delete.</warning>');
-    }
-
-    $ret = 0;
-    foreach ($webhooks as $webhook) {
-      try {
-        $this->achClientService->deleteWebhook($webhook['uuid']);
-      }
-      catch (\Exception $e) {
-        $output->writeln("<error>Could not delete webhook with id {$webhook['uuid']}. Reason: {$e->getMessage()}</error>");
-        $ret = 1;
-      }
-    }
-    $output->writeln('<info>Webhook deletion process has been finished.</info>');
-    return $ret;
-  }
-
 }

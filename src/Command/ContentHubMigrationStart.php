@@ -14,6 +14,7 @@ use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateClientRegistrar;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPublisherUpgrade;
+use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPurgeAndDeleteWebhooks;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use EclipseGc\CommonConsole\PlatformInterface;
@@ -119,8 +120,12 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $pass = $this->executeStage($stage, 2);
     $this->executeDatabaseBackups($application, $platform, $input, $output, $pass);
 
-    // Prepare Upgrade Command.
+    // Purge Subscription and delete Webhooks.
     $pass = $this->executeStage($stage, 3);
+    $this->purgeSubscriptionDeleteWebhooks($application, $platform, $input, $output, $helper, $pass);
+
+    // Prepare Upgrade Command.
+    $pass = $this->executeStage($stage, 4);
     $this->executePrepareUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Make sure Content Hub version 2 is deployed in all sites.
@@ -130,23 +135,21 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
       $output->writeln('Please include the up-to-date version of Acquia Lift (8.x-4.x) in the deploy!');
     }
     $helper->ask($input, $output, $quest);
-    $version_checker = $application->find(ContentHubVersion::getDefaultName());
-    $version_checker->addPlatform($input->getArgument('alias'), $platform);
-    $version_checker->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--lift-support' => $is_lift_customer]), $output);
+    $this->executeContentHubVersionCheck($application, $platform, $input, $output);
 
     // Run Publisher Upgrade Command.
-    $pass = $this->executeStage($stage, 4);
+    $pass = $this->executeStage($stage, 5);
     $this->executePublisherUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Creates Scheduled Jobs for Publisher/Subscriber Queues.
-    $pass = $this->executeStage($stage, 5);
+    $pass = $this->executeStage($stage, 6);
     $this->createContentHubScheduledJobs($application, $platform, $input, $output, $helper, $pass);
 
     $quest = new ConfirmationQuestion('Please wait until ALL publisher queues have finished exporting data. Press a key when ready.');
     $helper->ask($input, $output, $quest);
 
     // Run Subscriber Upgrade Command.
-    $pass = $this->executeStage($stage, 6);
+    $pass = $this->executeStage($stage, 7);
     $this->executeSubscriberUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Finalize process.
@@ -344,6 +347,73 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
   }
 
   /**
+   * Executes the Content Hub Audit Command.
+   *
+   * @param \Symfony\Component\Console\Application $application
+   *   The Console Application.
+   * @param PlatformInterface $platform
+   *   The Platform.
+   * @param InputInterface $input
+   *   The Input interface.
+   * @param OutputInterface $output
+   *   The Output interface.
+   * @param HelperInterface $helper
+   *   The helper Question.
+   * @param bool $execute
+   *   TRUE if we need to execute this stage, false otherwise.
+   *
+   * @return int
+   *
+   * @throws \Symfony\Component\Console\Exception\ExceptionInterface
+   */
+  protected function purgeSubscriptionDeleteWebhooks(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
+    $ready = FALSE;
+    while (!$ready && $execute) {
+      $sites = $this->getPlatformSites('source');
+      if (empty($sites)) {
+        $output->writeln('<Error>There are no sites in this platform.</Error>');
+        return 1;
+      }
+      // Getting URL of first site in the platform.
+      $url = reset(reset($sites));
+      $raw = $this->runWithMemoryOutput(ContentHubMigrationPurgeAndDeleteWebhooks::getDefaultName(), [
+        '--uri' => $url,
+      ]);
+      $lines = explode(PHP_EOL, trim($raw));
+      foreach ($lines as $line) {
+        $this->fromJson($line, $output);
+      }
+      if ($raw->getReturnCode()) {
+        $question = new Question('Please resolve the problems highlighted and make sure the code is up-to-date! Then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
+      }
+      $ready = TRUE;
+      $platform->set('acquia.content_hub.migration.stage', 4)->save();
+    }
+  }
+
+  /**
+   * Executes a Content Hub version check and does not let go until the correct version of CH 2.x is deployed.
+   *
+   * @param \Symfony\Component\Console\Application $application
+   *   The Console Application.
+   * @param PlatformInterface $platform
+   *   The Platform.
+   * @param InputInterface $input
+   *   The Input interface.
+   * @param OutputInterface $output
+   *   The Output interface.
+   *
+   * @throws \Symfony\Component\Console\Exception\ExceptionInterface
+   */
+  protected function executeContentHubVersionCheck(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output) {
+    $version_checker = $application->find(ContentHubVersion::getDefaultName());
+    $version_checker->addPlatform($input->getArgument('alias'), $platform);
+    $version_checker->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--clear-cache' => true]), $output);
+  }
+
+  /**
    * Executes the Prepare Upgrade Command.
    *
    * @param PlatformInterface $platform
@@ -374,7 +444,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 4)->save();
+      $platform->set('acquia.content_hub.migration.stage', 5)->save();
     }
   }
 
@@ -409,7 +479,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 5)->save();
+      $platform->set('acquia.content_hub.migration.stage', 6)->save();
     }
   }
 
@@ -451,7 +521,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         $scheduled_jobs->addPlatform($input->getArgument('alias'), $platform);
         $status = $scheduled_jobs->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
       }
-      $platform->set('acquia.content_hub.migration.stage', 6)->save();
+      $platform->set('acquia.content_hub.migration.stage', 7)->save();
     }
   }
 
@@ -486,7 +556,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 7)->save();
+      $platform->set('acquia.content_hub.migration.stage', 8)->save();
     }
   }
 

@@ -80,11 +80,11 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     // Origin/domain mismatch (within Plexus)
     // SSL Check
     if ($input->getOption('uri')) {
-      // $status_code = $this->executeCommand(ContentHubAuditSslCertificate::getDefaultName(), $input, $output);
-      // if ($return_early && $status_code !== 0) {
-        // $output->writeln('<error>Content Hub requires valid SSL certificates. Please fix the SSL certificate for this site before proceeding by running the audit command with "--fix" option.</error>');
-        // return $status_code;
-      // }
+       $status_code = $this->executeCommand(ContentHubAuditSslCertificate::getDefaultName(), $input, $output);
+       if ($return_early && $status_code !== 0) {
+         $output->writeln('<error>Content Hub requires valid SSL certificates. Please fix the SSL certificate for this site before proceeding by running the audit command with "--fix" option.</error>');
+         return $status_code;
+       }
     }
     else {
       $output->writeln('<warning>No SSL check was run because the --uri option was not passed.</warning>');

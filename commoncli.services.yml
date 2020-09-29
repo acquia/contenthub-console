@@ -137,7 +137,12 @@ services:
     public: true
     tags:
       - { name: common_console_command }
-  command.contenthub.ach_module_version:
+  command.contenthub.migrate.purge_del_webhooks:
+    class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPurgeAndDeleteWebhooks
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.module_exist:
     class: Acquia\Console\ContentHub\Command\ContentHubModuleVersion
     public: true
     tags:

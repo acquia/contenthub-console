@@ -76,6 +76,19 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   /**
    * {@inheritDoc}
    */
+  public function getFilters(): array {
+    $webhooks = [];
+    foreach ($this->client->getFilters() as $webhook) {
+      $webhooks[] = $webhook->getDefinition();
+    }
+
+    return $webhooks;
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
   public function getClients(): array {
     $clients = [];
     foreach ($this->client->getWebHooks() as $webhook) {
