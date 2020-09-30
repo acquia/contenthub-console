@@ -152,6 +152,14 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $pass = $this->executeStage($stage, 7);
     $this->executeSubscriberUpgradeCommand($platform, $input, $output, $helper, $pass);
 
+    // Run Validations on the migrated subscription.
+    $pass = $this->executeStage($stage, 8);
+    $this->executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $pass);
+
+    // Validate that default filters are attached to webhooks and all filters have been migrated.
+    $pass = $this->executeStage($stage, 9);
+    $this->executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $pass);
+
     // Finalize process.
     $output->writeln('Migration Process has been completed successfully. Please check your sites.');
     return 0;
@@ -410,7 +418,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
   protected function executeContentHubVersionCheck(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output) {
     $version_checker = $application->find(ContentHubVersion::getDefaultName());
     $version_checker->addPlatform($input->getArgument('alias'), $platform);
-    $version_checker->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--clear-cache' => true]), $output);
+    $version_checker->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
   }
 
   /**
@@ -560,5 +568,82 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     }
   }
 
+  /**
+   * Validates that the site has a registered webhook in Content Hub.
+   *
+   * @param PlatformInterface $platform
+   *   The Platform.
+   * @param InputInterface $input
+   *   The Input interface.
+   * @param OutputInterface $output
+   *   The Output interface.
+   * @param HelperInterface $helper
+   *   The helper Question.
+   * @param bool $execute
+   *   TRUE if we need to execute this stage, false otherwise.
+   */
+  protected function executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $execute) {
+
+    $ready = FALSE;
+    // Migrates Filters and adds imported entities to the subscribers' interest list.
+    while (!$ready && $execute) {
+      $quest = new ConfirmationQuestion('Validating site has a registered webhook.');
+      $helper->ask($input, $output, $quest);
+      $raw = $this->runWithMemoryOutput(ContentHubVerifyCurrentSiteWebhook::getDefaultName());
+      $lines = explode(PHP_EOL, trim($raw));
+      foreach ($lines as $line) {
+        $this->fromJson($line, $output);
+      }
+      if ($raw->getReturnCode()) {
+        $question = new Question('Please resolve the issues found, then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
+      }
+      $ready = TRUE;
+      $platform->set('acquia.content_hub.migration.stage', 9)->save();
+    }
+  }
+
+  /**
+   * Validates default filters and migrations from 1.x filters.
+   *
+   * @param PlatformInterface $platform
+   *   The Platform.
+   * @param InputInterface $input
+   *   The Input interface.
+   * @param OutputInterface $output
+   *   The Output interface.
+   * @param HelperInterface $helper
+   *   The helper Question.
+   * @param bool $execute
+   *   TRUE if we need to execute this stage, false otherwise.
+   */
+  protected function executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $execute) {
+
+    $ready = FALSE;
+    // Migrates Filters and adds imported entities to the subscribers' interest list.
+    while (!$ready && $execute) {
+      $quest = new ConfirmationQuestion('Validating filters migration...');
+      $helper->ask($input, $output, $quest);
+
+      // Getting URL of first site in the platform.
+      $sites = $this->getPlatformSites('source');
+      $url = reset(reset($sites));
+      $raw = $this->runWithMemoryOutput(ContentHubVerifyWebhooksDefaultFilters::getDefaultName(), [
+        '--uri' => $url,
+      ]);
+      $lines = explode(PHP_EOL, trim($raw));
+      foreach ($lines as $line) {
+        $this->fromJson($line, $output);
+      }
+      if ($raw->getReturnCode()) {
+        $question = new Question('Please resolve the issues found, then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
+      }
+      $ready = TRUE;
+      $platform->set('acquia.content_hub.migration.stage', 10)->save();
+    }
+  }
 }
 

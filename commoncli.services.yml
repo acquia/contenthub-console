@@ -108,6 +108,16 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.verify.default_filters:
+    class: Acquia\Console\ContentHub\Command\ContentHubVerifyWebhooksDefaultFilters
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.verify_current_site_webhook:
+    class: Acquia\Console\ContentHub\Command\ContentHubVerifyCurrentSiteWebhook
+    public: true
+    tags:
+      - { name: common_console_command }
   command.contenthub.panelizer:
     class: Acquia\Console\ContentHub\Command\ContentHubPanelizer
     public: true

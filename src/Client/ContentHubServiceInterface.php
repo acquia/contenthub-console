@@ -89,4 +89,12 @@ interface ContentHubServiceInterface {
    */
   public function deleteWebhook($uuid): array;
 
+  /**
+   * Returns filter information from service.
+   *
+   * @return array
+   *   Filter information.
+   */
+  public function listFilters(): array;
+
 }

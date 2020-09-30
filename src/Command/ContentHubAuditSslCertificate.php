@@ -44,6 +44,11 @@ class ContentHubAuditSslCertificate extends Command {
       $output->writeln("<error>No uri specified, add --uri= to your command with a valid hostname.</error>");
       return 1;
     }
+    // @TODO: This needs to be fixed. The 'https' is not present in the URL.
+    if (strpos($url, 'https') !== 0) {
+      $output->writeln("<warning>This site does not have an SSL Certificate.</warning>");
+      return 0;
+    }
     try {
       $cert = $this->getCertByHostname($url);
     } catch (\Exception $e) {

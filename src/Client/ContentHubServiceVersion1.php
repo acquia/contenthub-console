@@ -144,4 +144,11 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
     return $this->checkResponseSuccess($data);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function listFilters(): array {
+    return [];
+  }
+
 }

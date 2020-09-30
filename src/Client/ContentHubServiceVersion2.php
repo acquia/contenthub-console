@@ -237,4 +237,11 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
     );
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function listFilters(): array {
+    return $this->client->listFilters();
+  }
+
 }
