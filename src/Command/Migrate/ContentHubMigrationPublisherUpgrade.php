@@ -119,8 +119,9 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
    */
   protected function upgradePublishers(OutputInterface $output, $uri = ''): int {
     if ($this->isPublisher()) {
-      $output->writeln('The site is a publisher, enabling acquia_contenthub_publisher...');
+      $output->writeln('The site is a publisher, enabling acquia_contenthub_publisher and acquia_contenthub_curation module...');
       \Drupal::service('module_installer')->install(['acquia_contenthub_publisher']);
+      \Drupal::service('module_installer')->install(['acquia_contenthub_curation']);
     }
 
     // It is possible that it was already enabled, therefore we need to make

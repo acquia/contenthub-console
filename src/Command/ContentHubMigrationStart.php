@@ -166,6 +166,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $this->executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $pass);
 
     // Finalize process.
+    $output->writeln('The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.');
     $output->writeln('Migration Process has been completed successfully. Please check your sites.');
     return 0;
   }
@@ -686,4 +687,3 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     }
   }
 }
-
