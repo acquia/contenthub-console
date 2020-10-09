@@ -11,6 +11,7 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateClientRegistrar;
+use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPublisherUpgrade;
@@ -152,12 +153,16 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $pass = $this->executeStage($stage, 7);
     $this->executeSubscriberUpgradeCommand($platform, $input, $output, $helper, $pass);
 
-    // Run Validations on the migrated subscription.
+    // Enable Unsubscribe module if there are imported entities with local changes / auto-update disabled.
     $pass = $this->executeStage($stage, 8);
+    $this->executeEnableUnsubscribeCommand($platform, $input, $output, $helper, $pass);
+
+    // Run Validations on the migrated subscription.
+    $pass = $this->executeStage($stage, 9);
     $this->executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $pass);
 
     // Validate that default filters are attached to webhooks and all filters have been migrated.
-    $pass = $this->executeStage($stage, 9);
+    $pass = $this->executeStage($stage, 10);
     $this->executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $pass);
 
     // Finalize process.
@@ -569,6 +574,41 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
   }
 
   /**
+   * Enables the Unsubscribe module if there are imported entities with local changes / auto-update disabled.
+   *
+   * @param PlatformInterface $platform
+   *   The Platform.
+   * @param InputInterface $input
+   *   The Input interface.
+   * @param OutputInterface $output
+   *   The Output interface.
+   * @param HelperInterface $helper
+   *   The helper Question.
+   * @param bool $execute
+   *   TRUE if we need to execute this stage, false otherwise.
+   */
+  protected function executeEnableUnsubscribeCommand(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
+    $ready = FALSE;
+    // Migrates Filters and adds imported entities to the subscribers' interest list.
+    while (!$ready && $execute) {
+      $quest = new ConfirmationQuestion('The Unsubscribe module will be enabled if there are imported entities with local changes / auto-update disabled. Press a key when ready.');
+      $helper->ask($input, $output, $quest);
+      $raw = $this->runWithMemoryOutput(ContentHubMigrateEnableUnsubscribe::getDefaultName());
+      $lines = explode(PHP_EOL, trim($raw));
+      foreach ($lines as $line) {
+        $this->fromJson($line, $output);
+      }
+      if ($raw->getReturnCode()) {
+        $question = new Question('Please resolve the issues found, then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
+      }
+      $ready = TRUE;
+      $platform->set('acquia.content_hub.migration.stage', 9)->save();
+    }
+  }
+
+  /**
    * Validates that the site has a registered webhook in Content Hub.
    *
    * @param PlatformInterface $platform
@@ -600,7 +640,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 9)->save();
+      $platform->set('acquia.content_hub.migration.stage', 10)->save();
     }
   }
 
@@ -642,7 +682,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 10)->save();
+      $platform->set('acquia.content_hub.migration.stage', 11)->save();
     }
   }
 }

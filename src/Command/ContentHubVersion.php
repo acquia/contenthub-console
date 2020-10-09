@@ -108,8 +108,8 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
 
       $ready = TRUE;
     }
-
     $output->writeln('All sites are up-to-date. You may proceed.');
+    return 0;
   }
 
   /**

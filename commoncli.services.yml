@@ -157,6 +157,11 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.migrate.enable_unsubscribe:
+    class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe
+    public: true
+    tags:
+      - { name: common_console_command }
   command.contenthub.migrate.prepare_upgrade:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade
     public: true
