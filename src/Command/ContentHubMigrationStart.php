@@ -168,6 +168,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     // Finalize process.
     $output->writeln('The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.');
     $output->writeln('Migration Process has been completed successfully. Please check your sites.');
+    $output->writeln('The Diff module is no longer required by Content Hub and may not be required by your application. Please check and remove if applicable.');
     return 0;
   }
 

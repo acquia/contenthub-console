@@ -77,6 +77,13 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
     while (!$ready) {
       $continue = FALSE;
 
+      $sites_without_diff_module = $this->getNotUpToDateSites($output, ContentHubDiff::getDefaultName());
+      if (!empty($sites_without_diff_module)) {
+        $output->writeln('<error>The following sites do not have diff module within the codebase.</error>');
+        $this->renderTable($output, $sites_without_diff_module);
+        $continue = TRUE;
+      }
+
       $result = $this->runWithMemoryOutput(DrushWrapper::$defaultName, ['cr']);
       $output->writeln($result);
 
@@ -140,7 +147,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
    * @return array
    *   Array contains sites, which do not have ACH 2.x.
    */
-  protected function getNotUpToDateSites(OutputInterface $output, string $command_name, int $version): array {
+  protected function getNotUpToDateSites(OutputInterface $output, string $command_name, int $version = NULL): array {
     $sites_not_ready = [];
 
     $raw = $this->runWithMemoryOutput($command_name, []);
@@ -152,11 +159,13 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
         continue;
       }
 
-      if ($data->module_version < $version) {
-        $sites_not_ready[] = [
-          $data->base_url,
-        ];
+      if ($version) {
+        if ($data->module_version < $version) {
+          $sites_not_ready[] = [$data->base_url];
+          continue;
+        }
       }
+      $sites_not_ready[] = [$data->base_url];
     }
 
     return $sites_not_ready;
