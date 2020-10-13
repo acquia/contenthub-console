@@ -138,6 +138,11 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.verify_publisher_queues:
+    class: Acquia\Console\ContentHub\Command\ContentHubVerifyPublisherQueue
+    public: true
+    tags:
+      - { name: common_console_command }
 
   # Migration commands
   command.contenthub.migrate.client_registrar:

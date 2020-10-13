@@ -151,21 +151,29 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $quest = new ConfirmationQuestion('Please wait until ALL publisher queues have finished exporting data. Press a key when ready.');
     $helper->ask($input, $output, $quest);
 
-    // Run Subscriber Upgrade Command.
+    // Run validations on the publisher queues.
     $pass = $this->executeStage($stage, 7);
+    $this->executeValidatePublisherQueues($platform, $input, $output, $helper, $pass);
+
+    // Run Subscriber Upgrade Command.
+    $pass = $this->executeStage($stage, 8);
     $this->executeSubscriberUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Enable Unsubscribe module if there are imported entities with local changes / auto-update disabled.
-    $pass = $this->executeStage($stage, 8);
+    $pass = $this->executeStage($stage, 9);
     $this->executeEnableUnsubscribeCommand($platform, $input, $output, $helper, $pass);
 
     // Run Validations on the migrated subscription.
-    $pass = $this->executeStage($stage, 9);
+    $pass = $this->executeStage($stage, 10);
     $this->executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $pass);
 
     // Validate that default filters are attached to webhooks and all filters have been migrated.
-    $pass = $this->executeStage($stage, 10);
+    $pass = $this->executeStage($stage, 11);
     $this->executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $pass);
+
+    // Run validations on the interest list diff.
+    $pass = $this->executeStage($stage, 12);
+    $this->executeValidateInterestListDiff($platform, $input, $output, $helper, $pass);
 
     // Finalize process.
     $output->writeln('The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.');
@@ -207,7 +215,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
    */
   protected function setContentHubCredentialsForMigration(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output) {
     if (!$platform->get('acquia.content_hub.migration')) {
-      $output->writeln('Subscription details are not set for Migration. Setting up Content Hub credentials for Migration...' );
+      $output->writeln('Subscription details are not set for Migration. Setting up Content Hub credentials for Migration...');
       $subscription_setter = $application->find(ContentHubSubscriptionSet::getDefaultName());
       $subscription_setter->addPlatform($input->getArgument('alias'), $platform);
       $subscription_setter->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--migration' => TRUE]), $output);
@@ -577,7 +585,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 8)->save();
+      $platform->set('acquia.content_hub.migration.stage', 9)->save();
     }
   }
 
@@ -612,7 +620,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 9)->save();
+      $platform->set('acquia.content_hub.migration.stage', 10)->save();
     }
   }
 
@@ -647,7 +655,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 10)->save();
+      $platform->set('acquia.content_hub.migration.stage', 11)->save();
     }
   }
 
@@ -687,7 +695,77 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 11)->save();
+      $platform->set('acquia.content_hub.migration.stage', 12)->save();
+    }
+  }
+
+  /**
+   * Validates 2.x publisher queues.
+   *
+   * @param PlatformInterface $platform
+   *   The Platform.
+   * @param InputInterface $input
+   *   The Input interface.
+   * @param OutputInterface $output
+   *   The Output interface.
+   * @param HelperInterface $helper
+   *   The helper Question.
+   * @param bool $execute
+   *   TRUE if we need to execute this stage, false otherwise.
+   */
+  protected function executeValidatePublisherQueues($platform, $input, $output, $helper, $execute) {
+    $ready = FALSE;
+    while (!$ready && $execute) {
+      $quest = new ConfirmationQuestion('Validating publisher queues...');
+      $helper->ask($input, $output, $quest);
+
+      $raw = $this->runWithMemoryOutput(ContentHubVerifyPublisherQueue::getDefaultName());
+      $lines = explode(PHP_EOL, trim($raw));
+      foreach ($lines as $line) {
+        $this->fromJson($line, $output);
+      }
+      if ($raw->getReturnCode()) {
+        $question = new Question('Please resolve the issues found, then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
+      }
+      $ready = TRUE;
+      $platform->set('acquia.content_hub.migration.stage', 8)->save();
+    }
+  }
+
+  /**
+   * Validates interest list diff.
+   *
+   * @param PlatformInterface $platform
+   *   The Platform.
+   * @param InputInterface $input
+   *   The Input interface.
+   * @param OutputInterface $output
+   *   The Output interface.
+   * @param HelperInterface $helper
+   *   The helper Question.
+   * @param bool $execute
+   *   TRUE if we need to execute this stage, false otherwise.
+   */
+  protected function executeValidateInterestListDiff($platform, $input, $output, $helper, $execute) {
+    $ready = FALSE;
+    while (!$ready && $execute) {
+      $quest = new ConfirmationQuestion('Validating interest list diff...');
+      $helper->ask($input, $output, $quest);
+
+      $raw = $this->runWithMemoryOutput(ContentHubInterestListDiff::getDefaultName());
+      $lines = explode(PHP_EOL, trim($raw));
+      foreach ($lines as $line) {
+        $this->fromJson($line, $output);
+      }
+      if ($raw->getReturnCode()) {
+        $question = new Question('Please resolve the issues found, then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
+      }
+      $ready = TRUE;
+      $platform->set('acquia.content_hub.migration.stage', 13)->save();
     }
   }
 }
