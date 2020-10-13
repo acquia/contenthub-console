@@ -6,7 +6,9 @@ use Acquia\Console\Acsf\Command\AcsfCronCreate;
 use Acquia\Console\Acsf\Command\AcsfDatabaseBackupCreate;
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
 use Acquia\Console\Cloud\Command\AcquiaCloudCronCreate;
+use Acquia\Console\Cloud\Command\AcquiaCloudCronCreateMultiSite;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
+use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
@@ -390,9 +392,9 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         return 1;
       }
       // Getting URL of first site in the platform.
-      $url = reset(reset($sites));
+      $site_info = reset($sites);
       $raw = $this->runWithMemoryOutput(ContentHubMigrationPurgeAndDeleteWebhooks::getDefaultName(), [
-        '--uri' => $url,
+        '--uri' => $site_info['uri'],
       ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
@@ -528,6 +530,10 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
           $cmd_input['--wait'] = true;
           break;
 
+        case AcquiaCloudMultiSitePlatform::PLATFORM_NAME:
+          $scheduled_jobs = $application->find(AcquiaCloudCronCreateMultiSite::getDefaultName());
+          break;
+
         case ACSFPlatform::PLATFORM_NAME:
           $scheduled_jobs = $application->find(AcsfCronCreate::getDefaultName());
           break;
@@ -629,8 +635,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $ready = FALSE;
     // Migrates Filters and adds imported entities to the subscribers' interest list.
     while (!$ready && $execute) {
-      $quest = new ConfirmationQuestion('Validating site has a registered webhook.');
-      $helper->ask($input, $output, $quest);
+      $output->writeln('Validating site has a registered webhook.');
       $raw = $this->runWithMemoryOutput(ContentHubVerifyCurrentSiteWebhook::getDefaultName());
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
@@ -665,14 +670,12 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $ready = FALSE;
     // Migrates Filters and adds imported entities to the subscribers' interest list.
     while (!$ready && $execute) {
-      $quest = new ConfirmationQuestion('Validating filters migration...');
-      $helper->ask($input, $output, $quest);
-
+      $output->writeln('Validating filters migration...');
       // Getting URL of first site in the platform.
       $sites = $this->getPlatformSites('source');
-      $url = reset(reset($sites));
+      $site_info = reset($sites);
       $raw = $this->runWithMemoryOutput(ContentHubVerifyWebhooksDefaultFilters::getDefaultName(), [
-        '--uri' => $url,
+        '--uri' => $site_info['uri'],
       ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
