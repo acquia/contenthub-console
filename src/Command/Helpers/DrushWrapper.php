@@ -3,7 +3,6 @@
 namespace Acquia\Console\ContentHub\Command\Helpers;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,8 +17,8 @@ class DrushWrapper extends Command {
    */
   protected function configure() {
     $this->setDescription("A wrapper for running Drush commands.");
-    $this->addArgument('drush_command', InputArgument::OPTIONAL, "The drush command to run", "list");
-    $this->addOption('drush_args', 'da', InputOption::VALUE_OPTIONAL, "Any additional drush command arguments.", []);
+    $this->addOption('drush_command', 'cmd', InputOption::VALUE_OPTIONAL, "The drush command to run", "list");
+    $this->addOption('drush_args', 'da', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "Any additional drush command arguments.", []);
   }
 
   /**
@@ -32,10 +31,10 @@ class DrushWrapper extends Command {
       '../vendor/bin/drush',
     ];
 
-    $args = [$input->getArgument('drush_command')];
+    $args = [$input->getOption('drush_command')];
 
     if ($input->hasOption('drush_args') && $drush_args = $input->getOption('drush_args')) {
-      array_unshift($args, $drush_args);
+      $args = array_merge($args, $drush_args);
     }
     if ($input->hasOption('uri') && $uri = $input->getOption('uri')) {
       array_unshift($args, "--uri=$uri");
