@@ -716,7 +716,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
   protected function executeValidatePublisherQueues($platform, $input, $output, $helper, $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
-      $quest = new ConfirmationQuestion('Validating publisher queues...');
+      $quest = new ConfirmationQuestion('Validating publisher queues... Press any key to continue');
       $helper->ask($input, $output, $quest);
 
       $raw = $this->runWithMemoryOutput(ContentHubVerifyPublisherQueue::getDefaultName());

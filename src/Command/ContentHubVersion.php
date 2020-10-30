@@ -162,8 +162,8 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
       if ($version) {
         if ($data->module_version < $version) {
           $sites_not_ready[] = [$data->base_url];
-          continue;
         }
+        continue;
       }
       $sites_not_ready[] = [$data->base_url];
     }

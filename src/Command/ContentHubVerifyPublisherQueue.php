@@ -41,13 +41,13 @@ class ContentHubVerifyPublisherQueue extends ContentHubCommandBase implements Pl
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!$this->isPublisher()) {
-      return 1;
+      return 0;
     }
     $export_queue = \Drupal::service('acquia_contenthub_publisher.acquia_contenthub_export_queue');
     $count = $export_queue->getQueueCount();
     if (!empty($count)) {
       $output->writeln(sprintf('<warning>Publisher queues are not empty. Current number of queue items: %u</warning>', $count));
-//      return 1;
+      return 1;
     }
     return $this->verifyExportedEntitiesStatus($output);
 
