@@ -84,7 +84,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
         $continue = TRUE;
       }
 
-      $result = $this->runWithMemoryOutput(DrushWrapper::$defaultName, ['cr']);
+      $result = $this->runWithMemoryOutput(DrushWrapper::$defaultName, ['--drush_command' => 'cr']);
       $output->writeln($result);
 
       $sites_not_ready_ach = $this->getNotUpToDateSites($output, ContentHubModuleVersion::getDefaultName(), 2);
