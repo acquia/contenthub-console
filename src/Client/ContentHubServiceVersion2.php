@@ -244,4 +244,32 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
     return $this->client->listFilters();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function getSnapshots(): array {
+    return $this->client->getSnapshots();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function createSnapshot(): array {
+    return $this->client->createSnapshot();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function deleteSnapshot($name): array {
+    return $this->client->deleteSnapshot($name);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function restoreSnapshot($name): array {
+    return $this->client->restoreSnapshot($name);
+  }
+
 }

@@ -146,6 +146,38 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+  command.contenthub.get_snapshot:
+    class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubGetSnapshots
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.create_snapshot:
+    class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubCreateSnapshot
+    public: true
+    tags:
+      - { name: common_console_command }
+  command.contenthub.delete_snapshot:
+    class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubDeleteSnapshot
+    public: true
+    arguments: [ '@event_dispatcher' ]
+    tags:
+      - { name: common_console_command }
+  command.contenthub.delete_snapshot_helper:
+    class: Acquia\Console\ContentHub\Command\Helpers\ContentHubDeleteSnapshotHelper
+    public: false
+    tags:
+      - { name: common_console_command }
+  command.contenthub.restore_snapshot:
+    class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubRestoreSnapshot
+    public: true
+    arguments: [ '@event_dispatcher' ]
+    tags:
+      - { name: common_console_command }
+  command.contenthub.restore_snapshot_helper:
+    class: Acquia\Console\ContentHub\Command\Helpers\ContentHubRestoreSnapshotHelper
+    public: false
+    tags:
+      - { name: common_console_command }
 
   # Migration commands
   command.contenthub.migrate.client_registrar:

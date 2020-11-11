@@ -97,4 +97,38 @@ interface ContentHubServiceInterface {
    */
   public function listFilters(): array;
 
+  /**
+   * Returns snapshots.
+   *
+   * @return array
+   */
+  public function getSnapshots(): array;
+
+  /**
+   * Create snapshots.
+   *
+   * @return array
+   */
+  public function createSnapshot(): array;
+
+  /**
+   * Delete snapshot.
+   *
+   * @param $name
+   *   Snapshot name.
+   *
+   * @return array
+   */
+  public function deleteSnapshot($name): array;
+
+  /**
+   * Restore snapshot.
+   *
+   * @param $name
+   *   Snapshot name.
+   *
+   * @return array
+   */
+  public function restoreSnapshot($name): array;
+
 }
