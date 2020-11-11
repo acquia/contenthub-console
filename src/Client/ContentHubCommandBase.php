@@ -2,6 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Client;
 
+use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,11 +23,41 @@ abstract class ContentHubCommandBase extends Command implements PlatformBootStra
   protected $achClientService;
 
   /**
+   * The drupal service factory.
+   *
+   * @var \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
+   */
+  protected $drupalServiceFactory;
+
+  /**
    * {@inheritdoc}
    */
   protected function initialize(InputInterface $input, OutputInterface $output) {
-    $factory = new ContentHubClientFactory();
-    $this->achClientService = $factory->getClient();
+    if (empty($this->achClientService)) {
+      $factory = new ContentHubClientFactory();
+      $this->achClientService = $factory->getClient();
+    }
+    if (empty($this->drupalServiceFactory)) {
+      $this->drupalServiceFactory = new DrupalServiceFactory();
+    }
+  }
+
+  /**
+   * Sets achClientService instance.
+   *
+   * @param \Acquia\Console\ContentHub\Client\ContentHubServiceInterface $content_hub_service
+   */
+  public function setAchClientService(ContentHubServiceInterface $content_hub_service) {
+    $this->achClientService = $content_hub_service;
+  }
+
+  /**
+   * Sets drupalServiceFactory instance.
+   *
+   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
+   */
+  public function setDrupalServiceFactory(DrupalServiceFactory $drupalServiceFactory): void {
+    $this->drupalServiceFactory = $drupalServiceFactory;
   }
 
   /**

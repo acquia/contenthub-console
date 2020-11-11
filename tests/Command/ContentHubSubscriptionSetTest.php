@@ -36,13 +36,16 @@ class ContentHubSubscriptionSetTest extends TestCase {
       ContentHubSubscriptionSet::getDefaultName()
     );
     $command->addPlatform('test', $platform);
-    $output = $this->doRunCommand($command, ['hostname', 'api_key', 'secret_key', 'yes'], ['alias' => 'test']);
-    $this->assertStringContainsString('Please provide a valid Hostname', $output);
+    /** @var \Symfony\Component\Console\Tester\CommandTester $command_tester */
 
-    $output = $this->doRunCommand($command, ['https://example.com', 'api_key', 'secret_key', 'yes'], ['alias' => 'test']);
-    $this->assertStringContainsString('https://example.com', $output);
-    $this->assertStringContainsString('api_key', $output);
-    $this->assertStringContainsString('secret_key', $output);
+    $command_tester = $this->doRunCommand($command, ['hostname', 'api_key', 'secret_key', 'yes'], ['alias' => 'test']);
+    $this->assertStringContainsString('Please provide a valid Hostname', $command_tester->getDisplay());
+
+    $command_tester = $this->doRunCommand($command, ['https://example.com', 'api_key', 'secret_key', 'yes'], ['alias' => 'test']);
+    $this->assertStringContainsString('https://example.com', $command_tester->getDisplay());
+    $this->assertStringContainsString('api_key', $command_tester->getDisplay());
+    $this->assertStringContainsString('secret_key', $command_tester->getDisplay());
+    $this->assertEquals(0, $command_tester->getStatusCode());
 
     $hostname = $platform->get(ContentHubSubscriptionSet::CONFIG_HOSTNAME);
     $api_key = $platform->get(ContentHubSubscriptionSet::CONFIG_API_KEY);
@@ -51,11 +54,12 @@ class ContentHubSubscriptionSetTest extends TestCase {
     $this->assertEquals('api_key', $api_key, 'API key has been stored');
     $this->assertEquals('secret_key', $secret_key, 'Secret key has been stored');
 
-    $this->doRunCommand($command, ['https://example.com', 'api_key', 'secret_key', 'yes'], ['alias' => 'test', '--migration' => TRUE]);
+    $command_tester = $this->doRunCommand($command, ['https://example.com', 'api_key', 'secret_key', 'yes'], ['alias' => 'test', '--migration' => TRUE]);
     $creds = $platform->get(ContentHubMigrateClientRegistrar::CONFIG_ACH_MIGRATION);
     $this->assertEquals('https://example.com', $creds['hostname'], 'Hostname has been stored');
     $this->assertEquals('api_key', $creds['api_key'], 'API key has been stored');
     $this->assertEquals('secret_key', $creds['secret_key'], 'Secret key has been stored');
+    $this->assertEquals(0, $command_tester->getStatusCode());
   }
 
   /**

@@ -2,8 +2,8 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
+use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -12,19 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubAuditDepcalc extends Command implements PlatformBootStrapCommandInterface {
+class ContentHubAuditDepcalc extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   /**
    * {@inheritDoc}
    */
   protected static $defaultName = 'ach:audit:check-depcalc';
-
-  /**
-   * @inheritDoc
-   */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
 
   /**
    * {@inheritDoc}
@@ -38,12 +31,12 @@ class ContentHubAuditDepcalc extends Command implements PlatformBootStrapCommand
    * {@inheritDoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    if (!\Drupal::getContainer()->get('extension.list.module')->exists('depcalc')) {
+    if (!$this->drupalServiceFactory->getDrupalService('extension.list.module')->exists('depcalc')) {
       $output->writeln('<error>Depcalc module is missing from dependencies! Please run: composer require drupal/depcalc and deploy to your environment.</error>');
       return 2;
     }
 
-    if (!\Drupal::moduleHandler()->moduleExists('depcalc')) {
+    if (!$this->drupalServiceFactory->getDrupalService('module_handler')->moduleExists('depcalc')) {
       $output->writeln('<warning>Depcalc module is not enabled.</warning>');
       return 1;
     }

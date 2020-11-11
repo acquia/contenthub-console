@@ -3,6 +3,9 @@ services:
   http_client_factory.content_hub:
     class: Acquia\Console\ContentHub\Client\ContentHubClientFactory
     public: true
+  drupal_service_factory:
+    class: Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
+    public: true
 
   #  Commands
   command.contenthub.migration_start:
