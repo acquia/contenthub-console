@@ -34,8 +34,6 @@ class DrushVersionCheck extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln('Checking drush version...');
-    $version = $this->runWithMemoryOutput(DrushWrapper::$defaultName, ['--drush_command' => 'version', '--drush_args' => ['format' => 'string']], '');
-    print_r($version);exit;
     $version = $this->execDrush(['version', '--format=string'])->stdout;
     if (!$version) {
       $output->writeln('<comment>Attempted to run "drush". It might be missing or the executable name does not match the expected.</comment>');
