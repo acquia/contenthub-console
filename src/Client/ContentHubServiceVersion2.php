@@ -272,4 +272,11 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
     return $this->client->restoreSnapshot($name);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getWebhooksStatus(): array {
+    return $this->client->getWebhookStatus();
+  }
+
 }

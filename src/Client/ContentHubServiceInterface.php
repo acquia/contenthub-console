@@ -58,6 +58,14 @@ interface ContentHubServiceInterface {
   public function getWebhooks(): array;
 
   /**
+   * Asks service to ping all registered webhooks and returns with response.
+   *
+   * @return array
+   *   Status information.
+   */
+  public function getWebhooksStatus(): array ;
+
+  /**
    * Returns the remote settings.
    *
    * @return \Acquia\Console\ContentHub\Client\Settings

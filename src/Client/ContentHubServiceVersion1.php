@@ -123,6 +123,13 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getWebhooksStatus(): array {
+    return $this->client->getWebhookStatus();
+  }
+
+  /**
    * {@inheritDoc}
    */
   public function purge(): array {
