@@ -78,4 +78,27 @@ trait ContentHubModuleTrait {
     return \Drupal::moduleHandler()->moduleExists('acquia_contenthub_subscriber');
   }
 
+  /**
+   * Gets the current webhook from Drupal config depending on module version.
+   *
+   * @return array
+   *   Associative Array containing webhook uuid and webhook url.
+   *
+   * @throws \Exception
+   */
+  public function getCurrentSiteWebhookFromConfig() : array {
+    $ach_config = \Drupal::config('acquia_contenthub.admin_settings');
+
+    // Get webhook uuid and url w.r.t module version.
+    if(ContentHubClientFactory::getModuleVersion() === 2) {
+      $webhook_uuid = $ach_config->get('webhook.uuid');
+      $webhook_url = $ach_config->get('webhook.url');
+    }
+    else {
+      $webhook_uuid = $ach_config->get('webhook_uuid');
+      $webhook_url = $ach_config->get('webhook_url');
+    }
+    return ['webhook_uuid' => $webhook_uuid, 'webhook_url' => $webhook_url];
+  }
+
 }

@@ -3,6 +3,7 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
+use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Acquia\Console\ContentHub\Command
  */
 class ContentHubVerifyCurrentSiteWebhook extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
+
+  use ContentHubModuleTrait;
 
   /**
    * {@inheritdoc}
@@ -48,22 +51,31 @@ class ContentHubVerifyCurrentSiteWebhook extends ContentHubCommandBase implement
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *
    * @return int
+   *   Returns 1 if current site webhook not found in ACH Service otherwise 0.
+   *
+   * @throws \Exception
    */
-  protected function verifyCurrentSiteWebhook(OutputInterface $output) {
+  protected function verifyCurrentSiteWebhook(OutputInterface $output) : int {
     $webhooks = $this->achClientService->getWebhooks();
     if (!$webhooks) {
       $output->writeln('<error>No webhooks found.</error>');
       return 1;
     }
+
     // Fetch webhook uuids.
-    $webhook_uuid = array_column($webhooks, 'uuid');
+    $webhook_uuids = array_column($webhooks, 'uuid');
+    // Fetch webhook urls.
+    $webhook_urls = array_column($webhooks, 'url');
 
     // Current site webhook.
-    $settings = $this->achClientService->getSettings()->getWebhook();
-    if (!in_array($settings['webhook_uuid'], $webhook_uuid)) {
-      $output->writeln('<warning>Current site webhook ' . $settings['webhook_url'] . ' is not found in webhooks list.</warning>');
+    $current_webhook = $this->getCurrentSiteWebhookFromConfig();
+
+    // Check both webhook uuid and url.
+    if (!(in_array($current_webhook['webhook_uuid'], $webhook_uuids) && in_array($current_webhook['webhook_url'], $webhook_urls))) {
+      $output->writeln(sprintf('<error>Current site\'s webhook "%s" is not registered in the Content Hub service.</error>', $current_webhook['webhook_url']));
       return 1;
     }
+    $output->writeln('<info>The current site\'s webhook is correctly registered in the Content Hub service.</info>');
     return 0;
   }
 
