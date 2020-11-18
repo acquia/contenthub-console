@@ -4,7 +4,7 @@ namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
-use Symfony\Component\Console\Command\Command;
+use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubDiff extends Command implements PlatformBootStrapCommandInterface {
+class ContentHubDiff extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   use PlatformCmdOutputFormatterTrait;
 
@@ -41,7 +41,7 @@ class ContentHubDiff extends Command implements PlatformBootStrapCommandInterfac
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $module_list = \Drupal::getContainer()->get('extension.list.module');
+    $module_list = $this->drupalServiceFactory->getDrupalService('extension.list.module');
     if (!$module_list->exists('diff')) {
       $output->writeln($this->toJsonSuccess([
         'base_url' => $input->getOption('uri'),
