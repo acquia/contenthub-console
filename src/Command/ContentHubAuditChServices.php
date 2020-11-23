@@ -65,11 +65,11 @@ class ContentHubAuditChServices extends ContentHubCommandBase implements Platfor
     }
 
     if (!$files) {
-      $output->writeln('No deprecated service usage found!');
+      $output->writeln('<info>No deprecated service usage found!</info>');
       return 0;
     }
 
-    $output->writeln('Following deprecated ACH services found.');
+    $output->writeln('<warning>Following deprecated ACH services found.</warning>');
     $table = new Table($output);
     $table->setHeaders(['File', 'Matches found']);
     $table->addRows($files);

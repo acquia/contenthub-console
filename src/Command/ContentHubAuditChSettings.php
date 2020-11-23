@@ -83,7 +83,7 @@ class ContentHubAuditChSettings extends Command implements PlatformBootStrapComm
       $this->syncSettings($config, $diff);
       $output->writeln('<info>The configuration has been synchronized.</info>');
     }
-    $output->writeln('Content Hub configuration is in order. You may proceed.');
+    $output->writeln('<info>Content Hub configuration is in order. You may proceed.</info>');
     return 0;
   }
 

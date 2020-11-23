@@ -90,7 +90,7 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
       $output->writeln('<warning>No SSL check was run because the --uri option was not passed.</warning>');
     }
 
-    $output->writeln('Audit command executed successfully. Please proceed.');
+    $output->writeln('<info>Audit command executed successfully. Please proceed.</info>');
     return 0;
   }
 
@@ -141,7 +141,7 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     }
     if ($ok) {
       // Let's style this so it looks awesome.
-      $output->writeln("No deprecated ContentHub 1.x API implementations detected.");
+      $output->writeln("<info>No deprecated ContentHub 1.x API implementations detected.</info>");
     }
   }
 

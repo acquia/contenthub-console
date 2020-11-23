@@ -41,7 +41,7 @@ class ContentHubAuditDepcalc extends ContentHubCommandBase implements PlatformBo
       return 1;
     }
 
-    $output->writeln('Depcalc module is present. You may proceed.');
+    $output->writeln('<info>Depcalc module is present. You may proceed.</info>');
     return 0;
   }
 

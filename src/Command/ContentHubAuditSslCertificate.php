@@ -52,7 +52,7 @@ class ContentHubAuditSslCertificate extends Command {
     try {
       $cert = $this->getCertByHostname($url);
     } catch (\Exception $e) {
-      $output->writeln("Something went wrong getting the SSL cert of $url");
+      $output->writeln("<warning>Something went wrong getting the SSL cert of $url</warning>");
       return 1;
     }
 

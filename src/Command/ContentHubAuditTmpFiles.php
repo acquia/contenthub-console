@@ -41,7 +41,7 @@ class ContentHubAuditTmpFiles extends Command implements PlatformBootStrapComman
   protected function execute(InputInterface $input, OutputInterface $output) {
     $files = $this->getTempFiles(\Drupal::entityTypeManager());
     if (!$files) {
-      $output->writeln('Files are safe to export.');
+      $output->writeln('<info>Files are safe to export.</info>');
       return 0;
     }
 

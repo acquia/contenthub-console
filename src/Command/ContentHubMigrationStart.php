@@ -176,9 +176,9 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $this->executeValidateInterestListDiff($platform, $input, $output, $helper, $pass);
 
     // Finalize process.
-    $output->writeln('The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.');
-    $output->writeln('Migration Process has been completed successfully. Please check your sites.');
-    $output->writeln('The Diff module is no longer required by Content Hub and may not be required by your application. Please check and remove if applicable.');
+    $output->writeln('<warning>The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.</warning>');
+    $output->writeln('<info>Migration Process has been completed successfully. Please check your sites.</info>');
+    $output->writeln('<warning>The Diff module is no longer required by Content Hub and may not be required by your application. Please check and remove if applicable.</warning>');
     return 0;
   }
 
@@ -352,18 +352,18 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
           break;
       }
       if (empty($backup_command)) {
-        $output->writeln('This platform does not support site backups.');
+        $output->writeln('<warning>This platform does not support site backups.</warning>');
       } else {
         $backup_executor = $application->find($backup_command);
         $backup_executor->addPlatform($input->getArgument('alias'), $platform);
         $status = $backup_executor->run(new ArrayInput($cmd_input), $output);
         if ($status === 0) {
           if ($platform_type == AcquiaCloudPlatform::PLATFORM_NAME) {
-            $output->writeln('Site backups completed.');
+            $output->writeln('<info>Site backups completed.</info>');
           }
           else {
             $output->writeln('Site backups queued.');
-            $output->writeln('Please ensure the backup jobs have finished before proceeding to the next step.');
+            $output->writeln('<warning>Please ensure the backup jobs have finished before proceeding to the next step.</warning>');
           }
         }
       }

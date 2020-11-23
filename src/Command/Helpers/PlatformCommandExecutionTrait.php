@@ -33,6 +33,7 @@ trait PlatformCommandExecutionTrait {
     /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($cmd_name);
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
+    $remote_output->setDecorated(TRUE);
     $input['--bare'] = NULL;
     $bind_input = new ArrayInput($input);
     $bind_input->bind($this->getDefinitions($command));
