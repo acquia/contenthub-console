@@ -23,13 +23,6 @@ class ContentHubDiff extends ContentHubCommandBase implements PlatformBootStrapC
   protected static $defaultName = 'ach:diff';
 
   /**
-   * @inheritDoc
-   */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
-
-  /**
    * {@inheritdoc}
    */
   protected function configure() {
