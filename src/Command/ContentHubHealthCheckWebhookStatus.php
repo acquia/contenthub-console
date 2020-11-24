@@ -23,12 +23,38 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
   protected static $defaultName = 'ach:health-check:webhook-status';
 
   /**
+   * The applicable Content Hub Client.
+   *
+   * @var \GuzzleHttp\Client
+   */
+  protected $guzzleClient;
+
+  /**
    * {@inheritdoc}
    */
   protected function configure() {
     $this->setDescription('Prints webhook information.');
     $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Print webhooks information and unsuppress disabled webhooks.');
     $this->setAliases(['ach-hc-ws']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function initialize(InputInterface $input, OutputInterface $output) {
+    parent::initialize($input, $output);
+    if (empty($this->guzzleClient)) {
+      $this->guzzleClient = new Client();
+    }
+  }
+
+  /**
+   * Sets guzzleClient instance.
+   *
+   * @param \GuzzleHttp\Client
+   */
+  public function setGuzzleClient(Client $guzzleClient): void {
+    $this->guzzleClient = $guzzleClient;
   }
 
   /**
@@ -53,7 +79,7 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
         continue;
       }
 
-      if ($this->isWebhookOnline($webhook['url'])) {
+      if ($this->isWebhookOnline($webhook['url'], $output)) {
         $output->writeln("Removing suppression from webhook: {$webhook['client_name']}: {$webhook['uuid']}");
         $response = $this->achClientService->removeWebhookSuppression($webhook['uuid']);
         if (!$response['success']) {
@@ -81,9 +107,8 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
    *   Return TRUE if get request come back with 200 HTTP status code.
    */
   protected function isWebhookOnline(string $webhook, OutputInterface $output): bool {
-    $client = new Client();
     try {
-      $response = $client->request('options', $webhook);
+      $response = $this->guzzleClient->request('options', $webhook);
     } catch (\Exception $exception) {
       $output->writeln($exception->getMessage());
       return FALSE;
