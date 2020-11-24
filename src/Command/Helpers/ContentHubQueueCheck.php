@@ -2,11 +2,10 @@
 
 namespace Acquia\Console\ContentHub\Command\Helpers;
 
-use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
+use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
 use Acquia\Console\ContentHub\Exception\ContentHubVersionException;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -17,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubQueueCheck extends Command implements PlatformBootStrapCommandInterface {
+class ContentHubQueueCheck extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   use ContentHubModuleTrait;
 
@@ -25,13 +24,6 @@ class ContentHubQueueCheck extends Command implements PlatformBootStrapCommandIn
    * {@inheritDoc}
    */
   protected static $defaultName = 'ach:check-queue';
-
-  /**
-   * {@inheritDoc}
-   */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
 
   /**
    * {@inheritDoc}
@@ -45,7 +37,8 @@ class ContentHubQueueCheck extends Command implements PlatformBootStrapCommandIn
    * {@inheritDoc}
    */
   protected function initialize(InputInterface $input, OutputInterface $output) {
-    if (ContentHubClientFactory::getModuleVersion() !== 1) {
+    parent::initialize($input, $output);
+    if ($this->drupalServiceFactory->getModuleVersion() !== 1) {
       throw new ContentHubVersionException(1);
     }
   }
@@ -54,9 +47,9 @@ class ContentHubQueueCheck extends Command implements PlatformBootStrapCommandIn
    * {@inheritDoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $config = \Drupal::configFactory()->getEditable('acquia_contenthub.entity_config');
+    $config = $this->drupalServiceFactory->getDrupalService('config.factory')->getEditable('acquia_contenthub.entity_config');
     $queue_values = [];
-    if ($this->isPublisher()) {
+    if ($this->isPublisher($this->drupalServiceFactory)) {
       $queue_values['export_with_queue'] = (bool) $config->get('export_with_queue');
     }
 

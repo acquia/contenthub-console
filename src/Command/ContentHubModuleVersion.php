@@ -3,10 +3,10 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
+use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubModuleVersion extends Command  implements PlatformBootStrapCommandInterface {
+class ContentHubModuleVersion extends ContentHubCommandBase  implements PlatformBootStrapCommandInterface {
 
   use PlatformCmdOutputFormatterTrait;
   use PlatformCommandExecutionTrait;
@@ -25,13 +25,6 @@ class ContentHubModuleVersion extends Command  implements PlatformBootStrapComma
    * {@inheritDoc}
    */
   protected static $defaultName = 'ach:module-version';
-
-  /**
-   * @inheritDoc
-   */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
 
   /**
    * {@inheritdoc}
@@ -46,7 +39,7 @@ class ContentHubModuleVersion extends Command  implements PlatformBootStrapComma
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $module_list = \Drupal::getContainer()->get('extension.list.module');
+    $module_list = $this->drupalServiceFactory->getDrupalService('extension.list.module');
     if (!$module_list->exists('acquia_contenthub')) {
       return 1;
     }
@@ -56,10 +49,10 @@ class ContentHubModuleVersion extends Command  implements PlatformBootStrapComma
       $this->execDrushWithOutput($output, ['cr']);
     }
 
-    $module_version = ContentHubClientFactory::getModuleVersion();
+    $module_version = $this->drupalServiceFactory->getModuleVersion();
     $output->writeln($this->toJsonSuccess([
       'module_version' => $module_version,
-      'base_url' => $input->getOption('uri'),
+      'base_url' => $input->hasOption('uri') ? $input->getOption('uri') : '',
     ]));
 
     return 0;

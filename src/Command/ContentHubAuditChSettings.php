@@ -2,13 +2,10 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
+use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Acquia\ContentHubClient\Settings;
-use Drupal\acquia_contenthub\AcquiaContentHubEvents;
-use Drupal\acquia_contenthub\Event\AcquiaContentHubSettingsEvent;
 use Drupal\Core\Config\Config;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,19 +16,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command\Migrate
  */
-class ContentHubAuditChSettings extends Command implements PlatformBootStrapCommandInterface {
+class ContentHubAuditChSettings extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   /**
    * {@inheritDoc}
    */
   protected static $defaultName = 'ach:audit:settings';
-
-  /**
-   * {@inheritDoc}
-   */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
 
   /**
    * {@inheritDoc}
@@ -54,7 +44,7 @@ class ContentHubAuditChSettings extends Command implements PlatformBootStrapComm
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln('Running Content Hub config audit...');
     $attempt_fix = (bool) $input->getOption('fix');
-    $config = \Drupal::service('config.factory')->getEditable('acquia_contenthub.admin_settings');
+    $config = $this->drupalServiceFactory->getDrupalService('config.factory')->getEditable('acquia_contenthub.admin_settings');
     $config_with_overwrites = $this->getChSettings(TRUE);
     if (!array_values($config_with_overwrites)) {
       $output->writeln('<error>Content Hub configuration data should not be empty. Terminating...</error>');
@@ -132,8 +122,8 @@ class ContentHubAuditChSettings extends Command implements PlatformBootStrapComm
    *   The configuration list.
    */
   public function getChSettings(bool $with_overwrites = FALSE): array {
-    $version = ContentHubClientFactory::getModuleVersion();
-    $factory = \Drupal::service('config.factory');
+    $version = $this->drupalServiceFactory->getModuleVersion();
+    $factory = $this->drupalServiceFactory->getDrupalService('config.factory');
     if ($version === 1) {
       return $with_overwrites ?
         $factory->get('acquia_contenthub.admin_settings')->getOriginal() :
@@ -141,7 +131,7 @@ class ContentHubAuditChSettings extends Command implements PlatformBootStrapComm
     }
 
     if ($with_overwrites) {
-      $settings = \Drupal::service('acquia_contenthub.client.factory')->getSettings();
+      $settings = $this->drupalServiceFactory->getDrupalService('acquia_contenthub.client.factory')->getSettings();
       return $this->normalize($settings);
     }
 

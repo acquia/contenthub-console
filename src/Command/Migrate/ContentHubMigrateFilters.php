@@ -36,13 +36,6 @@ class ContentHubMigrateFilters extends ContentHubCommandBase implements Platform
   /**
    * {@inheritdoc}
    */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function initialize(InputInterface $input, OutputInterface $output) {
     parent::initialize($input, $output);
     if ($this->achClientService->getVersion() !== 2) {

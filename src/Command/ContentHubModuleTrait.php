@@ -3,6 +3,7 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
+use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 
 /**
  * Trait ContentHubModuleTrait.
@@ -51,15 +52,20 @@ trait ContentHubModuleTrait {
   /**
    * Checks if the given site can be considered as publisher.
    *
+   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
+   *   The drupal service factory.
+   *
    * @return bool
    *   TRUE if it is a publisher.
+   * 
+   * @throws \Exception
    */
-  public function isPublisher(): bool {
-    if (ContentHubClientFactory::getModuleVersion() === 2 && !\Drupal::database()->schema()->tableExists('acquia_contenthub_entities_tracking')) {
-      return \Drupal::moduleHandler()->moduleExists('acquia_contenthub_publisher');
+  public function isPublisher(DrupalServiceFactory $drupalServiceFactory): bool {
+    if ($drupalServiceFactory->getModuleVersion() === 2 && !$drupalServiceFactory->getDrupalService('database')->schema()->tableExists('acquia_contenthub_entities_tracking')) {
+      return $drupalServiceFactory->getDrupalService('module_handler')->moduleExists('acquia_contenthub_publisher');
     }
 
-    $result = \Drupal::database()
+    $result = $drupalServiceFactory->getDrupalService('database')
       ->select('acquia_contenthub_entities_tracking', 'exp')
       ->fields('exp', ['status_export'])
       ->condition('exp.status_export', '', '<>')
@@ -81,16 +87,19 @@ trait ContentHubModuleTrait {
   /**
    * Gets the current webhook from Drupal config depending on module version.
    *
+   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
+   *   Drupal Service Factory to use Drupal static functions.
+   *
    * @return array
    *   Associative Array containing webhook uuid and webhook url.
    *
    * @throws \Exception
    */
-  public function getCurrentSiteWebhookFromConfig() : array {
-    $ach_config = \Drupal::config('acquia_contenthub.admin_settings');
+  public function getCurrentSiteWebhookFromConfig(DrupalServiceFactory $drupalServiceFactory) : array {
+    $ach_config = $drupalServiceFactory->getDrupalService('config.factory')->get('acquia_contenthub.admin_settings');
 
     // Get webhook uuid and url w.r.t module version.
-    if(ContentHubClientFactory::getModuleVersion() === 2) {
+    if($drupalServiceFactory->getModuleVersion() === 2) {
       $webhook_uuid = $ach_config->get('webhook.uuid');
       $webhook_url = $ach_config->get('webhook.url');
     }

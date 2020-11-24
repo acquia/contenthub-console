@@ -31,13 +31,6 @@ class ContentHubMigrateEnableUnsubscribe extends ContentHubCommandBase implement
   /**
    * {@inheritdoc}
    */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Searching for "Disconnected" imported entities.');
     if (\Drupal::moduleHandler()->moduleExists('acquia_contenthub_subscriber')) {

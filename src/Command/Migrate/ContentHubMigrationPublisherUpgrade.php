@@ -2,10 +2,10 @@
 
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
+use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command\Migration
  */
-class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBootStrapCommandInterface {
+class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   use PlatformCommandExecutionTrait;
   use ContentHubModuleTrait;
@@ -24,13 +24,6 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
    * {@inheritdoc}
    */
   protected static $defaultName = 'ach:migrate:upgrade';
-
-  /**
-   * @inheritDoc
-   */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
 
   /**
    * {@inheritDoc}
@@ -118,7 +111,7 @@ class ContentHubMigrationPublisherUpgrade extends Command implements PlatformBoo
    * @throws \Exception
    */
   protected function upgradePublishers(OutputInterface $output, $uri = ''): int {
-    if ($this->isPublisher()) {
+    if ($this->isPublisher($this->drupalServiceFactory)) {
       $output->writeln('The site is a publisher, enabling acquia_contenthub_publisher and acquia_contenthub_curation module...');
       \Drupal::service('module_installer')->install(['acquia_contenthub_publisher']);
       \Drupal::service('module_installer')->install(['acquia_contenthub_curation']);

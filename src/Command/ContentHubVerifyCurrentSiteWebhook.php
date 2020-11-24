@@ -3,7 +3,6 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -68,7 +67,7 @@ class ContentHubVerifyCurrentSiteWebhook extends ContentHubCommandBase implement
     $webhook_urls = array_column($webhooks, 'url');
 
     // Current site webhook.
-    $current_webhook = $this->getCurrentSiteWebhookFromConfig();
+    $current_webhook = $this->getCurrentSiteWebhookFromConfig($this->drupalServiceFactory);
 
     // Check both webhook uuid and url.
     if (!(in_array($current_webhook['webhook_uuid'], $webhook_uuids) && in_array($current_webhook['webhook_url'], $webhook_urls))) {

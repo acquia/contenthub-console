@@ -32,15 +32,8 @@ class ContentHubVerifyPublisherQueue extends ContentHubCommandBase implements Pl
   /**
    * {@inheritdoc}
    */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    if (!$this->isPublisher()) {
+    if (!$this->isPublisher($this->drupalServiceFactory)) {
       return 0;
     }
     $export_queue = \Drupal::service('acquia_contenthub_publisher.acquia_contenthub_export_queue');

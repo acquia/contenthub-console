@@ -33,12 +33,12 @@ abstract class ContentHubCommandBase extends Command implements PlatformBootStra
    * {@inheritdoc}
    */
   protected function initialize(InputInterface $input, OutputInterface $output) {
-    if (empty($this->achClientService)) {
-      $factory = new ContentHubClientFactory();
-      $this->achClientService = $factory->getClient();
-    }
     if (empty($this->drupalServiceFactory)) {
       $this->drupalServiceFactory = new DrupalServiceFactory();
+    }
+    if (empty($this->achClientService)) {
+      $factory = new ContentHubClientFactory();
+      $this->achClientService = $factory->getClient($this->drupalServiceFactory);
     }
   }
 
