@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateClientRegistrar;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -69,13 +68,7 @@ class ContentHubSubscriptionSet extends Command implements PlatformCommandInterf
    */
   protected function configure() {
     $this->setDescription('Sets up the credentials for a Content Hub Subscription.')
-      ->setAliases(['ach-sub'])
-      ->addOption(
-        'migration',
-        'm',
-        InputOption::VALUE_NONE,
-        'By Enabling this option credentials will be set for migration.'
-      );
+      ->setAliases(['ach-sub']);
   }
 
   /**
@@ -112,20 +105,11 @@ class ContentHubSubscriptionSet extends Command implements PlatformCommandInterf
     } while ($answer !== TRUE);
 
     $platform = $this->getPlatform('source');
-    if ($input->getOption('migration')) {
-      $platform->set(ContentHubMigrateClientRegistrar::CONFIG_ACH_MIGRATION, [
-        'hostname' => $hostname,
-        'api_key' => $api_key,
-        'secret_key' => $secret_key,
-      ])->save();
-    }
-    else {
-      $platform
-        ->set(self::CONFIG_HOSTNAME, $hostname)
-        ->set(self::CONFIG_API_KEY, $api_key)
-        ->set(self::CONFIG_SECRET_KEY, $secret_key)
-        ->save();
-    }
+    $platform
+      ->set(self::CONFIG_HOSTNAME, $hostname)
+      ->set(self::CONFIG_API_KEY, $api_key)
+      ->set(self::CONFIG_SECRET_KEY, $secret_key)
+      ->save();
     $output->writeln(sprintf('<info>The following values have been saved in the current platform "%s":</info>', $platform->getAlias()));
     $table->render();
 
@@ -133,7 +117,7 @@ class ContentHubSubscriptionSet extends Command implements PlatformCommandInterf
   }
 
   /**
-   * Returns the default value of a given key, based on the --migrate option.
+   * Returns the default value of a given key.
    *
    * @param string $key
    *   The key of the value to return.
@@ -144,11 +128,7 @@ class ContentHubSubscriptionSet extends Command implements PlatformCommandInterf
    *   The value of the specified key.
    */
   protected function getDefault(string $key, InputInterface $input): string {
-    $migration = $input->getOption('migration');
     $prefix = 'acquia.content_hub';
-    if ($migration) {
-      $prefix = ContentHubMigrateClientRegistrar::CONFIG_ACH_MIGRATION;
-    }
     $platform = $this->getPlatform('source');
     return $platform->get("$prefix.$key") ?? '';
   }

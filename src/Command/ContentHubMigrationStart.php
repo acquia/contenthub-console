@@ -12,7 +12,6 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
-use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateClientRegistrar;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade;
@@ -115,20 +114,16 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $pass = $this->executeStage($stage, 0);
     $this->executeContentHubAuditCommand($platform, $input, $output, $helper, $pass);
 
-    // Check whether we are doing the migration in the same subscription or in a new one.
-    $pass = $this->executeStage($stage, 1);
-    $this->executeContentHubRegistrar($application, $platform, $input, $output, $helper, $pass);
-
     // Generate Database Backups.
-    $pass = $this->executeStage($stage, 2);
+    $pass = $this->executeStage($stage, 1);
     $this->executeDatabaseBackups($application, $platform, $input, $output, $pass);
 
     // Purge Subscription and delete Webhooks.
-    $pass = $this->executeStage($stage, 3);
+    $pass = $this->executeStage($stage, 2);
     $this->purgeSubscriptionDeleteWebhooks($application, $platform, $input, $output, $helper, $pass);
 
     // Prepare Upgrade Command.
-    $pass = $this->executeStage($stage, 4);
+    $pass = $this->executeStage($stage, 3);
     $this->executePrepareUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Make sure Content Hub version 2 is deployed in all sites.
@@ -141,38 +136,38 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $this->executeContentHubVersionCheck($application, $platform, $input, $output);
 
     // Run Publisher Upgrade Command.
-    $pass = $this->executeStage($stage, 5);
+    $pass = $this->executeStage($stage, 4);
     $this->executePublisherUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Creates Scheduled Jobs for Publisher/Subscriber Queues.
-    $pass = $this->executeStage($stage, 6);
+    $pass = $this->executeStage($stage, 5);
     $this->createContentHubScheduledJobs($application, $platform, $input, $output, $helper, $pass);
 
     $quest = new ConfirmationQuestion('Please wait until ALL publisher queues have finished exporting data. Press a key when ready.');
     $helper->ask($input, $output, $quest);
 
     // Run validations on the publisher queues.
-    $pass = $this->executeStage($stage, 7);
+    $pass = $this->executeStage($stage, 6);
     $this->executeValidatePublisherQueues($platform, $input, $output, $helper, $pass);
 
     // Run Subscriber Upgrade Command.
-    $pass = $this->executeStage($stage, 8);
+    $pass = $this->executeStage($stage, 7);
     $this->executeSubscriberUpgradeCommand($platform, $input, $output, $helper, $pass);
 
     // Enable Unsubscribe module if there are imported entities with local changes / auto-update disabled.
-    $pass = $this->executeStage($stage, 9);
+    $pass = $this->executeStage($stage, 8);
     $this->executeEnableUnsubscribeCommand($platform, $input, $output, $helper, $pass);
 
     // Run Validations on the migrated subscription.
-    $pass = $this->executeStage($stage, 10);
+    $pass = $this->executeStage($stage, 9);
     $this->executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $pass);
 
     // Validate that default filters are attached to webhooks and all filters have been migrated.
-    $pass = $this->executeStage($stage, 11);
+    $pass = $this->executeStage($stage, 10);
     $this->executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $pass);
 
     // Run validations on the interest list diff.
-    $pass = $this->executeStage($stage, 12);
+    $pass = $this->executeStage($stage, 11);
     $this->executeValidateInterestListDiff($platform, $input, $output, $helper, $pass);
 
     // Finalize process.
@@ -218,7 +213,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
       $output->writeln('Subscription details are not set for Migration. Setting up Content Hub credentials for Migration...');
       $subscription_setter = $application->find(ContentHubSubscriptionSet::getDefaultName());
       $subscription_setter->addPlatform($input->getArgument('alias'), $platform);
-      $subscription_setter->run(new ArrayInput(['alias' => $input->getArgument('alias'), '--migration' => TRUE]), $output);
+      $subscription_setter->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
     }
   }
 
@@ -285,38 +280,6 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
   }
 
   /**
-   * Registers the Sites to a new Content Hub Subscription.
-   *
-   * @param \Symfony\Component\Console\Application $application
-   *   The Console Application.
-   * @param PlatformInterface $platform
-   *   The Platform.
-   * @param InputInterface $input
-   *   The Input interface.
-   * @param OutputInterface $output
-   *   The Output interface.
-   * @param HelperInterface $helper
-   *   The helper Question.
-   * @param bool $execute
-   *   TRUE if we need to execute this stage, false otherwise.
-   *
-   * @throws \Symfony\Component\Console\Exception\ExceptionInterface
-   */
-  protected function executeContentHubRegistrar(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
-    if ($execute) {
-      $quest = new ConfirmationQuestion('Are we doing a migration in the same subscription? (Y/N): ');
-      $answer = $helper->ask($input, $output, $quest);
-      if ($answer != TRUE) {
-        // Create clients and update filters in the subscription.
-        $client_registrar = $application->find(ContentHubMigrateClientRegistrar::getDefaultName());
-        $client_registrar->addPlatform($input->getArgument('alias'), $platform);
-        $client_registrar->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
-        $platform->set('acquia.content_hub.migration.stage', 2)->save();
-      }
-    }
-  }
-
-  /**
    * Generates Database Backups.
    *
    * @param \Symfony\Component\Console\Application $application
@@ -367,7 +330,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
           }
         }
       }
-      $platform->set('acquia.content_hub.migration.stage', 3)->save();
+      $platform->set('acquia.content_hub.migration.stage', 2)->save();
     }
   }
 
@@ -414,7 +377,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 4)->save();
+      $platform->set('acquia.content_hub.migration.stage', 3)->save();
     }
   }
 
@@ -469,7 +432,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 5)->save();
+      $platform->set('acquia.content_hub.migration.stage', 4)->save();
     }
   }
 
@@ -504,7 +467,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 6)->save();
+      $platform->set('acquia.content_hub.migration.stage', 5)->save();
     }
   }
 
@@ -550,7 +513,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         $scheduled_jobs->addPlatform($input->getArgument('alias'), $platform);
         $status = $scheduled_jobs->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
       }
-      $platform->set('acquia.content_hub.migration.stage', 7)->save();
+      $platform->set('acquia.content_hub.migration.stage', 6)->save();
     }
   }
 
@@ -585,7 +548,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 9)->save();
+      $platform->set('acquia.content_hub.migration.stage', 8)->save();
     }
   }
 
@@ -620,7 +583,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 10)->save();
+      $platform->set('acquia.content_hub.migration.stage', 9)->save();
     }
   }
 
@@ -655,7 +618,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 11)->save();
+      $platform->set('acquia.content_hub.migration.stage', 10)->save();
     }
   }
 
@@ -695,7 +658,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 12)->save();
+      $platform->set('acquia.content_hub.migration.stage', 11)->save();
     }
   }
 
@@ -730,7 +693,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 8)->save();
+      $platform->set('acquia.content_hub.migration.stage', 7)->save();
     }
   }
 
@@ -765,7 +728,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 13)->save();
+      $platform->set('acquia.content_hub.migration.stage', 12)->save();
     }
   }
 }

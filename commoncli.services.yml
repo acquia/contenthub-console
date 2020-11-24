@@ -101,16 +101,6 @@ services:
     public: true
     tags:
       - { name: common_console_command }
-  command.contenthub.helper.ch_registrar:
-    class: Acquia\Console\ContentHub\Command\Helpers\ContentHubRegistrar
-    public: true
-    tags:
-      - { name: common_console_command }
-  command.contenthub.helper.client_info_retriever:
-    class: Acquia\Console\ContentHub\Command\Helpers\ClientInformationRetriever
-    public: true
-    tags:
-      - { name: common_console_command }
   command.contenthub.helper.drush:
     class: Acquia\Console\ContentHub\Command\Helpers\DrushWrapper
     public: true
@@ -185,13 +175,6 @@ services:
       - { name: common_console_command }
 
   # Migration commands
-  command.contenthub.migrate.client_registrar:
-    class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateClientRegistrar
-    public: true
-    arguments: ['@event_dispatcher']
-    tags:
-      - { name: common_console_command }
-      - { name: kernel.event_subscriber }
   command.contenthub.migrate.filters:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters
     public: true
