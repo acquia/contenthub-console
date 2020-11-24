@@ -48,21 +48,20 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
     $config_with_overwrites = $this->getChSettings(TRUE);
     if (!array_values($config_with_overwrites)) {
       $output->writeln('<error>Content Hub configuration data should not be empty. Terminating...</error>');
-      return 1;
+      return 2;
     }
 
     $config_raw = $this->getChSettings();
     if (empty(array_values($config_raw))) {
       $output->writeln('<warning>Content Hub configuration stored in database is empty. Please make sure it is intentional.</warning>');
     }
-    $diff = array_diff($config_with_overwrites, $config_raw);
-    $this->removeWebhookConfigKeys($diff);
+    $diff = array_diff($this->normalizeWebhookConfigKeys($config_with_overwrites), $this->normalizeWebhookConfigKeys($config_raw));
     if (!empty($diff) && $attempt_fix === FALSE) {
       $output->writeln('<comment>Configuration does not match the one stored in the database.</comment>');
       $table = new Table($output);
       $table->setHeaders(['Config Key', 'Value in Database', 'Overwritten Value']);
       foreach ($diff as $key => $val) {
-        $table->addRow([$key, $config_raw[$key], $val]);
+        $table->addRow([$key, $config_raw[$key] ?? '', $val]);
       }
       $table->render();
       $output->writeln('<warning>Run `--fix` to synchronize Content Hub settings.');
@@ -78,21 +77,27 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
   }
 
   /**
-   * Removes webhook related keys.
+   * Normalizes webhook related keys in the configuration array.
    *
    * The webhook is going to be unregistered in a later process.
    *
    * @param array $data
    *   The data array to modify.
    *
-   * @retun void
+   * @return array
+   *   The normalized array.
    */
-  protected function removeWebhookConfigKeys(array &$data): void {
+  protected function normalizeWebhookConfigKeys(array &$data): array {
     foreach (array_keys($data) as $key) {
       if (strpos($key, 'webhook') !== FALSE) {
+        $webhook = $data[$key];
         unset($data[$key]);
+        foreach ($webhook as $key => $item) {
+          $data["webhook:{$key}"] = $item;
+        }
       }
     }
+    return $data;
   }
 
   /**
@@ -120,6 +125,8 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
    *
    * @return array
    *   The configuration list.
+   *
+   * @throws \Exception
    */
   public function getChSettings(bool $with_overwrites = FALSE): array {
     $version = $this->drupalServiceFactory->getModuleVersion();

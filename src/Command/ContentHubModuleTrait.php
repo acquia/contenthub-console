@@ -53,7 +53,7 @@ trait ContentHubModuleTrait {
    * Checks if the given site can be considered as publisher.
    *
    * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
-   *   The drupal service factory.
+   *   The Drupal service factory.
    *
    * @return bool
    *   TRUE if it is a publisher.
@@ -98,7 +98,7 @@ trait ContentHubModuleTrait {
   public function getCurrentSiteWebhookFromConfig(DrupalServiceFactory $drupalServiceFactory) : array {
     $ach_config = $drupalServiceFactory->getDrupalService('config.factory')->get('acquia_contenthub.admin_settings');
 
-    // Get webhook uuid and url w.r.t module version.
+    // Get webhook uuid and url specific to module version.
     if($drupalServiceFactory->getModuleVersion() === 2) {
       $webhook_uuid = $ach_config->get('webhook.uuid');
       $webhook_url = $ach_config->get('webhook.url');

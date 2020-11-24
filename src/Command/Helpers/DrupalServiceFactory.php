@@ -75,5 +75,4 @@ class DrupalServiceFactory {
   public function getModuleVersion(): int {
     return $this->hasDrupalService('acquia_contenthub.client.factory') ? 2 : 1;
   }
-
 }

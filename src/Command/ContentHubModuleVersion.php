@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
