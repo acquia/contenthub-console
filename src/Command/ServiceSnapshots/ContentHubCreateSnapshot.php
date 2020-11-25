@@ -2,7 +2,9 @@
 
 namespace Acquia\Console\ContentHub\Command\ServiceSnapshots;
 
+use Acquia\Console\ContentHub\Client\ContentHubClientFactory;
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
+use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Acquia\Console\ContentHub\Command\ServiceSnapshots
  */
 class ContentHubCreateSnapshot extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
+
+  use PlatformCmdOutputFormatterTrait;
 
   /**
    * {@inheritdoc}
@@ -26,9 +30,13 @@ class ContentHubCreateSnapshot extends ContentHubCommandBase implements Platform
     return 'drupal8';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function configure() {
     $this->setDescription('Create Acquia Content Hub snapshots.')
-      ->setAliases(['ach-cs']);
+      ->setAliases(['ach-cs'])
+      ->setHidden(TRUE);
   }
 
   /**
@@ -37,10 +45,17 @@ class ContentHubCreateSnapshot extends ContentHubCommandBase implements Platform
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $snapshot = $this->achClientService->createSnapshot();
     if ($snapshot['success']) {
-      $output->writeln(sprintf('<info>Snapshot created successfully: %s</info>', $snapshot['data']));
+      $output->writeln($this->toJsonSuccess([
+        'snapshot_id' => $snapshot['data'],
+        'module_version' => $this->drupalServiceFactory->getModuleVersion(),
+      ]));
       return 0;
     }
-    $output->writeln(sprintf('<error>Could not create snapshot: %s</error>', $snapshot['error']['message']));
+
+    $output->writeln($this->toJsonError(
+      "<error>Something went wrong during snapshot creation: {$snapshot['error']['message']}</error>")
+    );
+
     return 1;
   }
 
