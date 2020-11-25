@@ -8,6 +8,7 @@ use Acquia\Console\Acsf\Platform\ACSFPlatform;
 use Acquia\Console\Cloud\Command\AcquiaCloudCronCreate;
 use Acquia\Console\Cloud\Command\AcquiaCloudCronCreateMultiSite;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
+use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupCreate;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
@@ -312,6 +313,10 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
 
         case ACSFPlatform::PLATFORM_NAME:
           $backup_command = AcsfDatabaseBackupCreate::getDefaultName();
+          break;
+
+        case AcquiaCloudMultiSitePlatform::PLATFORM_NAME:
+          $backup_command = AcquiaCloudMultisiteDatabaseBackupCreate::getDefaultName();
           break;
       }
       if (empty($backup_command)) {
