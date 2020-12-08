@@ -32,7 +32,9 @@ class ContentHubAuditTmpFiles extends Command implements PlatformBootStrapComman
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Audit an existing site for problematic temporary files.');
+    $this
+      ->setDescription('Audit an existing site for temporary files used in content from the site.')
+      ->setHidden(TRUE);
   }
 
   /**

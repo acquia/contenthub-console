@@ -31,9 +31,11 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Audit an existing code base to determine if there are any ContentHub level concerns.');
-    $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Run audit command and fix any errors found.');
-    $this->addOption('early-return', 'er', InputOption::VALUE_NONE, 'Run audit command and return early at first error.');
+    $this
+      ->setAliases(['ach-audit'])
+      ->setDescription('Audits an existing site and code base to determine if there are any Content Hub level concerns.')
+      ->addOption('fix', 'f', InputOption::VALUE_NONE, 'Run audit command and fix any errors found.')
+      ->addOption('early-return', 'er', InputOption::VALUE_NONE, 'Run audit command and return early at first error.');
   }
 
   /**

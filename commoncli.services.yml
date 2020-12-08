@@ -12,8 +12,8 @@ services:
     public: true;
 
   #  Commands
-  command.contenthub.migration_start:
-    class: Acquia\Console\ContentHub\Command\ContentHubMigrationStart
+  command.contenthub.upgrade_start:
+    class: Acquia\Console\ContentHub\Command\ContentHubUpgradeStart
     public: true
     arguments: ['@event_dispatcher']
     tags:

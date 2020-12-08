@@ -34,6 +34,7 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
    */
   protected function configure() {
     $this->setDescription('Delete Acquia Content Hub snapshots.')
+      ->setHidden(TRUE)
       ->setAliases(['ach-ds']);
   }
 

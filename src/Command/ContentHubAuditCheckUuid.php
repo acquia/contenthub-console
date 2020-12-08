@@ -26,7 +26,7 @@ class ContentHubAuditCheckUuid extends Command implements PlatformBootStrapComma
    * {@inheritdoc}
    */
   public function configure(): void {
-    $this->setDescription('Audit configuration entities and print the ones with missing uuids.');
+    $this->setDescription('Audits configuration entities for empty UUIDs.');
     $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Generating uuids.');
     $this->setAliases(['audit-uuid']);
   }

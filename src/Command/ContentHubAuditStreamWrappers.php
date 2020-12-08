@@ -36,6 +36,7 @@ class ContentHubAuditStreamWrappers extends Command implements PlatformBootStrap
    */
   protected function configure() {
     $this->setDescription('Audit stream wrappers and private file path.')
+      ->setHidden(TRUE)
       ->setAliases(['ach-asw']);
   }
 

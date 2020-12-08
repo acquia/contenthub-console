@@ -25,7 +25,7 @@ class ContentHubVerifyCurrentSiteWebhook extends ContentHubCommandBase implement
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Verify current site webhook.');
+    $this->setDescription('Verify if this site\'s webhook as defined in the configuration is actually registered in the Content Hub service.');
     $this->setAliases(['ach-vcsw']);
   }
 

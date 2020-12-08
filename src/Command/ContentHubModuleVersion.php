@@ -28,7 +28,7 @@ class ContentHubModuleVersion extends ContentHubCommandBase  implements Platform
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Check for the ContentHub module 2.x version.');
+    $this->setDescription('Checks for Content Hub module 2.x version.');
     $this->setHidden('TRUE');
   }
 
@@ -36,8 +36,7 @@ class ContentHubModuleVersion extends ContentHubCommandBase  implements Platform
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $module_list = $this->drupalServiceFactory->getDrupalService('extension.list.module');
-    if (!$module_list->exists('acquia_contenthub')) {
+    if (!$this->drupalServiceFactory->isContentHubEnabled()) {
       return 1;
     }
 

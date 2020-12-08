@@ -31,6 +31,7 @@ class ContentHubAuditSslCertificate extends Command {
    */
   protected function configure() {
     $this
+      ->setHidden(TRUE)
       ->setDescription('Checks SSL cert');
   }
 

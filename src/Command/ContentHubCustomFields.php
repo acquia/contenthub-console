@@ -53,7 +53,7 @@ class ContentHubCustomFields extends ContentHubCommandBase implements PlatformBo
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Check custom field type implementations');
+    $this->setDescription('Checks if custom field type implementations are supported by Content Hub.');
     $this->setAliases(['ach-cf']);
   }
 

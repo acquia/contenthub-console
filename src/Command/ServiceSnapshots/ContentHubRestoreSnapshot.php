@@ -34,6 +34,7 @@ class ContentHubRestoreSnapshot extends Command implements PlatformCommandInterf
    */
   protected function configure() {
     $this->setDescription('Restore Acquia Content Hub snapshots.')
+      ->setHidden(TRUE)
       ->setAliases(['ach-rs']);
   }
 

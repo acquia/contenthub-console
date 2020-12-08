@@ -26,7 +26,7 @@ class ContentHubDiff extends ContentHubCommandBase implements PlatformBootStrapC
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Check whether the diff module codebase exists or not.');
+    $this->setDescription('Check whether the diff module exists in the application codebase or not.');
     $this->setHidden('TRUE');
   }
 

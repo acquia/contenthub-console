@@ -24,7 +24,7 @@ class ContentHubWebhookStatus extends ContentHubCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Ask service to provide info about the status of webhooks');
+    $this->setDescription('Uses the Content Hub Service to collect information about the status of webhooks.');
     $this->setAliases(['ach-ws']);
   }
 

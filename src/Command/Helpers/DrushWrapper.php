@@ -18,9 +18,11 @@ class DrushWrapper extends Command {
    * {@inheritDoc}
    */
   protected function configure() {
-    $this->setDescription("A wrapper for running Drush commands.");
-    $this->addOption('drush_command', 'cmd', InputOption::VALUE_OPTIONAL, "The drush command to run", "list");
-    $this->addOption('drush_args', 'da', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "Any additional drush command arguments.", []);
+    $this
+      ->setDescription("A wrapper for running Drush commands.")
+      ->addOption('drush_command', 'cmd', InputOption::VALUE_OPTIONAL, "The drush command to run", "list")
+      ->addOption('drush_args', 'da', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "Any additional drush command arguments.", [])
+      ->setAliases(['drush']);
   }
 
   /**

@@ -23,8 +23,9 @@ class ContentHubAuditDepcalc extends ContentHubCommandBase implements PlatformBo
    * {@inheritDoc}
    */
   protected function configure() {
-    $this->setDescription('Check for depcalc module presence.');
-    $this->setAliases(['ach-acd']);
+    $this->setDescription('Check for depcalc module presence.')
+    ->setHidden(TRUE)
+    ->setAliases(['ach-acd']);
   }
 
   /**

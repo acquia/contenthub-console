@@ -32,13 +32,14 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'ach:migrate:upgrade';
+  protected static $defaultName = 'ach:migrate:publisher-upgrade';
 
   /**
    * {@inheritDoc}
    */
   protected function configure() {
-    $this->setDescription('Upgrade sites to 2.x version.')
+    $this->setDescription('Runs database updates and upgrades publisher sites to Content Hub 2.x.')
+      ->setHidden(TRUE)
       ->setAliases(['ach-mu'])
       ->addOption(
         'lift-support',

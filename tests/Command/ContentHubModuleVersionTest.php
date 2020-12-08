@@ -37,9 +37,9 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
   public function testContentHubModuleVersion(bool $module_exist, int $module_version, string $needle, int $exit_code) {
     $this
       ->drupalServiceFactory
-      ->getDrupalService(Argument::any())
+      ->isContentHubEnabled()
       ->shouldBeCalled()
-      ->willReturn($this->getDrupalServiceMocks($module_exist));
+      ->willReturn($module_exist);
 
     if ($module_exist) {
       $this
@@ -69,24 +69,6 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
    *   Mock of getModuleVersion function return.
    */
   public function getModuleVersionMocks(int $module_version): int {return $module_version;}
-
-  /**
-   * Returns mock instance for getDrupalService().
-   *
-   * @param $module_exist
-   *   Return value for exists().
-   *
-   * @return object
-   *   Mock of getDrupalService function return.
-   */
-  public function getDrupalServiceMocks(bool $module_exist): object {
-    return new class ($module_exist) {
-      public function __construct(bool $module_exist) {
-        $this->exists = $module_exist;
-      }
-      public function exists(): bool {return $this->exists;}
-    };
-  }
 
   /**
    * A data provider for ::testContentHubModuleVersion

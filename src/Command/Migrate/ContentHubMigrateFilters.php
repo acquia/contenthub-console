@@ -38,8 +38,10 @@ class ContentHubMigrateFilters extends ContentHubCommandBase implements Platform
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Migrate filters from 1.x to 2.x.');
-    $this->setAliases(['ach-mf']);
+    $this
+      ->setDescription('Migrates filters from 1.x to 2.x.')
+      ->setHidden(TRUE)
+      ->setAliases(['ach-mf']);
   }
 
   /**

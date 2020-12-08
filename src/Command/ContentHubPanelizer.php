@@ -23,7 +23,7 @@ class ContentHubPanelizer extends ContentHubCommandBase  implements PlatformBoot
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Checks Panelizer module usage.');
+    $this->setDescription('Checks use of Panelizer module.');
     $this->setAliases(['ach-pan']);
   }
 

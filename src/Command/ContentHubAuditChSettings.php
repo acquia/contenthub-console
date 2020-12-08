@@ -27,7 +27,7 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
    * {@inheritDoc}
    */
   protected function configure() {
-    $this->setDescription('Audit content hub settings.')
+    $this->setDescription('Audits Content Hub settings for differences between database settings and overridden ones.')
       ->setHelp('Checks if there is a difference between the settings located in database and the one in settings.php')
       ->setAliases(['ach-as'])
       ->addOption(

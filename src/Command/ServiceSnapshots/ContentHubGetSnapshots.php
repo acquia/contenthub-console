@@ -35,9 +35,10 @@ class ContentHubGetSnapshots extends ContentHubCommandBase implements PlatformBo
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Fetch Acquia Content Hub snapshots.');
-    $this->setAliases(['ach-gs']);
-    $this->addOption('list', 'l', InputOption::VALUE_NONE, 'List Acquia Content Hub snapshots.');
+    $this->setDescription('Fetch Acquia Content Hub snapshots.')
+    ->setHidden(TRUE)
+    ->setAliases(['ach-gs'])
+    ->addOption('list', 'l', InputOption::VALUE_NONE, 'List Acquia Content Hub snapshots.');
 
   }
 

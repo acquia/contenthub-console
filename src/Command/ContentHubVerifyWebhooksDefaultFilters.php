@@ -24,8 +24,10 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Verify webhooks default filters in 2.x after migration.');
-    $this->setAliases(['ach-vw-df']);
+    $this
+      ->setDescription('Verifies webhooks default filters have been migrated successfully in 2.x after module upgrade.')
+      ->setHidden(TRUE)
+      ->setAliases(['ach-vw-df']);
   }
 
   /**

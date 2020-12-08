@@ -33,7 +33,7 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Prints webhook information.');
+    $this->setDescription('Prints status of Webhooks and if they are suppressed.');
     $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Print webhooks information and unsuppress disabled webhooks.');
     $this->setAliases(['ach-hc-ws']);
   }

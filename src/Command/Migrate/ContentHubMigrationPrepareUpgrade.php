@@ -40,7 +40,8 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Prepare sites for the version 2 upgrade.')
+    $this->setDescription('Prepares sites running Content Hub 1.x for upgrade to version 2.x.')
+      ->setHidden(TRUE)
       ->setAliases(['ach-mpu'])
       ->addOption(
         'uninstall-modules',

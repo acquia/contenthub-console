@@ -28,7 +28,7 @@ class ContentHubAuditClients extends ContentHubCommandBase implements PlatformBo
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('List client from ACH subscription.');
+    $this->setDescription('Lists the clients registered in the Acquia Content Hub Subscription.');
     $this->setAliases(['ach-cl']);
     $this->addOption('--count', 'c', InputOption::VALUE_NONE, 'Returns the number of clients.');
   }

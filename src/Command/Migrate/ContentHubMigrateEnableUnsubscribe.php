@@ -24,8 +24,10 @@ class ContentHubMigrateEnableUnsubscribe extends ContentHubCommandBase implement
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Enables Unsubscribe module if there are "disconnected" imported entities in the site.');
-    $this->setAliases(['ach-mi-un']);
+    $this
+      ->setDescription('Enables Unsubscribe module if there are "disconnected" imported entities in the site.')
+      ->setHidden(TRUE)
+      ->setAliases(['ach-mi-un']);
   }
 
   /**

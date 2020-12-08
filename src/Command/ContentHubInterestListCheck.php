@@ -23,8 +23,10 @@ class ContentHubInterestListCheck extends ContentHubCommandBase implements Platf
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Compares client interest list with already imported/exported entities.');
-    $this->setAliases(['ach-hc-il']);
+    $this
+      ->setDescription('Compares webhooks\'s interest list with the list of imported/exported entities.')
+      ->setHidden(TRUE)
+      ->setAliases(['ach-hc-il']);
   }
 
   /**
@@ -46,7 +48,7 @@ class ContentHubInterestListCheck extends ContentHubCommandBase implements Platf
     $interest_diff_count = count($diff['interest_diff']);
 
     if ($tracking_diff_count === $interest_diff_count && $tracking_diff_count === 0) {
-      $output->writeln('<info>Interest list and tracking table are good to work with.</info>');
+      $output->writeln('<info>There are no differences between this Webhook\'s Interest list and export/import tracking table.</info>');
       return 0;
     }
 
@@ -58,7 +60,7 @@ class ContentHubInterestListCheck extends ContentHubCommandBase implements Platf
       $output->writeln(sprintf('<error>There are %u entities on the interest list but missing from the tracking table(s).</error>', $interest_diff_count));
     }
 
-    $output->writeln('<info>Listing the difference use ach:health-check:interest-diff command</info>');
+    $output->writeln('<info>For listing the actual differences, please use the ach:health-check:interest-diff command.</info>');
 
     return 2;
   }

@@ -136,7 +136,7 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
   }
 
   /**
-   * A data provider for ::testContentHubAuditDepcalc()
+   * A data provider for ::ContentHubAuditChSettingsTest()
    *
    * @return array[]
    */

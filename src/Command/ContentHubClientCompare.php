@@ -31,8 +31,10 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Compare the counts of platform sites and subscription clients.');
-    $this->setAliases(['ach-cl-diff']);
+    $this
+      ->setDescription('Compares the number of platform sites and Content Hub Subscription clients.')
+      ->setHidden(TRUE)
+      ->setAliases(['ach-cl-diff']);
   }
 
   /**

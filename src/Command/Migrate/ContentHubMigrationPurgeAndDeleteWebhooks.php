@@ -30,7 +30,7 @@ class ContentHubMigrationPurgeAndDeleteWebhooks extends ContentHubCommandBase im
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Purges Content Hub Subscription and Delete Webhooks.')
+    $this->setDescription('Purges Content Hub Subscription and deletes Webhooks.')
       ->setAliases(['ach-pdw']);
   }
 

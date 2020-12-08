@@ -37,7 +37,7 @@ use Symfony\Component\Console\Input\ArrayInput;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubMigrationStart extends Command implements PlatformCommandInterface {
+class ContentHubUpgradeStart extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
   use PlatformCommandExecutionTrait;
@@ -46,14 +46,14 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
   /**
    * {@inheritdoc}
    */
-  public static $defaultName = 'ach:migration:start';
+  public static $defaultName = 'ach:upgrade:start';
 
   /**
    * {@inheritdoc}
    */
   public function configure() {
-    $this->setDescription('Starts Migration Process.');
-    $this->setAliases(['ach-mstart'])
+    $this->setDescription('Starts the Upgrade Process from Acquia Content Hub 1.x to 2.x.');
+    $this->setAliases(['ach-ustart'])
       ->addOption(
         'uninstall-modules',
         'um',
@@ -92,8 +92,8 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $output->writeln('Welcome to the Acquia Content Hub Migration Beta!');
-    $output->writeln('This command line utility is designed to help you migrate from Content Hub 1.x to 2.x.');
+    $output->writeln('Welcome to the Acquia Content Hub Upgrade Beta!');
+    $output->writeln('This command line utility is designed to help you upgrade from Content Hub 1.x to 2.x.');
     $output->writeln('If you encounter any issues, please file a ticket with Acquia Support.');
 
     // Reading Application and Platform.
@@ -103,13 +103,13 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
 
     // Reset stage tracking if restart option is used.
     if ($input->getOption('restart')) {
-      $platform->set('acquia.content_hub.migration.stage', 0)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 0)->save();
     }
 
-    // Set Content Hub Credentials for Migration.
+    // Set Content Hub Credentials for Upgrade.
     $this->setContentHubCredentialsForMigration($application, $platform, $input, $output);
     $this->setAcquiaLiftUsage($platform, $input, $output);
-    $stage = $platform->get('acquia.content_hub.migration.stage');
+    $stage = $platform->get('acquia.content_hub.upgrade.stage');
 
     // Running Content Hub Audit in the current platform.
     $pass = $this->executeStage($stage, 0);
@@ -159,11 +159,11 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
     $pass = $this->executeStage($stage, 8);
     $this->executeEnableUnsubscribeCommand($platform, $input, $output, $helper, $pass);
 
-    // Run Validations on the migrated subscription.
+    // Run Validations on the upgraded subscription.
     $pass = $this->executeStage($stage, 9);
     $this->executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $pass);
 
-    // Validate that default filters are attached to webhooks and all filters have been migrated.
+    // Validate that default filters are attached to webhooks and all filters have been upgraded.
     $pass = $this->executeStage($stage, 10);
     $this->executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $pass);
 
@@ -173,7 +173,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
 
     // Finalize process.
     $output->writeln('<warning>The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.</warning>');
-    $output->writeln('<info>Migration Process has been completed successfully. Please check your sites.</info>');
+    $output->writeln('<info>Content Hub Upgrade process has been completed successfully. Please check your sites.</info>');
     $output->writeln('<warning>The Diff module is no longer required by Content Hub and may not be required by your application. Please check and remove if applicable.</warning>');
     return 0;
   }
@@ -196,7 +196,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
   }
 
   /**
-   * Sets Content Hub Credentials for Migration.
+   * Sets Content Hub Credentials.
    *
    * @param \Symfony\Component\Console\Application $application
    *   The Console Application.
@@ -210,8 +210,8 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
    * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
   protected function setContentHubCredentialsForMigration(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output) {
-    if (!$platform->get('acquia.content_hub.migration')) {
-      $output->writeln('Subscription details are not set for Migration. Setting up Content Hub credentials for Migration...');
+    if (!$platform->get('acquia.content_hub')) {
+      $output->writeln('Content Hub Subscription details are not set. Setting up Content Hub credentials for the Upgrade process...');
       $subscription_setter = $application->find(ContentHubSubscriptionSet::getDefaultName());
       $subscription_setter->addPlatform($input->getArgument('alias'), $platform);
       $subscription_setter->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
@@ -276,7 +276,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 1)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 1)->save();
     }
   }
 
@@ -335,7 +335,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
           }
         }
       }
-      $platform->set('acquia.content_hub.migration.stage', 2)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 2)->save();
     }
   }
 
@@ -382,7 +382,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 3)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 3)->save();
     }
   }
 
@@ -437,7 +437,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 4)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 4)->save();
     }
   }
 
@@ -472,7 +472,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 5)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 5)->save();
     }
   }
 
@@ -518,7 +518,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         $scheduled_jobs->addPlatform($input->getArgument('alias'), $platform);
         $status = $scheduled_jobs->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
       }
-      $platform->set('acquia.content_hub.migration.stage', 6)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 6)->save();
     }
   }
 
@@ -553,7 +553,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 8)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 8)->save();
     }
   }
 
@@ -588,7 +588,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 9)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 9)->save();
     }
   }
 
@@ -623,7 +623,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 10)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 10)->save();
     }
   }
 
@@ -663,7 +663,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 11)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 11)->save();
     }
   }
 
@@ -698,7 +698,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 7)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 7)->save();
     }
   }
 
@@ -733,7 +733,7 @@ class ContentHubMigrationStart extends Command implements PlatformCommandInterfa
         continue;
       }
       $ready = TRUE;
-      $platform->set('acquia.content_hub.migration.stage', 12)->save();
+      $platform->set('acquia.content_hub.upgrade.stage', 12)->save();
     }
   }
 }

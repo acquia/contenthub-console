@@ -88,7 +88,7 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
           'tracking_diff' => [],
           'interest_diff' => [],
         ],
-        'Interest list and tracking table are good to work with.' . PHP_EOL,
+        'There are no differences between this Webhook\'s Interest list and export/import tracking table.' . PHP_EOL,
         0
       ],
       [
@@ -98,7 +98,7 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
           'interest_diff' => [],
         ],
         'There are 1 entities in the tracking table which missing from the interest list.' . PHP_EOL .
-        'Listing the difference use ach:health-check:interest-diff command' . PHP_EOL,
+        'For listing the actual differences, please use the ach:health-check:interest-diff command.' . PHP_EOL,
         2,
       ],
       [
@@ -108,7 +108,7 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
           'interest_diff' => [1],
         ],
         'There are 1 entities on the interest list but missing from the tracking table(s).' . PHP_EOL .
-        'Listing the difference use ach:health-check:interest-diff command' . PHP_EOL,
+        'For listing the actual differences, please use the ach:health-check:interest-diff command.' . PHP_EOL,
         2,
       ],
       [
@@ -119,7 +119,7 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
         ],
         'There are 1 entities in the tracking table which missing from the interest list.' . PHP_EOL .
         'There are 1 entities on the interest list but missing from the tracking table(s).' . PHP_EOL .
-        'Listing the difference use ach:health-check:interest-diff command' . PHP_EOL,
+        'For listing the actual differences, please use the ach:health-check:interest-diff command.' . PHP_EOL,
         2,
       ],
     ];

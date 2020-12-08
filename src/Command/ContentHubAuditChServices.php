@@ -28,8 +28,9 @@ class ContentHubAuditChServices extends ContentHubCommandBase implements Platfor
    * {@inheritdoc}
    */
   public function configure() {
-    $this->setDescription('Audit deprecated 1.x service usage');
-    $this->setAliases(['ach-serv']);
+    $this->setDescription('Audit deprecated 1.x service usage')
+    ->setHidden(TRUE)
+    ->setAliases(['ach-serv']);
   }
 
   /**

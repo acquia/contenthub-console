@@ -24,7 +24,7 @@ class ContentHubInterestListDiff extends ContentHubCommandBase implements Platfo
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('List the differences between interest list and tracking tables.');
+    $this->setDescription('Lists the differences between webhook\'s interest list and export/import tracking tables.');
     $this->setAliases(['ach-hc-id']);
   }
 
