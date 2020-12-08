@@ -3,7 +3,9 @@
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\ContentHub\Command\Helpers\DrushWrapper;
+use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Exception\ContentHubVersionException;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
@@ -17,8 +19,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ContentHubMigrateFilters extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
-  use PlatformCommandExecutionTrait;
+  use PlatformCmdOutputFormatterTrait;
   use PlatformCommandTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -44,6 +53,19 @@ class ContentHubMigrateFilters extends ContentHubCommandBase implements Platform
   }
 
   /**
+   * ContentHubMigrationFilters constructor.
+   *
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
+   * @param string|null $name
+   *   The name of the command.
+   */
+  public function __construct(PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
+    parent::__construct($name);
+    $this->platformCommandExecutioner = $platform_command_executioner;
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
@@ -52,8 +74,14 @@ class ContentHubMigrateFilters extends ContentHubCommandBase implements Platform
       return 0;
     }
     $output->writeln('Migrating filters...');
-    $res = $this->execDrushWithOutput($output, ['ach-subscriber-upgrade'], $input->getOption('uri') ?: '');
-    if ($res !== 0) {
+    $drush_options = ['--drush_command' => 'ach-subscriber-upgrade'];
+    if ($uri = $input->getOption('uri')) {
+      $drush_options['--uri'] = $uri;
+    }
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, NULL, $drush_options);
+    $exit_code = $raw->getReturnCode();
+    $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
+    if ($exit_code > 0) {
       $output->writeln('<error>Error during filter migration.</error>');
       return 1;
     }

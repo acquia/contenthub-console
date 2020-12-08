@@ -3,8 +3,10 @@
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
+use Acquia\Console\ContentHub\Command\Helpers\DrushWrapper;
+use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,8 +19,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
-  use PlatformCommandExecutionTrait;
+  use PlatformCmdOutputFormatterTrait;
   use ContentHubModuleTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -40,16 +49,32 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
   }
 
   /**
+   * ContentHubMigrationPublisherUpgrade constructor.
+   *
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
+   * @param string|null $name
+   *   The name of the command.
+   */
+  public function __construct(PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
+    parent::__construct($name);
+    $this->platformCommandExecutioner = $platform_command_executioner;
+  }
+
+  /**
    * {@inheritdoc}
    *
    * @throws \Exception
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln('Initiating module upgrade process...');
-    $uri = $input->getOption('uri');
-    $this->execDrushWithOutput($output, ['cr'], $uri);
+    $drush_options = ['--drush_command' => 'cr'];
+    if ($uri = $input->getOption('uri')) {
+     $drush_options['--uri'] = $uri;
+    }
+    $this->executeDrushCommand($drush_options, $output);
     $this->updateDatabases($input, $output);
-    $this->execDrushWithOutput($output, ['cr'], $uri);
+    $this->executeDrushCommand($drush_options, $output);
     if ($input->getOption('lift-support')) {
       $this->enableAcquiaLiftPublisherModule($output);
       $this->setAcquiaLiftCdfVersion();
@@ -69,7 +94,11 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
    */
   protected function updateDatabases(InputInterface $input, OutputInterface $output): void {
     $output->writeln('Running database updates...');
-    $this->execDrushWithOutput($output, ['updatedb', '-y'], $input->getOption('uri'));
+    $drush_options = ['--drush_command' => 'updatedb', '--drush_args' => ['-y']];
+    if ($uri = $input->getOption('uri')) {
+      $drush_options['--uri'] = $uri;
+    }
+    $this->executeDrushCommand($drush_options, $output);
   }
 
   /**
@@ -121,14 +150,36 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
     // sure if that is the case.
     if (\Drupal::moduleHandler()->moduleExists('acquia_contenthub_publisher')) {
       $output->writeln('Running publisher upgrades...');
-      $out = $this->execDrushWithOutput($output, ['ach-publisher-upgrade'], $uri);
-      if ($out === 0) {
+      $drush_options = ['--drush_command' => 'ach-publisher-upgrade'];
+      if ($uri) {
+        $drush_options['--uri'] = $uri;
+      }
+      $exit_code = $this->executeDrushCommand($drush_options, $output);
+      if ($exit_code === 0) {
         $output->writeln('Done');
         return 0;
       }
       return 1;
     }
     return 0;
+  }
+
+  /**
+   * Helper function to execute drush command.
+   *
+   * @param $drush_options
+   *   Drush options with drush command and args.
+   * @param $output
+   *   Output stream.
+   *
+   * @return int
+   *   Exit code from drush execution.
+   */
+  private function executeDrushCommand($drush_options, $output) {
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName,NULL, $drush_options);
+    $exit_code = $raw->getReturnCode();
+    $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
+    return $exit_code;
   }
 
 }

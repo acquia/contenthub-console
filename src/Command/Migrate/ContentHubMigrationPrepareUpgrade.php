@@ -3,11 +3,14 @@
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\ContentHub\Command\Helpers\DrushWrapper;
+use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Exception\ContentHubVersionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Extension\MissingDependencyException;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
+use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,7 +22,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
-  use PlatformCommandExecutionTrait;
+  use PlatformCmdOutputFormatterTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -52,6 +62,26 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public static function getExpectedPlatformOptions(): array {
+    return ['source' => PlatformCommandInterface::ANY_PLATFORM];
+  }
+
+  /**
+   * ContentHubMigrationPrepareUpgrade constructor.
+   *
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
+   * @param string|null $name
+   *   The name of the command.
+   */
+  public function __construct(PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
+    parent::__construct($name);
+    $this->platformCommandExecutioner = $platform_command_executioner;
+  }
+
+  /**
    * {@inheritDoc}
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -62,7 +92,15 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     $output->writeln('Initiating Upgrade Process...');
     $this->handleModules($output, $input->getOption('uninstall-modules') ?? []);
     $this->removeRestResource($output);
-    $this->execDrushWithOutput($output, ['cr'], $input->getOption('uri') ?? '');
+
+    $drush_options = ['--drush_command' => 'cr'];
+    if ($uri = $input->getOption('uri')) {
+      $drush_options['--uri'] = $uri;
+    }
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, NULL, $drush_options);
+    $exit_code = $raw->getReturnCode();
+    $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
+
     $output->writeln('<info>Upgrade preparation has been completed. Please build a branch with Content Hub 2.x and push it to origin.</info>');
     return 0;
   }

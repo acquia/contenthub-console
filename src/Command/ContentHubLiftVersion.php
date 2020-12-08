@@ -7,7 +7,6 @@ use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -29,7 +28,6 @@ class ContentHubLiftVersion extends ContentHubCommandBase  implements PlatformBo
 
   protected function configure() {
     $this->setDescription('Checks for the Acquia Lift module 4.x version.');
-    $this->addOption('clear-cache','cr',InputOption::VALUE_OPTIONAL,'Clear cache.');
     $this->setHidden('TRUE');
   }
 
@@ -48,11 +46,6 @@ class ContentHubLiftVersion extends ContentHubCommandBase  implements PlatformBo
 
     if (!$this->isAcquiaLiftConfigured()) {
       return 3;
-    }
-
-    if ($input->getOption('clear-cache')) {
-      $output->writeln('Clearing database cache...');
-      $this->execDrushWithOutput($output, ['cr']);
     }
 
     $output->writeln($this->toJsonSuccess([

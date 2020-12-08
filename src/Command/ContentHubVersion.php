@@ -2,9 +2,9 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\DrushWrapper;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -23,8 +23,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ContentHubVersion extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
-  use PlatformCommandExecutionTrait;
   use PlatformCmdOutputFormatterTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -53,16 +59,18 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
   }
 
   /**
-   * ContentHubSubscriptionSet constructor.
+   * ContentHubVersion constructor.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.
    */
-  public function __construct(EventDispatcherInterface $dispatcher, string $name = NULL) {
+  public function __construct(EventDispatcherInterface $dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
     parent::__construct($name);
-
+    $this->platformCommandExecutioner = $platform_command_executioner;
     $this->dispatcher = $dispatcher;
   }
 
@@ -84,8 +92,10 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
         $continue = TRUE;
       }
 
-      $result = $this->runWithMemoryOutput(DrushWrapper::$defaultName, ['--drush_command' => 'cr']);
-      $output->writeln($result);
+      $drush_options = ['--drush_command' => 'cr'];
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, $this->getPlatform('source'), $drush_options);
+      $exit_code = $raw->getReturnCode();
+      $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
 
       $sites_not_ready_ach = $this->getNotUpToDateSites($output, ContentHubModuleVersion::getDefaultName(), 2);
 
@@ -150,7 +160,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
   protected function getNotUpToDateSites(OutputInterface $output, string $command_name, int $version = NULL): array {
     $sites_not_ready = [];
 
-    $raw = $this->runWithMemoryOutput($command_name, []);
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput($command_name, $this->getPlatform('source'));
 
     $lines = explode(PHP_EOL, trim($raw));
     foreach ($lines as $line) {

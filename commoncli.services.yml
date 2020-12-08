@@ -6,6 +6,10 @@ services:
   drupal_service_factory:
     class: Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
     public: true
+  platform_command_executioner:
+    class: Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+    arguments: ['@common_console_application']
+    public: true;
 
   #  Commands
   command.contenthub.migration_start:
@@ -28,6 +32,7 @@ services:
   command.drush.version:
     class: Acquia\Console\ContentHub\Command\DrushVersionCheck
     public: true
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.audit.config_uuid:
@@ -178,11 +183,13 @@ services:
   command.contenthub.migrate.filters:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters
     public: true
+    arguments: ['@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.migrate.publisher_upgrade:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPublisherUpgrade
     public: true
+    arguments: ['@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.queue:
@@ -198,6 +205,7 @@ services:
   command.contenthub.migrate.prepare_upgrade:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade
     public: true
+    arguments: ['@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.migrate.purge_del_webhooks:
@@ -218,7 +226,7 @@ services:
   command.contenthub.module_version:
     class: Acquia\Console\ContentHub\Command\ContentHubVersion
     public: true
-    arguments: ['@event_dispatcher']
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.helper.with_queue:

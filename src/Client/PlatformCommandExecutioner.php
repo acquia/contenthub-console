@@ -1,34 +1,63 @@
 <?php
 
-namespace Acquia\Console\ContentHub\Command\Helpers;
+namespace Acquia\Console\ContentHub\Client;
 
+use Acquia\Console\ContentHub\Command\Helpers\CommandOptionsDefinitionTrait;
 use EclipseGc\CommonConsole\PlatformInterface;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
 
 /**
- * Trait PlatformCommandExecutionTrait.
+ * Class PlatformCommandExecutioner.
  *
- * @package Acquia\Console\ContentHub\Command\Helpers
+ * @package Acquia\Console\ContentHub\Client
  */
-trait PlatformCommandExecutionTrait {
+class PlatformCommandExecutioner {
 
   use CommandOptionsDefinitionTrait;
+
+  /**
+   * Symfony console application.
+   *
+   * @var \Symfony\Component\Console\Application
+   */
+  protected $application;
+
+  /**
+   * PlatformCommandExecutioner constructor.
+   *
+   * @param \Symfony\Component\Console\Application $application
+   *   Current application.
+   */
+  public function __construct(Application $application) {
+    $this->application = $application;
+  }
+
+  /**
+   * Helper function to return current application.
+   *
+   * @return \Symfony\Component\Console\Application
+   *   Current application.
+   */
+  protected function getApplication() : Application {
+    return $this->application;
+  }
 
   /**
    * Executes a command on the given platform and returns the output.
    *
    * @param string $cmd_name
    *   The name of the command to execute.
+   * @param \EclipseGc\CommonConsole\PlatformInterface|NULL $platform
+   *   The platform where command needs to be executed.
    * @param array $input
    *   The input for the command.
-   * @param string $platform
-   *   The name of the key of where the desired platform resides.
    *
    * @return object
    *   The output of the command execution.
    */
-  protected function runWithMemoryOutput(string $cmd_name, array $input = [], string $platform = 'source'): object {
+  public function runWithMemoryOutput(string $cmd_name, PlatformInterface $platform = NULL, array $input = []): object {
     /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($cmd_name);
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
@@ -38,8 +67,15 @@ trait PlatformCommandExecutionTrait {
     $input['--bare'] = NULL;
     $bind_input = new ArrayInput($input);
     $bind_input->bind($this->getDefinitions($command));
-    $return_code = $this->getPlatform($platform)->execute($command, $bind_input, $remote_output);
+    if ($platform) {
+      $return_code = $platform->execute($command, $bind_input, $remote_output);
+    }
+    // Current execution already on platform.
+    else {
+      $return_code = $command->run($bind_input, $remote_output);
+    }
     rewind($remote_output->getStream());
+
     return $this->formatReturnObject($return_code, $remote_output);
   }
 
@@ -58,7 +94,7 @@ trait PlatformCommandExecutionTrait {
    *
    * @throws \Exception
    */
-  protected function runLocallyWithMemoryOutput(string $cmd_name, PlatformInterface $platform, array $input = []) {
+  public function runLocallyWithMemoryOutput(string $cmd_name, PlatformInterface $platform, array $input = []) {
     /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($cmd_name);
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));

@@ -106,4 +106,46 @@ trait PlatformCmdOutputFormatterTrait {
     return TRUE;
   }
 
+  /**
+   * Helper function to get drush output.
+   *
+   * @param string $raw
+   *   Raw output from remote output stream.
+   *
+   * @param OutputInterface $output
+   *   Output stream.
+   *
+   * @param int $exit_code
+   *   Exit code from drush command.
+   *
+   * @param string $drush_command
+   *   Drush command executed.
+   *
+   * @param bool $print_output
+   *   Whether to print the output.
+   *
+   * @return object|NULL
+   *   Actual Drush command output.
+   */
+  protected function getDrushOutput(string $raw, OutputInterface $output, int $exit_code, string $drush_command, bool $print_output = TRUE): ?object {
+    $result = NULL;
+    $data = NULL;
+    if ($exit_code > 0) {
+      $output->writeln(sprintf('<error>Error executing drush command "%s" (Exit code = %s):</error>', $drush_command, $exit_code));
+    }
+    $lines = explode(PHP_EOL, trim($raw));
+    foreach ($lines as $line) {
+      $data = $this->fromJson($line, $output);
+      if (!$data) {
+        continue;
+      }
+      $result = $data;
+    }
+    if ($print_output && $result) {
+      $output->writeln($result->drush_output);
+      $output->writeln($result->drush_error);
+    }
+    return $result;
+  }
+
 }
