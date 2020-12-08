@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ContentHubHealthCheck
+ * Class ContentHubInterestListCheck
  *
  * @package Acquia\Console\ContentHub\Command
  */
@@ -30,45 +30,37 @@ class ContentHubInterestListCheck extends ContentHubCommandBase implements Platf
   /**
    * {@inheritdoc}
    */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     if (!$this->achClientService->checkClient()) {
-      $output->writeln('Client connection to service is not healthy.');
+      $output->writeln('<error>Client connection to service is not healthy.</error>');
       return 1;
     }
 
     $diff = $this->achClientService->getTrackingAndInterestDiff();
     if (empty($diff)) {
-      $output->writeln('There are no entities in tracking table(s) and interest list.');
+      $output->writeln('<info>There are no entities in tracking table(s) and interest list.</info>');
       return 0;
     }
 
     $tracking_diff_count = count($diff['tracking_diff']);
     $interest_diff_count = count($diff['interest_diff']);
 
-    if ($tracking_diff_count === $interest_diff_count
-      && $tracking_diff_count === 0) {
-      $output->writeln('Interest list and tracking table are good to work with.');
+    if ($tracking_diff_count === $interest_diff_count && $tracking_diff_count === 0) {
+      $output->writeln('<info>Interest list and tracking table are good to work with.</info>');
       return 0;
     }
 
-    if ($tracking_diff_count !== 0) {
-      $output->writeln("<error>There are $tracking_diff_count entities in the tracking table which missing from the interest list.</error>");
+    if ($tracking_diff_count > 0) {
+      $output->writeln(sprintf('<error>There are %u entities in the tracking table which missing from the interest list.</error>', $tracking_diff_count));
     }
 
-    if ($interest_diff_count !== 0) {
-      $output->writeln("<error>There are $interest_diff_count entities on the interest list but missing from the tracking table(s).</error>");
+    if ($interest_diff_count > 0) {
+      $output->writeln(sprintf('<error>There are %u entities on the interest list but missing from the tracking table(s).</error>', $interest_diff_count));
     }
 
-    $output->writeln('Listing the difference use ach:health-check:interest-diff command');
+    $output->writeln('<info>Listing the difference use ach:health-check:interest-diff command</info>');
 
-    return 0;
+    return 2;
   }
 
 }
