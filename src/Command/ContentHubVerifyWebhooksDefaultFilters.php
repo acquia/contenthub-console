@@ -33,13 +33,6 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
   /**
    * {@inheritdoc}
    */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Verifying default filters...');
     $verify_default_filters = $this->verifyWebhookDefaultFilters($output);
@@ -84,7 +77,7 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
     if ($check_filters) {
       $output->writeln('<warning>Some default filters are not attached to any webhook.<warning>');
       $table = new Table($output);
-      $table->setHeaders(['UUID, Name']);
+      $table->setHeaders(['UUID', 'Name']);
       $table->addRows($check_filters);
       $table->render();
       return 1;
@@ -101,8 +94,8 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
    * @return int
    */
   protected function verifyFiltersMigration(OutputInterface $output) {
-    $unmigrated_filters = \Drupal::state()->get('acquia_contenthub_subscriber_82002_unmigrated_filters');
-    $contenthub_filters = \Drupal::state()->get('acquia_contenthub_subscriber_82002_acquia_contenthub_filters');
+    $unmigrated_filters = $this->drupalServiceFactory->getDrupalService('state')->get('acquia_contenthub_subscriber_82002_unmigrated_filters');
+    $contenthub_filters = $this->drupalServiceFactory->getDrupalService('state')->get('acquia_contenthub_subscriber_82002_acquia_contenthub_filters');
     if (empty($unmigrated_filters) && empty($contenthub_filters)) {
       $output->writeln('<info>All filters have been successfully migrated from 1.x to 2.x</info>');
       return 0;
