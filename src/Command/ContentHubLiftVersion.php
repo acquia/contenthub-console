@@ -4,7 +4,6 @@ namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ContentHubLiftVersion extends ContentHubCommandBase  implements PlatformBootStrapCommandInterface {
 
   use PlatformCmdOutputFormatterTrait;
-  use PlatformCommandExecutionTrait;
 
   public const ACQUIA_LIFT_USAGE = 'acquia.lift.usage';
 

@@ -2,9 +2,9 @@
 
 namespace Acquia\Console\ContentHub\Command\ServiceSnapshots;
 
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\ContentHubDeleteSnapshotHelper;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -21,8 +21,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
-  use PlatformCommandExecutionTrait;
   use PlatformCmdOutputFormatterTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -50,12 +56,15 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.
    */
-  public function __construct(EventDispatcherInterface $dispatcher, string $name = NULL) {
+  public function __construct(EventDispatcherInterface $dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
     parent::__construct($name);
     $this->dispatcher = $dispatcher;
+    $this->platformCommandExecutioner = $platform_command_executioner;
   }
 
   /**
@@ -68,7 +77,9 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
     $question = new ChoiceQuestion('Select snapshot you want to delete.', $snapshots);
     $select_snapshot = $helper->ask($input, $output, $question);
 
-    $delete_snapshot = $this->runWithMemoryOutput(ContentHubDeleteSnapshotHelper::getDefaultName(), ['--name' => $select_snapshot]);
+    $delete_snapshot = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubDeleteSnapshotHelper::getDefaultName(), $this->getPlatform('source'), [
+      '--name' => $select_snapshot
+    ]);
     if ($delete_snapshot->getReturnCode()) {
       $output->writeln(sprintf('<error>Could not delete snapshot: %s</error>', $select_snapshot));
       return 1;
@@ -87,7 +98,9 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
    *   Snapshots list.
    */
   protected function listSnapshots($output) {
-    $raw = $this->runWithMemoryOutput(ContentHubGetSnapshots::getDefaultName(), ['--list' => TRUE]);
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubGetSnapshots::getDefaultName(), $this->getPlatform('source'), [
+      '--list' => TRUE
+    ]);
     if ($raw->getReturnCode()) {
       return 1;
     }

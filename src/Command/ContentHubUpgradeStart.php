@@ -11,8 +11,8 @@ use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupCreate;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade;
@@ -40,8 +40,14 @@ use Symfony\Component\Console\Input\ArrayInput;
 class ContentHubUpgradeStart extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
-  use PlatformCommandExecutionTrait;
   use PlatformCmdOutputFormatterTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -76,16 +82,19 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   }
 
   /**
-   * ContentHubSubscriptionSet constructor.
+   * ContentHubUpgradeStart constructor.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.
    */
-  public function __construct(EventDispatcherInterface $dispatcher, string $name = NULL) {
+  public function __construct(EventDispatcherInterface $dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
     parent::__construct($name);
     $this->dispatcher = $dispatcher;
+    $this->platformCommandExecutioner = $platform_command_executioner;
   }
 
   /**
@@ -121,7 +130,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
 
     // Purge Subscription and delete Webhooks.
     $pass = $this->executeStage($stage, 2);
-    $this->purgeSubscriptionDeleteWebhooks($application, $platform, $input, $output, $helper, $pass);
+    $this->purgeSubscriptionDeleteWebhooks($platform, $input, $output, $helper, $pass);
 
     // Prepare Upgrade Command.
     $pass = $this->executeStage($stage, 3);
@@ -231,7 +240,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   protected function setAcquiaLiftUsage(PlatformInterface $platform, InputInterface $input, OutputInterface $output): void {
     $platform->set(ContentHubLiftVersion::ACQUIA_LIFT_USAGE, FALSE);
 
-    $raw = $this->runWithMemoryOutput(ContentHubLiftVersion::getDefaultName());
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubLiftVersion::getDefaultName(), $platform);
     $lines = explode(PHP_EOL, trim($raw));
 
     foreach ($lines as $line) {
@@ -263,7 +272,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   protected function executeContentHubAuditCommand(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
-      $raw = $this->runWithMemoryOutput(ContentHubAudit::getDefaultName(), [
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubAudit::getDefaultName(), $platform, [
         '--early-return' => true,
       ]);
       $lines = explode(PHP_EOL, trim($raw));
@@ -342,8 +351,6 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Executes the Content Hub Audit Command.
    *
-   * @param \Symfony\Component\Console\Application $application
-   *   The Console Application.
    * @param PlatformInterface $platform
    *   The Platform.
    * @param InputInterface $input
@@ -359,7 +366,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *
    * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
-  protected function purgeSubscriptionDeleteWebhooks(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
+  protected function purgeSubscriptionDeleteWebhooks(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
       $sites = $this->getPlatformSites('source');
@@ -369,7 +376,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       }
       // Getting URL of first site in the platform.
       $site_info = reset($sites);
-      $raw = $this->runWithMemoryOutput(ContentHubMigrationPurgeAndDeleteWebhooks::getDefaultName(), [
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubMigrationPurgeAndDeleteWebhooks::getDefaultName(), $platform, [
         '--uri' => $site_info['uri'],
       ]);
       $lines = explode(PHP_EOL, trim($raw));
@@ -426,7 +433,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     while (!$ready && $execute) {
       $quest = new ConfirmationQuestion('About to start upgrade preparation. Press a key when ready.');
       $helper->ask($input, $output, $quest);
-      $raw = $this->runWithMemoryOutput(ContentHubMigrationPrepareUpgrade::getDefaultName());
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubMigrationPrepareUpgrade::getDefaultName(), $platform);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);
@@ -461,7 +468,9 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     while (!$ready && $execute) {
       $quest = new ConfirmationQuestion('Starting publisher upgrade. Press a key when ready.');
       $helper->ask($input, $output, $quest);
-      $raw = $this->runWithMemoryOutput(ContentHubMigrationPublisherUpgrade::getDefaultName(), ['--lift-support' => $platform->get(ContentHubLiftVersion::ACQUIA_LIFT_USAGE)]);
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubMigrationPublisherUpgrade::getDefaultName(), $platform, [
+        '--lift-support' => $platform->get(ContentHubLiftVersion::ACQUIA_LIFT_USAGE)
+      ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);
@@ -542,7 +551,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     while (!$ready && $execute) {
       $quest = new ConfirmationQuestion('Starting subscriber upgrade. Press a key when ready.');
       $helper->ask($input, $output, $quest);
-      $raw = $this->runWithMemoryOutput(ContentHubMigrateFilters::getDefaultName());
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubMigrateFilters::getDefaultName(), $platform);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);
@@ -577,7 +586,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     while (!$ready && $execute) {
       $quest = new ConfirmationQuestion('The Unsubscribe module will be enabled if there are imported entities with local changes / auto-update disabled. Press a key when ready.');
       $helper->ask($input, $output, $quest);
-      $raw = $this->runWithMemoryOutput(ContentHubMigrateEnableUnsubscribe::getDefaultName());
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubMigrateEnableUnsubscribe::getDefaultName(), $platform);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);
@@ -606,13 +615,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
    */
-  protected function executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $execute) {
+  protected function executeValidateSiteWebhooksCommand(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
 
     $ready = FALSE;
     // Migrates Filters and adds imported entities to the subscribers' interest list.
     while (!$ready && $execute) {
       $output->writeln('Validating site has a registered webhook.');
-      $raw = $this->runWithMemoryOutput(ContentHubVerifyCurrentSiteWebhook::getDefaultName());
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubVerifyCurrentSiteWebhook::getDefaultName(), $platform);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);
@@ -641,7 +650,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
    */
-  protected function executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $execute) {
+  protected function executeValidateDefaultFiltersCommand(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
 
     $ready = FALSE;
     // Migrates Filters and adds imported entities to the subscribers' interest list.
@@ -650,7 +659,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       // Getting URL of first site in the platform.
       $sites = $this->getPlatformSites('source');
       $site_info = reset($sites);
-      $raw = $this->runWithMemoryOutput(ContentHubVerifyWebhooksDefaultFilters::getDefaultName(), [
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubVerifyWebhooksDefaultFilters::getDefaultName(), $platform, [
         '--uri' => $site_info['uri'],
       ]);
       $lines = explode(PHP_EOL, trim($raw));
@@ -681,13 +690,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
    */
-  protected function executeValidatePublisherQueues($platform, $input, $output, $helper, $execute) {
+  protected function executeValidatePublisherQueues(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
       $quest = new ConfirmationQuestion('Validating publisher queues... Press any key to continue');
       $helper->ask($input, $output, $quest);
 
-      $raw = $this->runWithMemoryOutput(ContentHubVerifyPublisherQueue::getDefaultName());
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubVerifyPublisherQueue::getDefaultName(), $platform);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);
@@ -716,13 +725,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
    */
-  protected function executeValidateInterestListDiff($platform, $input, $output, $helper, $execute) {
+  protected function executeValidateInterestListDiff(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
       $quest = new ConfirmationQuestion('Validating interest list diff...');
       $helper->ask($input, $output, $quest);
 
-      $raw = $this->runWithMemoryOutput(ContentHubInterestListDiff::getDefaultName());
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubInterestListDiff::getDefaultName(), $platform);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
         $this->fromJson($line, $output);

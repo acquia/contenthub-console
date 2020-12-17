@@ -94,7 +94,7 @@ class PlatformCommandExecutioner {
    *
    * @throws \Exception
    */
-  public function runLocallyWithMemoryOutput(string $cmd_name, PlatformInterface $platform, array $input = []) {
+  public function runLocallyWithMemoryOutput(string $cmd_name, PlatformInterface $platform, array $input = []): object {
     /** @var \Symfony\Component\Console\Command\Command $command */
     $command = $this->getApplication()->find($cmd_name);
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
@@ -120,7 +120,7 @@ class PlatformCommandExecutioner {
    *
    * @return object
    */
-  protected function formatReturnObject(int $return_code, StreamOutput $remote_output) {
+  protected function formatReturnObject(int $return_code, StreamOutput $remote_output): object {
     return new class($return_code, stream_get_contents($remote_output->getStream()) ?? '') {
       public function __construct($returnCode, string $result) {
         $this->returnCode = $returnCode ?? -1;

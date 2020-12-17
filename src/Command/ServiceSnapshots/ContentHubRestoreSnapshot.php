@@ -2,9 +2,9 @@
 
 namespace Acquia\Console\ContentHub\Command\ServiceSnapshots;
 
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\ContentHubRestoreSnapshotHelper;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -21,8 +21,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ContentHubRestoreSnapshot extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
-  use PlatformCommandExecutionTrait;
   use PlatformCmdOutputFormatterTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -50,12 +56,15 @@ class ContentHubRestoreSnapshot extends Command implements PlatformCommandInterf
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.
    */
-  public function __construct(EventDispatcherInterface $dispatcher, string $name = NULL) {
+  public function __construct(EventDispatcherInterface $dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
     parent::__construct($name);
     $this->dispatcher = $dispatcher;
+    $this->platformCommandExecutioner = $platform_command_executioner;
   }
 
   /**
@@ -68,7 +77,9 @@ class ContentHubRestoreSnapshot extends Command implements PlatformCommandInterf
     $question = new ChoiceQuestion('Select snapshot you want to restore.', $snapshots);
     $select_snapshot = $helper->ask($input, $output, $question);
 
-    $restore_snapshot = $this->runWithMemoryOutput(ContentHubRestoreSnapshotHelper::getDefaultName(), ['--name' => $select_snapshot]);
+    $restore_snapshot = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubRestoreSnapshotHelper::getDefaultName(), $this->getPlatform('source'), [
+      '--name' => $select_snapshot
+    ]);
     if ($restore_snapshot->getReturnCode()) {
       $output->writeln(sprintf('<error>Could not restore snapshot: %s</error>', $select_snapshot));
       return 1;
@@ -87,7 +98,9 @@ class ContentHubRestoreSnapshot extends Command implements PlatformCommandInterf
    *   Snapshots list.
    */
   protected function listSnapshots($output) {
-    $raw = $this->runWithMemoryOutput(ContentHubGetSnapshots::getDefaultName(), ['--list' => TRUE]);
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubGetSnapshots::getDefaultName(), $this->getPlatform('source'), [
+      '--list' => TRUE
+    ]);
     if ($raw->getReturnCode()) {
       return 1;
     }

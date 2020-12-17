@@ -3,13 +3,9 @@
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use Acquia\Console\ContentHub\Exception\ContentHubVersionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Core\Extension\MissingDependencyException;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -18,8 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Acquia\Console\ContentHub\Command\Migration
  */
 class ContentHubMigrationPurgeAndDeleteWebhooks extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
-
-  use PlatformCommandExecutionTrait;
 
   /**
    * {@inheritdoc}

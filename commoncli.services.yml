@@ -15,7 +15,7 @@ services:
   command.contenthub.upgrade_start:
     class: Acquia\Console\ContentHub\Command\ContentHubUpgradeStart
     public: true
-    arguments: ['@event_dispatcher']
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.subscription_set:
@@ -53,7 +53,7 @@ services:
   command.contenthub.audit.client-compare:
     class: Acquia\Console\ContentHub\Command\ContentHubClientCompare
     public: true
-    arguments: ['@event_dispatcher']
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.audit.ssl_cert:
@@ -159,7 +159,7 @@ services:
   command.contenthub.delete_snapshot:
     class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubDeleteSnapshot
     public: true
-    arguments: [ '@event_dispatcher' ]
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.delete_snapshot_helper:
@@ -170,7 +170,7 @@ services:
   command.contenthub.restore_snapshot:
     class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubRestoreSnapshot
     public: true
-    arguments: [ '@event_dispatcher' ]
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.restore_snapshot_helper:

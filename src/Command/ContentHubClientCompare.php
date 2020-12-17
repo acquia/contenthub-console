@@ -2,8 +2,8 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +20,13 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
 
   use PlatformCommandTrait;
   use PlatformCmdOutputFormatterTrait;
-  use PlatformCommandExecutionTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -51,11 +57,14 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The event dispatcher.
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
    * @param string|NULL $name
    *   The name of this command.
    */
-  public function __construct(EventDispatcherInterface $dispatcher, string $name = NULL) {
-    parent::__construct();
+  public function __construct(EventDispatcherInterface $dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
+    parent::__construct($name);
+    $this->platformCommandExecutioner = $platform_command_executioner;
     $this->dispatcher = $dispatcher;
   }
 
@@ -68,8 +77,8 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
     $platform = $this->getPlatform('source');
     $sites_count = count($platform->getPlatformSites());
 
-    $raw = $this->runWithMemoryOutput(ContentHubAuditClients::getDefaultName(), [
-        '--count',
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubAuditClients::getDefaultName(), $platform, [
+        '--count' => TRUE,
       ]);
 
     $lines = explode(PHP_EOL, trim($raw));
