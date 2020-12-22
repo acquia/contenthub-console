@@ -167,12 +167,6 @@ services:
     public: false
     tags:
       - { name: common_console_command }
-  command.contenthub.restore_snapshot:
-    class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubRestoreSnapshot
-    public: true
-    arguments: ['@event_dispatcher', '@platform_command_executioner']
-    tags:
-      - { name: common_console_command }
   command.contenthub.restore_snapshot_helper:
     class: Acquia\Console\ContentHub\Command\Helpers\ContentHubRestoreSnapshotHelper
     public: false

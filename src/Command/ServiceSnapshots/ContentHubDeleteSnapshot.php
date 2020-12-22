@@ -75,16 +75,20 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
 
     $helper = $this->getHelper('question');
     $question = new ChoiceQuestion('Select snapshot you want to delete.', $snapshots);
+    $question->setMultiselect(TRUE);
     $select_snapshot = $helper->ask($input, $output, $question);
 
-    $delete_snapshot = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubDeleteSnapshotHelper::getDefaultName(), $this->getPlatform('source'), [
-      '--name' => $select_snapshot
-    ]);
-    if ($delete_snapshot->getReturnCode()) {
-      $output->writeln(sprintf('<error>Could not delete snapshot: %s</error>', $select_snapshot));
-      return 1;
+    foreach ($select_snapshot as $snapshot) {
+      $delete_snapshot = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubDeleteSnapshotHelper::getDefaultName(),
+        $this->getPlatform('source'),
+        ['--name' => $snapshot]);
+      if ($delete_snapshot->getReturnCode()) {
+        $output->writeln(sprintf('<error>Could not delete snapshot: %s</error>', $snapshot));
+        return 1;
+      }
+      $output->writeln(sprintf('<info>Snapshot deleted successfully: %s</info>', $snapshot));
     }
-    $output->writeln(sprintf('<info>Snapshot deleted successfully: %s</info>', $select_snapshot));
+
     return 0;
   }
 
@@ -98,7 +102,8 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
    *   Snapshots list.
    */
   protected function listSnapshots($output) {
-    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubGetSnapshots::getDefaultName(), $this->getPlatform('source'), [
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubGetSnapshots::getDefaultName(),
+      $this->getPlatform('source'), [
       '--list' => TRUE
     ]);
     if ($raw->getReturnCode()) {
