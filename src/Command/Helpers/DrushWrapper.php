@@ -29,13 +29,20 @@ class DrushWrapper extends Command {
    * {@inheritDoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    // Only ./vendor/bin/drush needs to be checked because commoncli is executed from vendor path
-    // which is configured in the platform configuration.
-    // So we are always executing it from vendor path configured in the platform config
-    // so we don't need to check ../vendor/bin/drush.
-    $path_to_drush = './vendor/bin/drush';
+    $eligible_drush_paths = [
+      './vendor/bin/drush',
+      '../vendor/bin/drush'
+    ];
 
-    if (!is_executable($path_to_drush)) {
+    $path_to_drush = '';
+    foreach ($eligible_drush_paths as $path) {
+      if (is_executable($path)) {
+        $path_to_drush = $path;
+        break;
+      }
+    }
+
+    if (empty($path_to_drush)) {
       throw new \Exception('Drush executable not found!');
     }
 
@@ -59,6 +66,7 @@ class DrushWrapper extends Command {
     }
 
     $process = new Process(array_merge([$match], $args));
+    $process->setTimeout(600);
 
     $exit_code = $process->run();
     $exit_code === 0 ?

@@ -34,7 +34,7 @@ class ContentHubModuleVersion extends ContentHubCommandBase  implements Platform
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    if (!$this->drupalServiceFactory->isContentHubEnabled()) {
+    if (!$this->drupalServiceFactory->isModuleEnabled('acquia_contenthub')) {
       return 1;
     }
 

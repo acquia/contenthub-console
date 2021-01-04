@@ -37,7 +37,7 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
   public function testContentHubModuleVersion(bool $module_exist, int $module_version, string $needle, int $exit_code) {
     $this
       ->drupalServiceFactory
-      ->isContentHubEnabled()
+      ->isModuleEnabled(Argument::any())
       ->shouldBeCalled()
       ->willReturn($module_exist);
 

@@ -85,17 +85,17 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
     while (!$ready) {
       $continue = FALSE;
 
+      $drush_options = ['--drush_command' => 'cr'];
+      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, $this->getPlatform('source'), $drush_options);
+      $exit_code = $raw->getReturnCode();
+      $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
+
       $sites_without_diff_module = $this->getNotUpToDateSites($output, ContentHubDiff::getDefaultName());
       if (!empty($sites_without_diff_module)) {
         $output->writeln('<error>The following sites do not have diff module within the codebase.</error>');
         $this->renderTable($output, $sites_without_diff_module);
         $continue = TRUE;
       }
-
-      $drush_options = ['--drush_command' => 'cr'];
-      $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, $this->getPlatform('source'), $drush_options);
-      $exit_code = $raw->getReturnCode();
-      $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
 
       $sites_not_ready_ach = $this->getNotUpToDateSites($output, ContentHubModuleVersion::getDefaultName(), 2);
 

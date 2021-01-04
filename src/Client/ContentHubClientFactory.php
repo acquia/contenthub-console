@@ -23,7 +23,7 @@ class ContentHubClientFactory {
    * @throws \Exception
    */
   public function getClient(DrupalServiceFactory $factory): ContentHubServiceInterface {
-    if (!$factory->isContentHubEnabled()) {
+    if (!$factory->isModuleEnabled('acquia_contenthub')) {
       throw new \Exception('No ContentHub version found in your Drupal instance.');
     }
 

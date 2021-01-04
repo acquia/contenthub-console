@@ -33,12 +33,27 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
    *
    * @dataProvider dataProvider
    */
-  public function testContentHubAuditDepcalc(bool $module_exist, bool $module_enabled, string $needle, int $exit_code) {
+  public function testContentHubAuditDepcalc(bool $module_exist, bool $module_enabled, bool $enable_depcalc, string $needle, int $exit_code) {
     $this
       ->drupalServiceFactory
-      ->getDrupalService(Argument::any())
+      ->isModulePresentInCodebase(Argument::any())
       ->shouldBeCalled()
-      ->willReturn($this->getDrupalServiceMocks($module_exist, $module_enabled));
+      ->willReturn($module_exist);
+    if ($module_exist) {
+      $this
+        ->drupalServiceFactory
+        ->isModuleEnabled(Argument::any())
+        ->shouldBeCalled()
+        ->willReturn($module_enabled);
+    }
+    if ($enable_depcalc) {
+      $this
+        ->drupalServiceFactory
+        ->enableModules(Argument::any())
+        ->shouldBeCalled()
+        ->willReturn($enable_depcalc);
+    }
+
 
     $command = new ContentHubAuditDepcalc();
     $command->setDrupalServiceFactory($this->drupalServiceFactory->reveal());
@@ -51,28 +66,6 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
   }
 
   /**
-   * Returns mock instance for getDrupalService().
-   *
-   * @param $module_exist
-   *   Return value for exists().
-   * @param $module_enabled
-   *   Return value for moduleExists().
-   *
-   * @return object
-   *   Mock of getDrupalService function return.
-   */
-  public function getDrupalServiceMocks(bool $module_exist, bool $module_enabled): object {
-    return new class ($module_exist, $module_enabled) {
-      public function __construct(bool $module_exist, bool $module_enabled) {
-        $this->exists = $module_exist;
-        $this->enabled = $module_enabled;
-      }
-      public function exists(): bool {return $this->exists;}
-      public function moduleExists(): bool {return $this->enabled;}
-    };
-  }
-
-  /**
    * A data provider for ::testContentHubAuditDepcalc()
    *
    * @return array[]
@@ -82,11 +75,13 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
       [
         TRUE,
         TRUE,
-        'Depcalc module is present. You may proceed.',
+        FALSE,
+        "Depcalc module is enabled. You may proceed.\n",
         0,
       ],
       [
         TRUE,
+        FALSE,
         FALSE,
         'Depcalc module is not enabled.',
         1,
@@ -94,10 +89,12 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
       [
         FALSE,
         TRUE,
+        FALSE,
         'Depcalc module is missing from dependencies! Please run: composer require drupal/depcalc and deploy to your environment.',
         2,
       ],
       [
+        FALSE,
         FALSE,
         FALSE,
         'Depcalc module is missing from dependencies! Please run: composer require drupal/depcalc and deploy to your environment.',

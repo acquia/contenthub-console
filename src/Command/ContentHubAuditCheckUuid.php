@@ -27,7 +27,7 @@ class ContentHubAuditCheckUuid extends Command implements PlatformBootStrapComma
    */
   public function configure(): void {
     $this->setDescription('Audits configuration entities for empty UUIDs.');
-    $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Generating uuids.');
+    $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Generate UUIDs for entities without UUIDs.');
     $this->setAliases(['audit-uuid']);
   }
 
@@ -56,7 +56,7 @@ class ContentHubAuditCheckUuid extends Command implements PlatformBootStrapComma
       return 0;
     }
 
-    $output->writeln('<bg=yellow;options=bold>The following configuration entities do not have a uuid:</>');
+    $output->writeln('<error>The following configuration entities do not have valid UUIDs:</error>');
     $table = new Table($output);
     $table->setHeaders(['Config']);
     foreach (array_keys($configs) as $config_id) {
@@ -64,13 +64,13 @@ class ContentHubAuditCheckUuid extends Command implements PlatformBootStrapComma
     }
     $table->render();
 
-    if ($input->getOption('fix')) {
+    if ($input->hasOption('fix') && $input->getOption('fix')) {
       $this->provideUuid($configs);
-      $output->writeln('<info>Uuids have been generated for the entities listed above.</info>');
+      $output->writeln('<info>UUIDs have been generated for the entities listed above.</info>');
       return 0;
     }
     // Errors were not fixed.
-    $output->writeln("<comment>Uuids have not been generated yet. Re-run this command with the '-fix' flag to automatically generate uuids for these entities.</comment>");
+    $output->writeln("<comment>UUIDs have not been generated yet. Re-run the 'ach:audit:config-uuid' command with '-fix' option to automatically generate UUIDs for these entities.</comment>");
     return 1;
   }
 

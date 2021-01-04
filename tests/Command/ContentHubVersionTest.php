@@ -144,10 +144,10 @@ class ContentHubVersionTest extends TestCase {
         // Test case to validate command works fine without Lift version.
         // Alias options.
         ['alias' => 'test', '--uri' => "dev.acquiacloud.com"],
-        // ContentHubDiff output.
-        ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // DrushWrapper output.
         ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'],
+        // ContentHubDiff output.
+        ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // ContentHubModuleVersion output.
         ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'],
         // ContentHubLiftVersion output.
@@ -166,10 +166,10 @@ class ContentHubVersionTest extends TestCase {
       [
         // Alias options.
         ['alias' => 'test', '--uri' => "dev.acquiacloud.com", '--lift-support' => TRUE],
-        // ContentHubDiff output.
-        ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // DrushWrapper output.
         ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'],
+        // ContentHubDiff output.
+        ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // ContentHubModuleVersion output.
         ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'],
         // ContentHubLiftVersion output.
@@ -188,10 +188,10 @@ class ContentHubVersionTest extends TestCase {
       [
         // Alias options. input set to yes so that command becomes interactive.
         ['alias' => 'test', '--uri' => "dev.acquiacloud.com", '--lift-support' => TRUE, 'input' => 'yes'],
-        // ContentHubDiff output.
-        ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // DrushWrapper output.
         ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'],
+        // ContentHubDiff output.
+        ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // ContentHubModuleVersion output.
         ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'],
         // ContentHubLiftVersion output. Since in the first iteration Lift version is 3, command becomes interactive.

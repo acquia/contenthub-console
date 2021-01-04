@@ -728,7 +728,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   protected function executeValidateInterestListDiff(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
-      $quest = new ConfirmationQuestion('Validating interest list diff...');
+      $quest = new ConfirmationQuestion('Validating interest list diff... Press any key to validate.');
       $helper->ask($input, $output, $quest);
 
       $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubInterestListDiff::getDefaultName(), $platform);

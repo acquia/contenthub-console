@@ -135,7 +135,8 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   public function purge(): array {
     $response = \Drupal::service('acquia_contenthub.client_manager')->createRequest('purge');
     if (!isset($response['success']) || $response['success'] !== TRUE) {
-      throw new \Exception("Purge failed. Reason: {$response['error']['message']}");
+      $error_message = isset($response['error']['message']) ?  $response['error']['message'] : $response['error'];
+      throw new \Exception("Purge failed. Reason: {$error_message}");
     }
     return $response;
   }

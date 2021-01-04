@@ -53,15 +53,48 @@ class DrupalServiceFactory {
   }
 
   /**
-   * Checks if Acquia ContentHub module is present.
+   * Checks whether a particular module is present in the codebase.
+   *
+   * @param string $module
+   *   The module to check if it is present.
    *
    * @return bool
-   *   True if Acquia ContentHub module is enabled.
+   *   TRUE if module exists in the codebase, FALSE otherwise.
    *
    * @throws \Exception
    */
-  public function isContentHubEnabled(): bool {
-    return $this->getDrupalService('module_handler')->moduleExists('acquia_contenthub');
+  public function isModulePresentInCodebase(string $module): bool {
+    return $this->getDrupalService('extension.list.module')->exists($module);
+  }
+
+  /**
+   * Checks if a particular module is enabled.
+   *
+   * @param string $module
+   *   The module to enable.
+   *
+   * @return bool
+   *   TRUE if module is enabled, FALSE otherwise.
+   *
+   * @throws \Exception
+   */
+  public function isModuleEnabled(string $module): bool {
+    return $this->getDrupalService('module_handler')->moduleExists($module);
+  }
+
+  /**
+   * Enables a module in the site.
+   *
+   * @param array $modules
+   *   The modules to enable.
+   *
+   * @return bool
+   *   TRUE if the modules were successfully enabled, FALSE otherwise.
+   *
+   * @throws \Exception
+   */
+  public function enableModules(array $modules): bool {
+    return $this->getDrupalService('module_installer')->install($modules);
   }
 
   /**
