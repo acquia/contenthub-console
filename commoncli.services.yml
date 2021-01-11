@@ -54,6 +54,24 @@ services:
     arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
     tags:
       - { name: common_console_command }
+  command.contenthub.ace.cron_check:
+    class: Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCheck
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace.cron_create:
+    class: Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate
+    public: true
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace_multi.cron_create:
+    class: Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreateMultiSite
+    public: true
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
   command.contenthub.acsf.backup.create:
     class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupCreate
     public: true
@@ -70,6 +88,18 @@ services:
     class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupDelete
     public: true
     arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
+    tags:
+      - { name: common_console_command }
+  command.contenthub.acsf.cron_create:
+    class: Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate
+    public: true
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.acsf.cron_check:
+    class: Acquia\Console\ContentHub\Command\Cron\AcsfCronCheck
+    public: true
+    arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
   command.contenthub.upgrade_start:
