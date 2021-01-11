@@ -12,6 +12,66 @@ services:
     public: true;
 
   #  Commands
+  command.contenthub.backup.list:
+    class: Acquia\Console\ContentHub\Command\Backups\BackupList
+    public: true
+    arguments: ['@config.storage']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace.backup.create:
+    class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate
+    public: true
+    arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace_multi.backup.create:
+    class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreateMultiSite
+    public: true
+    arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace.backup.restore:
+    class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestore
+    public: true
+    arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace_multi.backup.restore:
+    class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestoreMultisite
+    public: true
+    arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace.backup.delete:
+    class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupDelete
+    public: true
+    arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
+    tags:
+      - { name: common_console_command }
+  command.contenthub.ace_multi.backup.delete:
+    class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupDeleteMultisite
+    public: true
+    arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
+    tags:
+      - { name: common_console_command }
+  command.contenthub.acsf.backup.create:
+    class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupCreate
+    public: true
+    arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.acsf.backup.restore:
+    class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupRestore
+    public: true
+    arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.acsf.backup.delete:
+    class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupDelete
+    public: true
+    arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
+    tags:
+      - { name: common_console_command }
   command.contenthub.upgrade_start:
     class: Acquia\Console\ContentHub\Command\ContentHubUpgradeStart
     public: true
