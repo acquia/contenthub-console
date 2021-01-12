@@ -3,9 +3,8 @@
     "description": "A package providing Acquia ContentHub commands for the CommonConsole command line interface.",
     "type": "project",
     "require": {
-        "acquia/cloud-console": "dev-master",
+        "acquia/acsf-console": "dev-LCH-4692",
         "ext-json": "*",
-        "eclipsegc/common-console": "dev-master",
         "spatie/ssl-certificate": "^1.19"
     },
     "autoload": {
