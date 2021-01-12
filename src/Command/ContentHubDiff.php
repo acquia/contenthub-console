@@ -2,7 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
 use Symfony\Component\Console\Input\InputInterface;

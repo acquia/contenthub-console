@@ -14,11 +14,31 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Acquia\\Console\\ContentHub\\Tests\\": "tests"
+            "Acquia\\Console\\ContentHub\\Tests\\": "tests",
+            "Acquia\\Console\\Cloud\\Tests\\": "vendor/acquia/cloud-console/tests",
+            "Acquia\\Console\\Acsf\\Tests\\": "vendor/acquia/acsf-console/tests",
+            "Acquia\\Console\\Helpers\\Tests\\": "vendor/acquia/console-helpers/tests"
         }
     },
     "minimum-stability": "dev",
     "require-dev": {
         "phpunit/phpunit": "^8"
+    },
+    "repositories": {
+        "console-helpers": {
+            "type": "vcs",
+            "url": "git@github.com:acquia/console-helpers.git",
+            "no-api": true
+        },
+        "cloud-console": {
+            "type": "vcs",
+            "url": "git@github.com:acquia/cloud-console.git",
+            "no-api": true
+        },
+        "acsf-console": {
+            "type": "vcs",
+            "url": "git@github.com:acquia/acsf-console.git",
+            "no-api": true
+        }
     }
 }
