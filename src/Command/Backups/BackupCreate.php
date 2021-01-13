@@ -6,7 +6,7 @@ use Acquia\Console\Acsf\Platform\ACSFPlatform;
 use Acquia\Console\Cloud\Command\Helpers\AcquiaCloudDbBackupDeleteHelper;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
-use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,7 +30,7 @@ class BackupCreate extends Command {
   /**
    * Command executioner service.
    *
-   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $executioner;
 
@@ -39,7 +39,7 @@ class BackupCreate extends Command {
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
-   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $executioner
    *   Command executioner service instance.
    * @param string|NULL $name
    *   Command name.

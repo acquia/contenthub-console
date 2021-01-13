@@ -2,7 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\DrushWrapper;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
@@ -28,7 +28,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -63,7 +63,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.
-   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.

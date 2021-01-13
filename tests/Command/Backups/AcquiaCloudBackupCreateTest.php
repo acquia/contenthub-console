@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Tests\Command\Backups;
 
 use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate;
-use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
 use Exception;
 use Prophecy\Argument;
@@ -178,6 +178,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    * @throws Exception
    */
   public function getPlatformCommandExecutioner(array $arr): object {
+    /** @var \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command */
     $platform_command = $this->prophesize(PlatformCommandExecutioner::class);
     $platform_command
       ->runLocallyWithMemoryOutput(Argument::any(), Argument::any(), Argument::any())

@@ -4,7 +4,7 @@ namespace Acquia\Console\ContentHub\Command\Backups;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\Helpers\AcquiaCloudDbBackupDeleteHelper;
-use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\ContentHubDeleteSnapshotHelper;
 use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
@@ -42,7 +42,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
   /**
    * Command executioner service.
    *
-   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $executioner;
 
@@ -66,7 +66,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    *   Event dispatcher.
    * @param \EclipseGc\CommonConsole\Config\ConfigStorage $configStorage
    *   Config storage.
-   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $executioner
    *   Command executioner service instance.
    * @param string|NULL $name
    *   Command name.

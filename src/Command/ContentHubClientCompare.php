@@ -2,7 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
@@ -24,7 +24,7 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -57,7 +57,7 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The event dispatcher.
-   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
    * @param string|NULL $name
    *   The name of this command.

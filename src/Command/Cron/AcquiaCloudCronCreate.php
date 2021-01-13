@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Command\Cron;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
-use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\ContentHubQueue;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use AcquiaCloudApi\Endpoints\Crons;
@@ -28,7 +28,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -50,7 +50,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
-   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
    * @param string|NULL $name
    *   Command name.

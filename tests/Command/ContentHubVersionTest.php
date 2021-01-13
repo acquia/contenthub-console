@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Tests\Command;
 
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
-use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\ContentHubVersion;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
