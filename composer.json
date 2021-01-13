@@ -22,22 +22,5 @@
     "minimum-stability": "dev",
     "require-dev": {
         "phpunit/phpunit": "^8"
-    },
-    "repositories": {
-        "console-helpers": {
-            "type": "vcs",
-            "url": "git@github.com:acquia/console-helpers.git",
-            "no-api": true
-        },
-        "cloud-console": {
-            "type": "vcs",
-            "url": "git@github.com:acquia/cloud-console.git",
-            "no-api": true
-        },
-        "acsf-console": {
-            "type": "vcs",
-            "url": "git@github.com:acquia/acsf-console.git",
-            "no-api": true
-        }
     }
 }
