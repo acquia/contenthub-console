@@ -2,7 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Tests\Command\Backups;
 
-use Acquia\Console\Cloud\Command\Backups\AcquiaCloudBackupRestore;
+use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestore;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
@@ -12,7 +12,7 @@ use Prophecy\Argument;
 /**
  * Class AcquiaCloudBackupRestoreTest
  *
- * @coversDefaultClass \Acquia\Console\Cloud\Command\Backups\AcquiaCloudBackupRestore
+ * @coversDefaultClass \Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestore
  *
  * @group acquia-console-cloud
  *
