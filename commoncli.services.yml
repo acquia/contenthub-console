@@ -6,10 +6,6 @@ services:
   drupal_service_factory:
     class: Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
     public: true
-  platform_command_executioner:
-    class: Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
-    arguments: ['@common_console_application']
-    public: true;
 
   #  Commands
   command.contenthub.backup.list:

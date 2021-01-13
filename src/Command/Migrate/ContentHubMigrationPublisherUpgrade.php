@@ -3,10 +3,10 @@
 namespace Acquia\Console\ContentHub\Command\Migrate;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
 use Acquia\Console\ContentHub\Command\Helpers\DrushWrapper;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -25,7 +25,7 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -52,7 +52,7 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
   /**
    * ContentHubMigrationPublisherUpgrade constructor.
    *
-   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.
