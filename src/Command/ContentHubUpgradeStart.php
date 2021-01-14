@@ -2,11 +2,11 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\Acsf\Command\AcsfCronCreate;
 use Acquia\Console\Acsf\Command\AcsfDatabaseBackupCreate;
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
-use Acquia\Console\Cloud\Command\AcquiaCloudCronCreate;
-use Acquia\Console\Cloud\Command\AcquiaCloudCronCreateMultiSite;
+use Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate;
+use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate;
+use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreateMultiSite;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupCreate;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
