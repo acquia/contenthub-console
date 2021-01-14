@@ -7,6 +7,9 @@ use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ *
+ */
 class ContentHubCustomFields extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   /**

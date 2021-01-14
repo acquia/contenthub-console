@@ -65,7 +65,8 @@ class AcquiaCloudCronCheck extends AcquiaCloudCommandBase {
       try {
         $cron->disable($filtered_cron['env_id'], $filtered_cron['id']);
         $output->writeln("<warning>{$filtered_cron['label']} has been disabled!</warning>");
-      } catch (\Exception $exception) {
+      }
+      catch (\Exception $exception) {
         $output->writeln("<error>Cannot disable cron with id: {$filtered_cron['id']}</error>");
       }
     }

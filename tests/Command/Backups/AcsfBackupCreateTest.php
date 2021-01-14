@@ -112,19 +112,34 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
    */
   private function runOutputMocks(array $output): object {
     return new class($output['exit_code'], $output['command_output']) {
+
+      /**
+       *
+       */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
         $this->command_output = $command_output;
       }
 
-      public function getReturnCode() {return $this->exit_code;}
+      /**
+       *
+       */
+      public function getReturnCode() {
+        return $this->exit_code;
+      }
 
-      public function __toString() {return $this->command_output;}
+      /**
+       *
+       */
+      public function __toString() {
+        return $this->command_output;
+      }
+
     };
   }
 
   /**
-   * A data provider for ::testAcsfBackupCreate
+   * A data provider for ::testAcsfBackupCreate.
    *
    * @return array[]
    *   Data provider array for testAcsfBackupCreate.
@@ -136,7 +151,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         ['test_backup_name'],
         // Whether database config name already exists.
         [FALSE],
-        //ACSF DB Creation output.
+        // ACSF DB Creation output.
         [
           ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
           ['exit_code' => 0, 'command_output' => ''],
@@ -154,11 +169,11 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site1.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ],
           // Site 2.
           [
@@ -168,18 +183,18 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site2.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ]
         ],
         // Config Storage save() method called.
         TRUE,
-        // Exit code
+        // Exit code.
         0,
-        // Needle
+        // Needle.
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
@@ -210,11 +225,11 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site1.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ],
           // Site 2.
           [
@@ -224,18 +239,18 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site2.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ]
         ],
         // Config Storage save() method called.
         TRUE,
-        // Exit code
+        // Exit code.
         0,
-        // Needle
+        // Needle.
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Name cannot contain white spaces!'
@@ -269,11 +284,11 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site1.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ],
           // Site 2.
           [
@@ -283,18 +298,18 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site2.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ]
         ],
         // Config Storage save() method called.
         FALSE,
-        // Exit code
+        // Exit code.
         2,
-        // Needle
+        // Needle.
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
@@ -309,7 +324,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         ['test_backup_name'],
         // Whether database config name already exists.
         [FALSE],
-        //ACSF DB Creation output.
+        // ACSF DB Creation output.
         [
           ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
           ['exit_code' => 0, 'command_output' => ''],
@@ -327,11 +342,11 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site1.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ],
           // Site 2.
           [
@@ -341,18 +356,18 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
             'stack_id' => 1,
             'domain' => 'site2.acsitefactory.com',
             'groups' =>
-              array (
+              [
                 0 => 326,
-              ),
-            'site_collection' => false,
-            'is_primary' => true,
+              ],
+            'site_collection' => FALSE,
+            'is_primary' => TRUE,
           ]
         ],
         // Config Storage save() method called.
         FALSE,
-        // Exit code
+        // Exit code.
         2,
-        // Needle
+        // Needle.
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
@@ -367,7 +382,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         ['test_backup_name1'],
         // Whether database config name already exists.
         [FALSE],
-        //ACSF DB Creation output.
+        // ACSF DB Creation output.
         [
           ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
           ['exit_code' => 0, 'command_output' => ''],
@@ -379,9 +394,9 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         [],
         // Config Storage save() method called.
         FALSE,
-        // Exit code
+        // Exit code.
         1,
-        // Needle
+        // Needle.
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'

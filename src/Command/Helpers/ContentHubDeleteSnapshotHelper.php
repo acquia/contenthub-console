@@ -27,6 +27,9 @@ class ContentHubDeleteSnapshotHelper extends ContentHubCommandBase implements Pl
     return 'drupal8';
   }
 
+  /**
+   *
+   */
   protected function configure() {
     $this->setDescription('Acquia Content Hub delete snapshots helper.')
       ->setHidden(TRUE)

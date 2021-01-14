@@ -10,7 +10,7 @@ use Prophecy\Argument;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * Class BackupListTest
+ * Class BackupListTest.
  *
  * @coversDefaultClass \Acquia\Console\ContentHub\Command\Backups\BackupList
  *

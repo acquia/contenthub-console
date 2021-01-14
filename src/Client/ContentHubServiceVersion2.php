@@ -6,7 +6,7 @@ use Acquia\Console\ContentHub\Command\ContentHubModuleTrait;
 use GuzzleHttp\ClientInterface;
 
 /**
- * Class ContentHubServiceVersion2
+ * Class ContentHubServiceVersion2.
  *
  * @package Acquia\Console\ContentHub\Client
  */
@@ -84,7 +84,6 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
 
     return $webhooks;
   }
-
 
   /**
    * {@inheritDoc}

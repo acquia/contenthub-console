@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ContentHubVerifyWebhooksDefaultFilters
+ * Class ContentHubVerifyWebhooksDefaultFilters.
  *
  * @package Acquia\Console\ContentHub\Command
  */
@@ -67,7 +67,7 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
     // Fetch all filters and separate default filters.
     $all_filters = $this->achClientService->listFilters();
     $all_filters = array_column($all_filters['data'], 'name', 'uuid');
-    $default_filters  = preg_grep("/" . 'default_filter' . "/i", $all_filters);
+    $default_filters = preg_grep("/" . 'default_filter' . "/i", $all_filters);
     foreach ($default_filters as $filter_uuid => $filter_name) {
       if (!in_array($filter_uuid, $filters)) {
         $check_filters[] = [$filter_uuid, $filter_name];
@@ -87,7 +87,7 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
   }
 
   /**
-   * Verify filters migration from 1.x to 2.x
+   * Verify filters migration from 1.x to 2.x.
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *

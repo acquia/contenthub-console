@@ -72,15 +72,53 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
    */
   public function getDrupalServiceMocks($overridden_conf, $conf): object {
     return new class ($overridden_conf, $conf) {
+
+      /**
+       *
+       */
       public function __construct($overridden_conf, $conf) {
         $this->overridden_conf = $overridden_conf;
         $this->conf = $conf;
       }
-      public function getOriginal() {return $this->overridden_conf;}
-      public function getSettings() {return $this->overridden_conf;}
-      public function getRawData() {return is_object($this->conf) ? $this->normalize($this->conf) : $this->conf;}
-      public function get(): object {return $this;}
-      public function getEditable(): object {return $this;}
+
+      /**
+       *
+       */
+      public function getOriginal() {
+        return $this->overridden_conf;
+      }
+
+      /**
+       *
+       */
+      public function getSettings() {
+        return $this->overridden_conf;
+      }
+
+      /**
+       *
+       */
+      public function getRawData() {
+        return is_object($this->conf) ? $this->normalize($this->conf) : $this->conf;
+      }
+
+      /**
+       *
+       */
+      public function get(): object {
+        return $this;
+      }
+
+      /**
+       *
+       */
+      public function getEditable(): object {
+        return $this;
+      }
+
+      /**
+       *
+       */
       protected function normalize($settings):array {
         return [
           'hostname' => $settings->getUrl(),
@@ -92,6 +130,7 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
           'webhook' => $settings->toArray()['webhook'],
         ];
       }
+
     };
   }
 
@@ -99,7 +138,7 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
    * Sets Default values for Content Hub Admin Settings.
    *
    * @param array $overrides
-   *   Override initial default values
+   *   Override initial default values.
    * @param bool $settings
    *   TRUE if we want to return a Settings object, FALSE for array return.
    *
@@ -198,7 +237,7 @@ Configuration does not match the one stored in the database.
         2,
         $ch_config2,
         [],
-//        new Settings(NULL, NULL, NULL, NULL, NULL),
+      // New Settings(NULL, NULL, NULL, NULL, NULL),.
         "<warning>Content Hub configuration stored in database is empty. Please make sure it is intentional.</warning>
 Configuration does not match the one stored in the database.
 +----------------------+-------------------+-------------------------------------------+

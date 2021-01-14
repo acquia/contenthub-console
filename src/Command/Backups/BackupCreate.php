@@ -41,7 +41,7 @@ class BackupCreate extends Command {
    *   Event dispatcher.
    * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $executioner
    *   Command executioner service instance.
-   * @param string|NULL $name
+   * @param string|null $name
    *   Command name.
    */
   public function __construct(EventDispatcherInterface $event_dispatcher, PlatformCommandExecutioner $executioner, string $name = NULL) {
@@ -49,7 +49,6 @@ class BackupCreate extends Command {
 
     $this->executioner = $executioner;
   }
-
 
   /**
    * {@inheritdoc}
@@ -67,15 +66,18 @@ class BackupCreate extends Command {
     switch ($platform) {
       case AcquiaCloudPlatform::getPlatformId():
         return $this->executioner->runLocallyWithMemoryOutput(AcquiaCloudBackupCreate::getDefaultName(), $platform, $input);
-        break;
+
+      break;
 
       case AcquiaCloudMultiSitePlatform::getPlatformId():
         return $this->executioner->runLocallyWithMemoryOutput(AcquiaCloudBackupCreateMultiSite::getDefaultName(), $platform, $input);
-        break;
+
+      break;
 
       case ACSFPlatform::getPlatformId():
         return $this->executioner->runLocallyWithMemoryOutput(AcquiaCloudBackupCreate::getDefaultName(), $platform, $input);
-        break;
+
+      break;
 
       default:
         break;

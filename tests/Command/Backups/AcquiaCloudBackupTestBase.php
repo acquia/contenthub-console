@@ -58,7 +58,8 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
         if (!empty($arg['arguments'])) {
           $client->request(Argument::any(), Argument::any())
             ->willReturn(...$arg['returns']);
-        } else {
+        }
+        else {
           $client->request(Argument::any(), Argument::any())
             ->willReturn(...$arg['returns']);
         }
@@ -71,7 +72,7 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
         AcquiaCloudPlatform::ACE_API_SECRET => 'test_secret',
         AcquiaCloudPlatform::ACE_APPLICATION_ID => ['test1'],
         AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS => [
-          '111111-11111111-c36a-401a-9724-fd8072a607d7'=>'111111-11111111-c36a-401a-9724-fd8072a607d7'
+          '111111-11111111-c36a-401a-9724-fd8072a607d7' => '111111-11111111-c36a-401a-9724-fd8072a607d7'
         ],
         PlatformInterface::PLATFORM_ALIAS_KEY => 'test'
       ],
@@ -88,7 +89,7 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
    * @return object
    *   Object containing ConfigStorage data.
    */
-  abstract function getConfigStorage(array $arr): object;
+  abstract public function getConfigStorage(array $arr): object;
 
   /**
    * @param array $arr
@@ -97,7 +98,6 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
    * @return object
    *   Object containing PlatformCommandExecutioner instance.
    */
-  abstract function getPlatformCommandExecutioner(array $arr): object;
-
+  abstract public function getPlatformCommandExecutioner(array $arr): object;
 
 }

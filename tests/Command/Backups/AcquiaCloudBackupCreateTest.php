@@ -5,11 +5,10 @@ namespace Acquia\Console\ContentHub\Tests\Command\Backups;
 use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
-use Exception;
 use Prophecy\Argument;
 
 /**
- * Class AcquiaCloudBackupCreateTest
+ * Class AcquiaCloudBackupCreateTest.
  *
  * @coversDefaultClass \Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate
  *
@@ -38,6 +37,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    *   Expected return value of execute() method.
    *
    * @throws \ReflectionException
+   *
    * @dataProvider dataProvider
    */
   public function testBackupCreate(array $config_exists, array $backup_name, array $local_data, array $platform_data, string $needle, int $exit_code) {
@@ -47,11 +47,11 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
       'create backup' => [
         'arguments' => [
           // First case.
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           // Second case.
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           // Third case.
-          ['delete','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/chdemo1/backups/4676965']
+          ['delete', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/chdemo1/backups/4676965']
         ],
         'returns' => [
           // First case.
@@ -94,7 +94,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
           ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'],
         ],
         [
-          'exit_code' => 0, 'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
+          'exit_code' => 0,
+        'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
         ],
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
          . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
@@ -112,7 +113,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
           ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'],
         ],
         [
-          'exit_code' => 0, 'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
+          'exit_code' => 0,
+        'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
         ],
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
@@ -131,7 +133,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
           ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'],
         ],
         [
-          'exit_code' => 0, 'command_output' => ''
+          'exit_code' => 0,
+        'command_output' => ''
         ],
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
@@ -152,7 +155,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    *
    * @return object
    *   Object containing ConfigStorage data.
-   * @throws Exception
+   *
+   * @throws \Exception
    */
   public function getConfigStorage(array $arr): object {
     $config_storage = $this->prophesize(ConfigStorage::class);
@@ -175,7 +179,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    *
    * @return object
    *   Object containing PlatformCommandExecutioner instance.
-   * @throws Exception
+   *
+   * @throws \Exception
    */
   public function getPlatformCommandExecutioner(array $arr): object {
     /** @var \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command */
@@ -209,14 +214,29 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    */
   protected function runLocallyWithMemoryOutputMocks(array $output): object {
     return new class($output['exit_code'], $output['command_output']) {
+
+      /**
+       *
+       */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
         $this->command_output = $command_output;
       }
 
-      public function getReturnCode() {return $this->exit_code;}
+      /**
+       *
+       */
+      public function getReturnCode() {
+        return $this->exit_code;
+      }
 
-      public function __toString() {return $this->command_output;}
+      /**
+       *
+       */
+      public function __toString() {
+        return $this->command_output;
+      }
+
     };
   }
 
@@ -231,14 +251,29 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    */
   protected function runWithMemoryOutputMocks(array $output): object {
     return new class($output['exit_code'], $output['command_output']) {
+
+      /**
+       *
+       */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
         $this->command_output = $command_output;
       }
 
-      public function getReturnCode() {return $this->exit_code;}
+      /**
+       *
+       */
+      public function getReturnCode() {
+        return $this->exit_code;
+      }
 
-      public function __toString() {return $this->command_output;}
+      /**
+       *
+       */
+      public function __toString() {
+        return $this->command_output;
+      }
+
     };
   }
 

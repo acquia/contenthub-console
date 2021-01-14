@@ -9,7 +9,7 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\StreamOutput;
 
 /**
- * Class ContentHubVerifyWebhooksDefaultFiltersTest
+ * Class ContentHubVerifyWebhooksDefaultFiltersTest.
  *
  * @coversDefaultClass \Acquia\Console\ContentHub\Command\ContentHubVerifyWebhooksDefaultFilters
  *
@@ -109,6 +109,7 @@ class ContentHubVerifyWebhooksDefaultFiltersTest extends ContentHubCommandTestBa
       public function get(string $state_name): array {
         return $this->filters[$state_name];
       }
+
     };
   }
 
@@ -201,4 +202,5 @@ No webhooks found.
       ],
     ];
   }
+
 }

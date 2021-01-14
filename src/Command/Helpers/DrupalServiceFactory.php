@@ -109,4 +109,5 @@ class DrupalServiceFactory {
     return $this->hasDrupalService('acquia_contenthub.client.factory') ? 2 :
       ($this->hasDrupalService('acquia_contenthub.client_manager') ? 1 : 0);
   }
+
 }

@@ -71,7 +71,7 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
     $output->writeln('Initiating module upgrade process...');
     $drush_options = ['--drush_command' => 'cr'];
     if ($uri = $input->getOption('uri')) {
-     $drush_options['--uri'] = $uri;
+      $drush_options['--uri'] = $uri;
     }
     $this->executeDrushCommand($drush_options, $output);
     $this->updateDatabases($input, $output);
@@ -177,7 +177,7 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
    *   Exit code from drush execution.
    */
   private function executeDrushCommand($drush_options, $output) {
-    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName,NULL, $drush_options);
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, NULL, $drush_options);
     $exit_code = $raw->getReturnCode();
     $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
     return $exit_code;

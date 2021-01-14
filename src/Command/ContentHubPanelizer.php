@@ -12,12 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubPanelizer extends ContentHubCommandBase  implements PlatformBootStrapCommandInterface {
+class ContentHubPanelizer extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   /**
    * {@inheritdoc}
    */
-  protected  static $defaultName = 'ach:panelizer-check';
+  protected static $defaultName = 'ach:panelizer-check';
 
   /**
    * {@inheritdoc}
@@ -44,4 +44,5 @@ class ContentHubPanelizer extends ContentHubCommandBase  implements PlatformBoot
     $output->writeln('<comment>Panelizer module installed. Please consider using Layout builder instead!</comment>');
     return 0;
   }
+
 }

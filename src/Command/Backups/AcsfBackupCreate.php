@@ -85,8 +85,8 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
    */
   protected function getDifference(object $before, object $after) {
     $diff = [];
-    $before = json_decode(json_encode($before), true);
-    $after = json_decode(json_encode($after), true);
+    $before = json_decode(json_encode($before), TRUE);
+    $after = json_decode(json_encode($after), TRUE);
     foreach ($before as $site_id => $backup_ids) {
       $backup_id = current(array_diff($after[$site_id], $backup_ids));
       if ($backup_id) {
@@ -100,9 +100,9 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
   /**
    * Helper function to get the list of Acsf sites backup list.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform instance.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Output instance.
    *
    * @return object|null
@@ -110,7 +110,7 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
    *
    * @throws \Exception
    */
-  protected function runAcsfBackupListCommand(PlatformInterface $platform, OutputInterface $output): ?object  {
+  protected function runAcsfBackupListCommand(PlatformInterface $platform, OutputInterface $output): ?object {
     $raw = $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcsfDatabaseBackupList::getDefaultName(),
       $platform, ['--silent' => TRUE]);
 

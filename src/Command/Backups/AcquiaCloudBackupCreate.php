@@ -74,7 +74,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *   Config storage.
    * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
-   * @param string|NULL $name
+   * @param string|null $name
    *   Command name.
    */
   public function __construct(EventDispatcherInterface $event_dispatcher, ConfigStorage $config_storage, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
@@ -117,7 +117,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     });
     $answer = $helper->ask($input, $output, $question);
 
-    try{
+    try {
       $backups = $this->getBackupId($this->platform, $output);
       if (empty($backups)) {
         $output->writeln('<warning>Cannot find the recently created backup.</warning>');
@@ -129,7 +129,8 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       try {
         $snapshot = $this->runSnapshotCreateCommand($output);
         $snapshot_failed = empty($snapshot) ? TRUE : FALSE;
-      } catch (\Exception $exception) {
+      }
+      catch (\Exception $exception) {
         $output->writeln("<error>{$exception->getMessage()}</error>");
       }
       if ($snapshot_failed) {
@@ -140,7 +141,8 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       }
       $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is {$snapshot['module_version']}.x .</info>");
 
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
       $output->writeln("<error>{$exception->getMessage()}</error>");
       return 3;
     }
@@ -155,7 +157,6 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       'database' => $backups,
       'ach_snapshot' => $snapshot['snapshot_id'],
     ];
-
 
     $config->set('name', $answer);
     $config->set('platform', $platform_info);
@@ -175,6 +176,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @return array
    *   Info about newly created database backups.
+   *
    * @throws \Exception
    */
   protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
@@ -206,8 +208,8 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    */
   protected function runBackupListCommand(PlatformInterface $platform, OutputInterface $output): array {
     $cmd_input = [
-      '--all' => true,
-      '--silent' => true,
+      '--all' => TRUE,
+      '--silent' => TRUE,
     ];
 
     $raw = $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupList::getDefaultName(), $platform, $cmd_input);
@@ -245,8 +247,8 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    */
   protected function runBackupCreateCommand(PlatformInterface $platform): object {
     $cmd_input = [
-      '--all' => true,
-      '--wait' => true,
+      '--all' => TRUE,
+      '--wait' => TRUE,
     ];
 
     return $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupCreate::getDefaultName(), $platform, $cmd_input);

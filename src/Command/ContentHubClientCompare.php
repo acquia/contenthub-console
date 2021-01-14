@@ -59,7 +59,7 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
    *   The event dispatcher.
    * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
-   * @param string|NULL $name
+   * @param string|null $name
    *   The name of this command.
    */
   public function __construct(EventDispatcherInterface $dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
@@ -78,8 +78,8 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
     $sites_count = count($platform->getPlatformSites());
 
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubAuditClients::getDefaultName(), $platform, [
-        '--count' => TRUE,
-      ]);
+      '--count' => TRUE,
+    ]);
 
     $lines = explode(PHP_EOL, trim($raw));
     foreach ($lines as $line) {
@@ -91,7 +91,8 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
       if ($sites_count !== $data->count) {
         $output->writeln("<error>You have $sites_count sites in your platform configuration and {$data->count} clients in your subscription.</error>");
         $output->writeln('Please review your configuration!');
-      } else {
+      }
+      else {
         $output->writeln('Sites count and clients count are equal');
       }
     }

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubModuleVersion extends ContentHubCommandBase  implements PlatformBootStrapCommandInterface {
+class ContentHubModuleVersion extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   use PlatformCmdOutputFormatterTrait;
 

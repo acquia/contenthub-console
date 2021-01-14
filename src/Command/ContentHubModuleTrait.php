@@ -17,7 +17,7 @@ trait ContentHubModuleTrait {
    * Checks if the given module is enabled or not.
    *
    * @param $module
-   *  Module id.
+   *   Module id.
    *
    * @return bool
    *   TRUE if enabled, FALSE otherwise.
@@ -56,7 +56,7 @@ trait ContentHubModuleTrait {
    *
    * @return bool
    *   TRUE if it is a publisher.
-   * 
+   *
    * @throws \Exception
    */
   public function isPublisher(DrupalServiceFactory $drupalServiceFactory): bool {
@@ -98,7 +98,7 @@ trait ContentHubModuleTrait {
     $ach_config = $drupalServiceFactory->getDrupalService('config.factory')->get('acquia_contenthub.admin_settings');
 
     // Get webhook uuid and url specific to module version.
-    if($drupalServiceFactory->getModuleVersion() === 2) {
+    if ($drupalServiceFactory->getModuleVersion() === 2) {
       $webhook_uuid = $ach_config->get('webhook.uuid');
       $webhook_url = $ach_config->get('webhook.url');
     }

@@ -2,8 +2,6 @@
 
 namespace Acquia\Console\ContentHub\Exception;
 
-use Throwable;
-
 /**
  * Class ContentHubVersionException.
  *
@@ -22,10 +20,10 @@ class ContentHubVersionException extends \Exception {
    *   The content hub version.
    * @param int $code
    *   [Optional] The Exception code.
-   * @param Throwable $previous
+   * @param \Throwable $previous
    *   [Optional] The previous throwable used for the exception chaining.
    */
-  public function __construct(int $version, int $code = 0, Throwable $previous = NULL) {
+  public function __construct(int $version, int $code = 0, \Throwable $previous = NULL) {
     parent::__construct(sprintf($this->message, $version), $code, $previous);
   }
 

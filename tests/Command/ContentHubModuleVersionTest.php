@@ -8,7 +8,7 @@ use Prophecy\Argument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Class ContentHubModuleVersionTest
+ * Class ContentHubModuleVersionTest.
  *
  * @coversDefaultClass \Acquia\Console\ContentHub\Command\ContentHubModuleVersion
  *
@@ -68,10 +68,12 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
    * @return int
    *   Mock of getModuleVersion function return.
    */
-  public function getModuleVersionMocks(int $module_version): int {return $module_version;}
+  public function getModuleVersionMocks(int $module_version): int {
+    return $module_version;
+  }
 
   /**
-   * A data provider for ::testContentHubModuleVersion
+   * A data provider for ::testContentHubModuleVersion.
    *
    * @return array[]
    */
@@ -111,10 +113,15 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
    */
   private function getCommand(): ContentHubModuleVersion {
     return new class extends ContentHubModuleVersion {
+
+      /**
+       *
+       */
       protected function configure() {
         parent::configure();
         $this->addOption('uri', NULL, InputOption::VALUE_OPTIONAL, 'The url from which to mock a request.');
       }
+
     };
   }
 

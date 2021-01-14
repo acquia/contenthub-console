@@ -43,7 +43,7 @@ class BackupList extends Command {
    *
    * @param \EclipseGc\CommonConsole\Config\ConfigStorage $configStorage
    *   Config storage.
-   * @param string|NULL $name
+   * @param string|null $name
    *   Command name.
    */
   public function __construct(ConfigStorage $configStorage, string $name = NULL) {
@@ -83,7 +83,7 @@ class BackupList extends Command {
         $config->get('name'),
         $config->get('platform.name'),
         $config->get('platform.type'),
-        $config->get('platform.module_version') == 1 ? '8.x-1.x' : '8.x-2.x' ,
+        $config->get('platform.module_version') == 1 ? '8.x-1.x' : '8.x-2.x',
         count($config->get('backups.database')),
         $created->format('Y-m-d H:i:s'),
       ];

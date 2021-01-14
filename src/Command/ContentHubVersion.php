@@ -50,7 +50,6 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
       'Checks Acquia Lift as well.');
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -152,7 +151,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
    * @param string
    *   Command to get module version.
    * @param int
-   *  Version to compare to
+   *   Version to compare to
    *
    * @return array
    *   Array contains sites, which do not have ACH 2.x.

@@ -40,30 +40,51 @@ class Settings {
     $this->webhook = $webhook;
   }
 
+  /**
+   *
+   */
   public function getClientName(): string {
     return $this->clientName;
   }
 
+  /**
+   *
+   */
   public function getHostName(): string {
     return $this->hostname;
   }
 
+  /**
+   *
+   */
   public function getApiKey(): string {
     return $this->apiKey;
   }
 
+  /**
+   *
+   */
   public function getSecretKey(): string {
     return $this->secretKey;
   }
 
+  /**
+   *
+   */
   public function getOrigin(): string {
     return $this->origin;
   }
 
+  /**
+   *
+   */
   public function getSharedSecret(): string {
     return $this->sharedSecret;
   }
 
+  /**
+   *
+   */
   public function getWebhook(): array {
     return $this->webhook;
   }

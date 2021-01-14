@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ContentHubVerifyPublisherQueue
+ * Class ContentHubVerifyPublisherQueue.
  *
  * @package Acquia\Console\ContentHub\Command
  */

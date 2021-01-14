@@ -89,4 +89,5 @@ class ContentHubWebhookStatus extends ContentHubCommandBase {
 
     return $exit_code;
   }
+
 }

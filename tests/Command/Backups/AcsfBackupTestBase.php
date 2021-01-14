@@ -59,7 +59,7 @@ abstract class AcsfBackupTestBase extends TestCase {
    * @param array $sites_array
    *   Array of sites for given ACSF Platform.
    *
-   * @return PlatformInterface
+   * @return \EclipseGc\CommonConsole\PlatformInterface
    *   Mock platform object.
    */
   public function getPlatform(array $sites_array = []): PlatformInterface {
@@ -161,4 +161,5 @@ abstract class AcsfBackupTestBase extends TestCase {
    *   Mock object of the command running.
    */
   abstract protected function getPlatformCommandExecutionMocks(array $local_data = [], array $platform_data = []): object;
+
 }

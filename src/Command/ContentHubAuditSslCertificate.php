@@ -52,7 +52,8 @@ class ContentHubAuditSslCertificate extends Command {
     }
     try {
       $cert = $this->getCertByHostname($url);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $output->writeln("<warning>Something went wrong getting the SSL cert of $url</warning>");
       return 1;
     }
@@ -63,7 +64,7 @@ class ContentHubAuditSslCertificate extends Command {
     }
 
     // Working with a limited list so only check $is_trusted when isSelfSigned()
-    // returns TRUE
+    // returns TRUE.
     if ($cert->isSelfSigned() && !$this->isTrustedOrganization($cert)) {
       $output->writeln('<error>Site is using self signed SSL certificate!</error>');
       return 3;
@@ -92,7 +93,7 @@ class ContentHubAuditSslCertificate extends Command {
    * Determines if organization trusted or not.
    *
    * @param \Spatie\SslCertificate\SslCertificate $cert
-   *  Organization name.
+   *   Organization name.
    *
    * @return bool
    *   True if organization name found in trusted providers list.

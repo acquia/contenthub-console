@@ -2,11 +2,10 @@
 
 namespace Acquia\Console\ContentHub\Command\Backups;
 
-
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 
 /**
- * Class AcquiaCloudBackupRestoreMultisite
+ * Class AcquiaCloudBackupRestoreMultisite.
  *
  * @package Acquia\Console\Cloud\Command\Backups
  */

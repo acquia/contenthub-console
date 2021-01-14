@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubLiftVersion extends ContentHubCommandBase  implements PlatformBootStrapCommandInterface {
+class ContentHubLiftVersion extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   use PlatformCmdOutputFormatterTrait;
 
@@ -24,6 +24,9 @@ class ContentHubLiftVersion extends ContentHubCommandBase  implements PlatformBo
    */
   protected static $defaultName = 'ach:lift-version';
 
+  /**
+   *
+   */
   protected function configure() {
     $this->setDescription('Checks for the Acquia Lift module 4.x version.');
     $this->setHidden('TRUE');
@@ -55,6 +58,9 @@ class ContentHubLiftVersion extends ContentHubCommandBase  implements PlatformBo
     return 0;
   }
 
+  /**
+   *
+   */
   protected function isAcquiaLiftConfigured(): bool {
     $config = $this->drupalServiceFactory->getDrupalService('config.factory')->getEditable('acquia_lift.settings');
     return empty($config->get('credential.account_id')) ? FALSE : TRUE;

@@ -68,7 +68,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    *   Config storage.
    * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $executioner
    *   Command executioner service instance.
-   * @param string|NULL $name
+   * @param string|null $name
    *   Command name.
    */
   public function __construct(EventDispatcherInterface $event_dispatcher, ConfigStorage $configStorage, PlatformCommandExecutioner $executioner, string $name = NULL) {
@@ -113,7 +113,8 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
       $output->writeln('<info>Acquia Content Hub service restoration is completed successfully.</info>');
       $output->writeln('<info>Database backup restoration started. It can take several minutes to complete.</info>');
       $exit = $this->restoreDatabaseBackups($this->platform, $config_to_restore->get('backups.database'));
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
       $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
       return 2;
     }
@@ -147,7 +148,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform instance.
    * @param array $backups
-   *   Database backup information from configuration
+   *   Database backup information from configuration.
    *
    * @return int
    *   Exit code.
@@ -173,7 +174,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    * @return int
    *   Exit code.
    */
-  protected function restoreSnapshot(string $snapshot_name, PlatformInterface $plaform , string $uri): int {
+  protected function restoreSnapshot(string $snapshot_name, PlatformInterface $plaform, string $uri): int {
     $raw = $this
       ->executioner
       ->runWithMemoryOutput(ContentHubRestoreSnapshotHelper::getDefaultName(), $plaform, ['--name' => $snapshot_name, '--uri' => $uri]);
@@ -193,7 +194,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    * Gets one of the site URI from platform.
    *
    * @param array $sites
-   *  Array of sites in the platform.
+   *   Array of sites in the platform.
    *
    * @return string
    */

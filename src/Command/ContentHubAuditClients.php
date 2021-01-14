@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ContentHubAuditClients
+ * Class ContentHubAuditClients.
  *
  * @package Acquia\Console\ContentHub\Command
  */

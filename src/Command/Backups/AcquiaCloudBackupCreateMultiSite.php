@@ -56,8 +56,8 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
    */
   protected function runBackupListCommand(PlatformInterface $platform, OutputInterface $output): array {
     $cmd_input = [
-      '--all' => true,
-      '--silent' => true,
+      '--all' => TRUE,
+      '--silent' => TRUE,
     ];
 
     $raw = $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudMultisiteDatabaseBackupList::getDefaultName(), $platform, $cmd_input);
@@ -86,8 +86,8 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
    */
   protected function runBackupCreateCommand(PlatformInterface $platform): object {
     $cmd_input = [
-      '--all' => true,
-      '--wait' => true,
+      '--all' => TRUE,
+      '--wait' => TRUE,
     ];
     return $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudMultisiteDatabaseBackupCreate::getDefaultName(), $platform, $cmd_input);
   }

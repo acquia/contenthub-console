@@ -11,6 +11,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ *
+ */
 class ContentHubAudit extends Command implements PlatformBootStrapCommandInterface {
 
   use CommandExecutionTrait;
@@ -43,17 +46,17 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $return_early = $input->getOption('early-return');
-    // CH 1.x hook implementations
+    // CH 1.x hook implementations.
     $this->findDeprecatedHookImplementations($output);
     // Custom code that uses 1.x CH services.
-    // Missing UUIDs
+    // Missing UUIDs.
     $status_code = $this->executeCommand(ContentHubAuditCheckUuid::getDefaultName(), $input, $output);
     if ($return_early && $status_code !== 0) {
       $output->writeln('<error>Please fix the entities without UUIDs before proceeding.</error>');
       return $status_code;
     }
 
-    // Tmp file bs
+    // Tmp file bs.
     $status_code = $this->executeCommand(ContentHubAuditTmpFiles::getDefaultName(), $input, $output);
     if ($return_early && $status_code !== 0) {
       $output->writeln('<error>Please fix the temporary files before proceeding.</error>');
@@ -80,13 +83,13 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     // Layout Builder defaults
     // Active connection to Plexus
     // Origin/domain mismatch (within Plexus)
-    // SSL Check
+    // SSL Check.
     if ($input->getOption('uri')) {
-       $status_code = $this->executeCommand(ContentHubAuditSslCertificate::getDefaultName(), $input, $output);
-       if ($return_early && $status_code !== 0) {
-         $output->writeln('<error>Content Hub requires valid SSL certificates. Please fix the SSL certificate for this site before proceeding by running the audit command with "--fix" option.</error>');
-         return $status_code;
-       }
+      $status_code = $this->executeCommand(ContentHubAuditSslCertificate::getDefaultName(), $input, $output);
+      if ($return_early && $status_code !== 0) {
+        $output->writeln('<error>Content Hub requires valid SSL certificates. Please fix the SSL certificate for this site before proceeding by running the audit command with "--fix" option.</error>');
+        return $status_code;
+      }
     }
     else {
       $output->writeln('<warning>No SSL check was run because the --uri option was not passed.</warning>');
@@ -161,42 +164,49 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     $source = file_get_contents($file);
     $tokens = token_get_all($source);
 
-    $functions = array();
-    $nextStringIsFunc = false;
-    $inClass = false;
+    $functions = [];
+    $nextStringIsFunc = FALSE;
+    $inClass = FALSE;
     $bracesCount = 0;
 
-    foreach($tokens as $token) {
-      switch($token[0]) {
+    foreach ($tokens as $token) {
+      switch ($token[0]) {
         case T_CLASS:
-          $inClass = true;
+          $inClass = TRUE;
           break;
+
         case T_FUNCTION:
-          if(!$inClass) $nextStringIsFunc = true;
+          if (!$inClass) {
+            $nextStringIsFunc = TRUE;
+          }
           break;
 
         case T_STRING:
-          if($nextStringIsFunc) {
-            $nextStringIsFunc = false;
+          if ($nextStringIsFunc) {
+            $nextStringIsFunc = FALSE;
             $functions[] = $token[1];
           }
           break;
 
-        // Anonymous functions
+        // Anonymous functions.
         case '(':
         case ';':
-          $nextStringIsFunc = false;
+          $nextStringIsFunc = FALSE;
           break;
 
-        // Exclude Classes
+        // Exclude Classes.
         case '{':
-          if($inClass) $bracesCount++;
+          if ($inClass) {
+            $bracesCount++;
+          }
           break;
 
         case '}':
-          if($inClass) {
+          if ($inClass) {
             $bracesCount--;
-            if($bracesCount === 0) $inClass = false;
+            if ($bracesCount === 0) {
+              $inClass = FALSE;
+            }
           }
           break;
       }

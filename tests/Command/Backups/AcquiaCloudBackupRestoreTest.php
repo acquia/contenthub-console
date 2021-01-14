@@ -6,11 +6,10 @@ use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestore;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
-use Exception;
 use Prophecy\Argument;
 
 /**
- * Class AcquiaCloudBackupRestoreTest
+ * Class AcquiaCloudBackupRestoreTest.
  *
  * @coversDefaultClass \Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestore
  *
@@ -38,6 +37,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    *   Expected return value of execute() method.
    *
    * @throws \ReflectionException
+   *
    * @dataProvider dataProvider
    */
   public function testBackupRestore(array $load_all_value, $load_value, array $local_data, array $platform_data, string $needle, int $exit_code) {
@@ -46,9 +46,9 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
       'create backup' => [
         'arguments' => [
           // First case.
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           // Second case.
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7']
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7']
         ],
         'returns' => [
           // First case.
@@ -88,7 +88,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
             'name' => 'Test',
           ]),
         ],
-        // load mock data.
+        // Load mock data.
         new Config([
           'backups' => [
             'database' => [
@@ -122,7 +122,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
             'name' => 'Test',
           ]),
         ],
-        // load mock data.
+        // Load mock data.
         new Config([
           'backups' => [
             'database' => [
@@ -156,7 +156,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
             'name' => 'Test',
           ]),
         ],
-        // load mock data.
+        // Load mock data.
         new Config([
           'backups' => [
             'database' => [
@@ -192,7 +192,8 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    *
    * @return object
    *   Object containing ConfigStorage data.
-   * @throws Exception
+   *
+   * @throws \Exception
    */
   public function getConfigStorage(array $arr): object {
     $config_storage = $this->prophesize(ConfigStorage::class);
@@ -213,7 +214,8 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    *
    * @return object
    *   Object containing PlatformCommandExecutioner instance.
-   * @throws Exception
+   *
+   * @throws \Exception
    */
   public function getPlatformCommandExecutioner(array $arr): object {
     $platform_command = $this->prophesize(PlatformCommandExecutioner::class);
@@ -243,14 +245,29 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    */
   protected function runLocallyWithMemoryOutputMocks(array $output): object {
     return new class($output['exit_code'], $output['command_output']) {
+
+      /**
+       *
+       */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
         $this->command_output = $command_output;
       }
 
-      public function getReturnCode() {return $this->exit_code;}
+      /**
+       *
+       */
+      public function getReturnCode() {
+        return $this->exit_code;
+      }
 
-      public function __toString() {return $this->command_output;}
+      /**
+       *
+       */
+      public function __toString() {
+        return $this->command_output;
+      }
+
     };
   }
 
@@ -265,14 +282,29 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    */
   protected function runWithMemoryOutputMocks(array $output): object {
     return new class($output['exit_code'], $output['command_output']) {
+
+      /**
+       *
+       */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
         $this->command_output = $command_output;
       }
 
-      public function getReturnCode() {return $this->exit_code;}
+      /**
+       *
+       */
+      public function getReturnCode() {
+        return $this->exit_code;
+      }
 
-      public function __toString() {return $this->command_output;}
+      /**
+       *
+       */
+      public function __toString() {
+        return $this->command_output;
+      }
+
     };
   }
 

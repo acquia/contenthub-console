@@ -5,7 +5,7 @@ namespace Acquia\Console\ContentHub\Client;
 use GuzzleHttp\ClientInterface;
 
 /**
- * Class ContentHubServiceVersion1
+ * Class ContentHubServiceVersion1.
  *
  * @package Acquia\Console\ContentHub\Client
  */
@@ -135,7 +135,7 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   public function purge(): array {
     $response = \Drupal::service('acquia_contenthub.client_manager')->createRequest('purge');
     if (!isset($response['success']) || $response['success'] !== TRUE) {
-      $error_message = isset($response['error']['message']) ?  $response['error']['message'] : $response['error'];
+      $error_message = isset($response['error']['message']) ? $response['error']['message'] : $response['error'];
       throw new \Exception("Purge failed. Reason: {$error_message}");
     }
     return $response;

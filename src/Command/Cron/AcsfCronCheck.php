@@ -26,6 +26,9 @@ class AcsfCronCheck extends AcquiaCloudCronCheck {
     $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Disable schedule jobs which are running ACH queues.');
   }
 
+  /**
+   *
+   */
   public static function getExpectedPlatformOptions(): array {
     return ['source' => ACSFPlatform::getPlatformId()];
   }

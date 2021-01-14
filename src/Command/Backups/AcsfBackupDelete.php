@@ -7,7 +7,7 @@ use Acquia\Console\Acsf\Platform\ACSFPlatform;
 use EclipseGc\CommonConsole\PlatformInterface;
 
 /**
- * Class AcsfBackupDelete
+ * Class AcsfBackupDelete.
  *
  * @package Acquia\Console\Acsf\Command\Backups
  */
@@ -42,6 +42,5 @@ class AcsfBackupDelete extends AcquiaCloudBackupDelete {
       ->runLocallyWithMemoryOutput(AcsfDbBackupDeleteHelper::getDefaultName(), $platform, ['--backups' => $backups]);
     return $raw->getReturnCode();
   }
-
 
 }

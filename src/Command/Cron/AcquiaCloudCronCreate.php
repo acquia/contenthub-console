@@ -52,7 +52,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
    *   Event dispatcher.
    * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
-   * @param string|NULL $name
+   * @param string|null $name
    *   Command name.
    */
   public function __construct(EventDispatcherInterface $event_dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
@@ -133,7 +133,6 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
       return $answer;
     });
 
-
     $job_count = $helper->ask($input, $output, $question);
     $output->writeln("<warning>You are about to create {$job_count} cron per site!</warning>");
 
@@ -145,7 +144,6 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
 
     return $job_count;
   }
-
 
   /**
    * Generate unique name for log file.

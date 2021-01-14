@@ -15,7 +15,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class AcquiaCloudBackupDelete
+ * Class AcquiaCloudBackupDelete.
  *
  * @package Acquia\Console\Cloud\Command\Backups
  */
@@ -68,7 +68,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    *   Config storage.
    * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $executioner
    *   Command executioner service instance.
-   * @param string|NULL $name
+   * @param string|null $name
    *   Command name.
    */
   public function __construct(EventDispatcherInterface $event_dispatcher, ConfigStorage $configStorage, PlatformCommandExecutioner $executioner, string $name = NULL) {
@@ -113,7 +113,8 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
       $output->writeln('<info>Acquia Content Hub service snapshot deletion is completed successfully.</info>');
       $output->writeln('<info>Database backup deletion started. It can take several minutes to complete.</info>');
       $exit = $this->deleteDatabaseBackups($this->platform, $config_to_delete->get('backups.database'));
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
       return 2;
     }
@@ -125,7 +126,8 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
 
     try {
       $this->storage->delete($answer, $this->config_dir);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $output->writeln('<warning>Backup configuration file deletion failed.</warning>');
       return 3;
     }
@@ -142,7 +144,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform instance.
    * @param array $backups
-   *   Database backup information from configuration
+   *   Database backup information from configuration.
    *
    * @return int
    *   Exit code.
@@ -183,7 +185,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    * @return int
    *   Exit code.
    */
-  protected function deleteSnapshot(string $snapshot_name, PlatformInterface $plaform , string $uri): int {
+  protected function deleteSnapshot(string $snapshot_name, PlatformInterface $plaform, string $uri): int {
     $raw = $this
       ->executioner
       ->runWithMemoryOutput(ContentHubDeleteSnapshotHelper::getDefaultName(), $plaform, ['--name' => $snapshot_name, '--uri' => $uri]);
@@ -215,5 +217,3 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
   }
 
 }
-
-

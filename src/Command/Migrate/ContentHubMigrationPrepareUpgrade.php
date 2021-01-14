@@ -167,4 +167,5 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
     }
     $output->writeln('Content Hub Filter rest resource removal has been finished.');
   }
+
 }

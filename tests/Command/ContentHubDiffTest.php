@@ -60,10 +60,21 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
    */
   public function getDrupalServiceMocks(bool $module_exist): object {
     return new class ($module_exist) {
+
+      /**
+       *
+       */
       public function __construct(bool $module_exist) {
         $this->exists = $module_exist;
       }
-      public function exists(): bool {return $this->exists;}
+
+      /**
+       *
+       */
+      public function exists(): bool {
+        return $this->exists;
+      }
+
     };
   }
 
@@ -95,10 +106,15 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
    */
   private function getCommand(): ContentHubDiff {
     return new class extends ContentHubDiff {
+
+      /**
+       *
+       */
       public function configure() {
         parent::configure();
         $this->addOption('uri', 'ur', InputOption::VALUE_OPTIONAL, 'Mock site uri');
       }
+
     };
   }
 

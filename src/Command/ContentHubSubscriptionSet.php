@@ -30,7 +30,7 @@ class ContentHubSubscriptionSet extends Command implements PlatformCommandInterf
   /**
    * Api key config key name.
    */
-  public const CONFIG_HOSTNAME= 'acquia.content_hub.hostname';
+  public const CONFIG_HOSTNAME = 'acquia.content_hub.hostname';
 
   /**
    * Api key config key name.

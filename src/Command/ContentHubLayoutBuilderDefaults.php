@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubLayoutBuilderDefaults extends ContentHubCommandBase implements  PlatformBootStrapCommandInterface {
+class ContentHubLayoutBuilderDefaults extends ContentHubCommandBase implements PlatformBootStrapCommandInterface {
 
   /**
    * {@inheritdoc}
@@ -45,7 +45,7 @@ class ContentHubLayoutBuilderDefaults extends ContentHubCommandBase implements  
     $bundle_info_manager = \Drupal::service('entity_type.bundle.info');
     $view_mode_repository = \Drupal::service('entity_display.repository');
 
-    foreach($entity_types as $entity_type) {
+    foreach ($entity_types as $entity_type) {
       if ($entity_type instanceof ConfigEntityType) {
         continue;
       }
@@ -55,7 +55,7 @@ class ContentHubLayoutBuilderDefaults extends ContentHubCommandBase implements  
         $view_modes = $view_mode_repository->getViewModes($entity_type_id);
         $modes = array_keys($view_modes);
 
-        // Default view mode not get listed, must add manually
+        // Default view mode not get listed, must add manually.
         $modes[] = 'default';
         foreach ($modes as $mode) {
           $view_mode_config = \Drupal::configFactory()

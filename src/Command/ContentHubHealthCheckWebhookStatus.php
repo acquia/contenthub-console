@@ -3,7 +3,6 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use DateTime;
 use GuzzleHttp\Client;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -100,7 +99,7 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
    *
    * @param string $webhook
    *   Webhook url.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Output.
    *
    * @return bool
@@ -109,7 +108,8 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
   protected function isWebhookOnline(string $webhook, OutputInterface $output): bool {
     try {
       $response = $this->guzzleClient->request('options', $webhook);
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
       $output->writeln($exception->getMessage());
       return FALSE;
     }
@@ -141,8 +141,8 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
         $webhook['client_name'],
         $webhook['status'],
         $this->isSuppressed($webhook['suppressed_until']) ?
-          $this->formatTimestamp($webhook['suppressed_until'])
-          : 'Not suppressed',
+        $this->formatTimestamp($webhook['suppressed_until'])
+        : 'Not suppressed',
       ];
     }
     $table->addRows($rows);
@@ -153,7 +153,7 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
    * Decides if webhook is suppressed or not based on timestamp.
    *
    * @param int $timestamp
-   *  Field (suppressed_until) value from response.
+   *   Field (suppressed_until) value from response.
    *
    * @return bool
    *   TRUE if suppressed, FALSE otherwise.
@@ -166,13 +166,14 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
    * Format timestamp into a user friendly format.
    *
    * @param int $timestamp
-   *  Field (suppressed_until) value from response.
+   *   Field (suppressed_until) value from response.
    *
    * @return string
+   *
    * @throws \Exception
    */
   protected function formatTimestamp(int $timestamp): string {
-    $date = new DateTime();
+    $date = new \DateTime();
     $date->setTimestamp($timestamp);
     return $date->format('Y-m-d H:i:s');
   }
