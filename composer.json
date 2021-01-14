@@ -4,7 +4,7 @@
     "type": "project",
     "license": "GPL-2.0-or-later",
     "require": {
-        "acquia/acsf-console": "dev-LCH-4692",
+        "acquia/acsf-console": "dev-main",
         "ext-json": "*",
         "spatie/ssl-certificate": "^1.19"
     },
