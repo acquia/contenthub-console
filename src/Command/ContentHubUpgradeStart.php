@@ -2,17 +2,17 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\Acsf\Command\AcsfCronCreate;
 use Acquia\Console\Acsf\Command\AcsfDatabaseBackupCreate;
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
-use Acquia\Console\Cloud\Command\AcquiaCloudCronCreate;
-use Acquia\Console\Cloud\Command\AcquiaCloudCronCreateMultiSite;
+use Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate;
+use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate;
+use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreateMultiSite;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupCreate;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade;
@@ -45,7 +45,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -86,7 +86,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.
-   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.
@@ -194,6 +194,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *   The stage variable or NULL if no stage is saved.
    * @param int $step
    *   The stage number to check for.
+   *
    * @return bool
    *   TRUE if the stage passed is NULL or the stage to check (step) is higher or equal to the passed stage.
    */
@@ -209,11 +210,11 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *
    * @param \Symfony\Component\Console\Application $application
    *   The Console Application.
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
    *
    * @throws \Symfony\Component\Console\Exception\ExceptionInterface
@@ -258,13 +259,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Executes the Content Hub Audit Command.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -273,7 +274,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     $ready = FALSE;
     while (!$ready && $execute) {
       $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubAudit::getDefaultName(), $platform, [
-        '--early-return' => true,
+        '--early-return' => TRUE,
       ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
@@ -294,11 +295,11 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *
    * @param \Symfony\Component\Console\Application $application
    *   The Console Application.
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -311,13 +312,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       $backup_command = NULL;
       $cmd_input = [
         'alias' => $input->getArgument('alias'),
-        '--all' => true,
+        '--all' => TRUE,
       ];
       $output->writeln('Starting backups for all sites in the platform.');
       switch ($platform_type) {
         case AcquiaCloudPlatform::PLATFORM_NAME:
           $backup_command = AcquiaCloudDatabaseBackupCreate::getDefaultName();
-          $cmd_input['--wait'] = true;
+          $cmd_input['--wait'] = TRUE;
           break;
 
         case ACSFPlatform::PLATFORM_NAME:
@@ -330,7 +331,8 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       }
       if (empty($backup_command)) {
         $output->writeln('<warning>This platform does not support site backups.</warning>');
-      } else {
+      }
+      else {
         $backup_executor = $application->find($backup_command);
         $backup_executor->addPlatform($input->getArgument('alias'), $platform);
         $status = $backup_executor->run(new ArrayInput($cmd_input), $output);
@@ -351,13 +353,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Executes the Content Hub Audit Command.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -398,11 +400,11 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *
    * @param \Symfony\Component\Console\Application $application
    *   The Console Application.
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
    *
    * @throws \Symfony\Component\Console\Exception\ExceptionInterface
@@ -416,13 +418,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Executes the Prepare Upgrade Command.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -451,13 +453,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Executes the Publisher Upgrade Command.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -490,13 +492,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *
    * @param \Symfony\Component\Console\Application $application
    *   The Console Application.
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -512,7 +514,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       switch ($platform_type) {
         case AcquiaCloudPlatform::PLATFORM_NAME:
           $scheduled_jobs = $application->find(AcquiaCloudCronCreate::getDefaultName());
-          $cmd_input['--wait'] = true;
+          $cmd_input['--wait'] = TRUE;
           break;
 
         case AcquiaCloudMultiSitePlatform::PLATFORM_NAME:
@@ -534,13 +536,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Executes the Subscriber Upgrade Command.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -569,13 +571,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Enables the Unsubscribe module if there are imported entities with local changes / auto-update disabled.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -604,13 +606,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Validates that the site has a registered webhook in Content Hub.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -639,13 +641,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Validates default filters and migrations from 1.x filters.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -679,13 +681,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Validates 2.x publisher queues.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -714,13 +716,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * Validates interest list diff.
    *
-   * @param PlatformInterface $platform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   The Platform.
-   * @param InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The Input interface.
-   * @param OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
-   * @param HelperInterface $helper
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
@@ -745,4 +747,5 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       $platform->set('acquia.content_hub.upgrade.stage', 12)->save();
     }
   }
+
 }

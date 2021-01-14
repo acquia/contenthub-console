@@ -2,8 +2,8 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -24,7 +24,7 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -57,9 +57,9 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The event dispatcher.
-   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
-   * @param string|NULL $name
+   * @param string|null $name
    *   The name of this command.
    */
   public function __construct(EventDispatcherInterface $dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
@@ -78,8 +78,8 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
     $sites_count = count($platform->getPlatformSites());
 
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubAuditClients::getDefaultName(), $platform, [
-        '--count' => TRUE,
-      ]);
+      '--count' => TRUE,
+    ]);
 
     $lines = explode(PHP_EOL, trim($raw));
     foreach ($lines as $line) {
@@ -91,7 +91,8 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
       if ($sites_count !== $data->count) {
         $output->writeln("<error>You have $sites_count sites in your platform configuration and {$data->count} clients in your subscription.</error>");
         $output->writeln('Please review your configuration!');
-      } else {
+      }
+      else {
         $output->writeln('Sites count and clients count are equal');
       }
     }

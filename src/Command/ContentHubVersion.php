@@ -2,9 +2,9 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\DrushWrapper;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -28,7 +28,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -50,7 +50,6 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
       'Checks Acquia Lift as well.');
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -63,7 +62,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.
-   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
    * @param string|null $name
    *   The name of the command.
@@ -152,7 +151,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
    * @param string
    *   Command to get module version.
    * @param int
-   *  Version to compare to
+   *   Version to compare to
    *
    * @return array
    *   Array contains sites, which do not have ACH 2.x.

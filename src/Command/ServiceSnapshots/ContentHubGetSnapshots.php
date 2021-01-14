@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Command\ServiceSnapshots;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,9 +36,9 @@ class ContentHubGetSnapshots extends ContentHubCommandBase implements PlatformBo
    */
   protected function configure() {
     $this->setDescription('Fetch Acquia Content Hub snapshots.')
-    ->setHidden(TRUE)
-    ->setAliases(['ach-gs'])
-    ->addOption('list', 'l', InputOption::VALUE_NONE, 'List Acquia Content Hub snapshots.');
+      ->setHidden(TRUE)
+      ->setAliases(['ach-gs'])
+      ->addOption('list', 'l', InputOption::VALUE_NONE, 'List Acquia Content Hub snapshots.');
 
   }
 

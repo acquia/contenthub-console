@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Client;
 
 /**
- * Interface ContentHubServiceInterface
+ * Interface ContentHubServiceInterface.
  *
  * @package Acquia\Console\ContentHub\Client
  */
@@ -63,7 +63,7 @@ interface ContentHubServiceInterface {
    * @return array
    *   Status information.
    */
-  public function getWebhooksStatus(): array ;
+  public function getWebhooksStatus(): array;
 
   /**
    * Returns the remote settings.

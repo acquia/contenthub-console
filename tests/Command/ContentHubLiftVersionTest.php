@@ -69,19 +69,43 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
    */
   public function getDrupalServiceMocks(array $module_exist, bool $module_enabled, string $lift_account_id): object {
     return new class ($module_exist, $module_enabled, $lift_account_id) {
+
+      /**
+       *
+       */
       public function __construct(array $module_exist, bool $module_enabled, string $lift_account_id) {
         $this->module_exist = $module_exist;
         $this->enabled = $module_enabled;
         $this->lift_account_id = $lift_account_id;
-       }
+      }
 
-      public function exists(string $module_name): bool {return $this->module_exist[$module_name];}
+      /**
+       *
+       */
+      public function exists(string $module_name): bool {
+        return $this->module_exist[$module_name];
+      }
 
-      public function moduleExists(): bool {return $this->enabled;}
+      /**
+       *
+       */
+      public function moduleExists(): bool {
+        return $this->enabled;
+      }
 
-      public function getEditable(): object {return $this;}
+      /**
+       *
+       */
+      public function getEditable(): object {
+        return $this;
+      }
 
-      public function get(): string {return $this->lift_account_id;}
+      /**
+       *
+       */
+      public function get(): string {
+        return $this->lift_account_id;
+      }
 
     };
   }
@@ -166,10 +190,15 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
    */
   private function getCommand() : ContentHubLiftVersion {
     return new class extends ContentHubLiftVersion {
+
+      /**
+       *
+       */
       protected function configure() {
         parent::configure();
         $this->addOption('uri', NULL, InputOption::VALUE_OPTIONAL, 'The url from which to mock a request.');
       }
+
     };
   }
 

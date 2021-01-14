@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Tests\Command;
 
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\DrushVersionCheck;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -81,15 +81,30 @@ class DrushVersionCheckTest extends TestCase {
    */
   private function runWithMemoryOutputMocks(int $exit_code, string $drush_output): object {
     return new class($exit_code, $drush_output) {
+
+      /**
+       *
+       */
       public function __construct(int $exit_code, string $drush_output) {
         $this->exit_code = $exit_code;
         $this->drush_output = $drush_output;
 
       }
 
-      public function getReturnCode() {return $this->exit_code;}
+      /**
+       *
+       */
+      public function getReturnCode() {
+        return $this->exit_code;
+      }
 
-      public function __toString() {return $this->drush_output;}
+      /**
+       *
+       */
+      public function __toString() {
+        return $this->drush_output;
+      }
+
     };
   }
 
@@ -104,14 +119,14 @@ class DrushVersionCheckTest extends TestCase {
         0,
         0,
         '{"success":true,"data":{"drush_output":"10.3.4","drush_error":""}}',
-        'Checking drush version...' . PHP_EOL .'Current drush version is: 10.3.4'
+        'Checking drush version...' . PHP_EOL . 'Current drush version is: 10.3.4'
         . PHP_EOL
       ],
       [
         0,
         0,
         '{"success":true,"data":{"drush_output":"9.0.0","drush_error":""}}',
-        'Checking drush version...' . PHP_EOL .'Current drush version is: 9.0.0'
+        'Checking drush version...' . PHP_EOL . 'Current drush version is: 9.0.0'
         . PHP_EOL
       ],
       [

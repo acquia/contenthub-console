@@ -29,8 +29,8 @@ class ContentHubAuditChServices extends ContentHubCommandBase implements Platfor
    */
   public function configure() {
     $this->setDescription('Audit deprecated 1.x service usage')
-    ->setHidden(TRUE)
-    ->setAliases(['ach-serv']);
+      ->setHidden(TRUE)
+      ->setAliases(['ach-serv']);
   }
 
   /**
@@ -52,7 +52,8 @@ class ContentHubAuditChServices extends ContentHubCommandBase implements Platfor
 
     try {
       $regex = $this->getFilesInfo('/^((?!acquia_contenthub).)*$/', 'modules');
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
       $output->writeln($exception->getMessage());
       return 0;
     }

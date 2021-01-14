@@ -54,7 +54,7 @@ class ContentHubAuditTmpFiles extends Command implements PlatformBootStrapComman
     $table->render();
     return 1;
   }
-  
+
   /**
    * Returns temporary files with status of 0.
    *

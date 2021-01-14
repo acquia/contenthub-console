@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ContentHubMigrateEnableUnsubscribe
+ * Class ContentHubMigrateEnableUnsubscribe.
  *
  * @package Acquia\Console\ContentHub\Command
  */

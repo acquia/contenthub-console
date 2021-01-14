@@ -20,6 +20,7 @@ trait DirectoryIteratorTrait {
    *
    * @return \RegexIterator
    *   Returns iterable with file info.
+   *
    * @throws \Exception
    */
   public function getFilesInfo(string $pattern, string $docroot_directory): \RegexIterator {

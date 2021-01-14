@@ -2,6 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command\Helpers;
 
+use Acquia\Console\Helpers\Command\CommandOptionsDefinitionTrait;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

@@ -5,7 +5,6 @@ namespace Acquia\Console\ContentHub\Tests\Command;
 use Acquia\Console\ContentHub\Client\ContentHubServiceVersion2;
 use Acquia\Console\ContentHub\Command\ContentHubHealthCheckWebhookStatus;
 use Acquia\Console\ContentHub\Tests\ContentHubCommandTestBase;
-use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -29,7 +28,7 @@ use Symfony\Component\Console\Output\StreamOutput;
 class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
 
   /**
-   * @var OutputInterface
+   * @var \Symfony\Component\Console\Output\OutputInterface
    */
   protected $output;
 
@@ -39,7 +38,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
   public function setUp(): void {
     parent::setUp();
     // Open up new output stream to print the output for assertion.
-    $this->output = new StreamOutput(fopen('php://memory', 'w', false));
+    $this->output = new StreamOutput(fopen('php://memory', 'w', FALSE));
     // This needs to be done because removeWebhookSuppression method doesn't exist in ContentHubServiceInterface.
     $this->contentHubService = $this->prophesize()->willExtend(ContentHubServiceVersion2::class);
   }
@@ -101,7 +100,9 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * @return array
    *   Success array.
    */
-  private function removeWebhookSuppressionMocks() : array {return ['success' => 'Webhook suppression removed'];}
+  private function removeWebhookSuppressionMocks() : array {
+    return ['success' => 'Webhook suppression removed'];
+  }
 
   /**
    * Returns mock instance of getWebhooks().
@@ -112,7 +113,9 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * @return array
    *   Mock of getWebhooks() function return.
    */
-  private function getWebhooksMocks(array $webhooks_data) {return $webhooks_data;}
+  private function getWebhooksMocks(array $webhooks_data) {
+    return $webhooks_data;
+  }
 
   /**
    * Sets the guzzleClient mock.
@@ -120,7 +123,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * @param array $webhook_data
    *   Webhook array.
    *
-   * @return Client
+   * @return \GuzzleHttp\Client
    *   Returns Mocked Guzzle Client with predefined response for suppressed webhooks.
    */
   private function setGuzzleClientMock(array $webhook_data) {
@@ -130,8 +133,8 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
       'unavailable' => new Response(201, [], 'Webhook Not available'),
       'error' => new RequestException('Could not find domain.', new Request('OPTIONS', 'test'))
     ];
-    foreach($webhook_data as $webhook) {
-      if($this->isSuppressed($webhook['suppressed_until'])) {
+    foreach ($webhook_data as $webhook) {
+      if ($this->isSuppressed($webhook['suppressed_until'])) {
         $response_array[] = $response_array_options[$webhook['response_type']];
       }
     }
@@ -201,7 +204,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    */
   private function getRemoveWebhookSuppressionCount(array $webhook_data) : int {
     $count = 0;
-    foreach($webhook_data as $webhook) {
+    foreach ($webhook_data as $webhook) {
       // When webhook is suppressed and is online.
       if ($this->isSuppressed($webhook['suppressed_until']) && $webhook['response_type'] === 'success') {
         $count++;
@@ -223,10 +226,10 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
     $webhooks = [];
     $status_array = ['ENABLED', "DISABLED"];
     $response_array = ['success', 'error', 'unavailable'];
-    for($i = 0; $i < $webhook_count; $i++) {
+    for ($i = 0; $i < $webhook_count; $i++) {
       $webhooks[] = [
         'uuid' => $this->getRandomString(32) . $i,
-        'url' => 'https://' . $this->getRandomString(10) .$i . '.devcloud.acquia-sites.com/acquia-contenthub/webhook',
+        'url' => 'https://' . $this->getRandomString(10) . $i . '.devcloud.acquia-sites.com/acquia-contenthub/webhook',
         'suppressed_until' => mt_rand(time() - 100, time() + 100),
         'client_name' => $this->getRandomString(10) . $i,
         'status' => $status_array[array_rand($status_array)],
@@ -278,7 +281,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * Decides if webhook is suppressed or not based on timestamp.
    *
    * @param int $timestamp
-   *  Field (suppressed_until) value from response.
+   *   Field (suppressed_until) value from response.
    *
    * @return bool
    *   TRUE if suppressed, FALSE otherwise.
@@ -291,13 +294,14 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * Format timestamp into a user friendly format.
    *
    * @param int $timestamp
-   *  Field (suppressed_until) value from response.
+   *   Field (suppressed_until) value from response.
    *
    * @return string
+   *
    * @throws \Exception
    */
   private function formatTimestamp(int $timestamp): string {
-    $date = new DateTime();
+    $date = new \DateTime();
     $date->setTimestamp($timestamp);
     return $date->format('Y-m-d H:i:s');
   }
@@ -341,7 +345,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
           if (($response_type = $webhook['response_type']) === 'success') {
             $this->output->writeln($webhook_online_status[$response_type] . $webhook['client_name'] . ': ' . $webhook['uuid']);
           }
-          else if (($response_type = $webhook['response_type']) === 'error') {
+          elseif (($response_type = $webhook['response_type']) === 'error') {
             $this->output->writeln($webhook_online_status[$response_type]);
             $this->output->writeln($webhook_online_status['unavailable'] . $webhook['uuid']);
           }
@@ -361,7 +365,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * {@inheritdoc}
    */
   public function tearDown(): void {
-    $this->output = null;
+    $this->output = NULL;
   }
 
 }

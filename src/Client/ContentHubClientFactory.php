@@ -31,4 +31,5 @@ class ContentHubClientFactory {
       ContentHubServiceVersion1::new() :
       ContentHubServiceVersion2::new();
   }
+
 }

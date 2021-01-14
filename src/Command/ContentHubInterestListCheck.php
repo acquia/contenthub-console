@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ContentHubInterestListCheck
+ * Class ContentHubInterestListCheck.
  *
  * @package Acquia\Console\ContentHub\Command
  */

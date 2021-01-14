@@ -11,7 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Class ContentHubAuditCheckUuidTest.
  *
- * @coversDefaultClass  \Acquia\Console\ContentHub\Command\ContentHubAuditCheckUuid
+ * @coversDefaultClass \Acquia\Console\ContentHub\Command\ContentHubAuditCheckUuid
  *
  * @group acquia-console-contenthub
  *
@@ -83,6 +83,7 @@ class ContentHubAuditCheckUuidTest extends EntityKernelTestBase {
    *   The values to set.
    *
    * @return \Drupal\node\Entity\NodeType
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function createNodeType(array $values): NodeType {

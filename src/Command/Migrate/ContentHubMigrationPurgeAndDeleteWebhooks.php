@@ -52,7 +52,6 @@ class ContentHubMigrationPurgeAndDeleteWebhooks extends ContentHubCommandBase im
     return $ret;
   }
 
-
   /**
    * Purges entities from Content Hub subscription.
    *

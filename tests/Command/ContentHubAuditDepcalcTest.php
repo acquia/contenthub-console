@@ -54,7 +54,6 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
         ->willReturn($enable_depcalc);
     }
 
-
     $command = new ContentHubAuditDepcalc();
     $command->setDrupalServiceFactory($this->drupalServiceFactory->reveal());
     $command->setAchClientService($this->contentHubService->reveal());

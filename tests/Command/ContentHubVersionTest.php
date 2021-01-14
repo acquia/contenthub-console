@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Tests\Command;
 
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\ContentHubVersion;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class ContentHubVersionTest
+ * Class ContentHubVersionTest.
  *
  * @coversDefaultClass \Acquia\Console\ContentHub\Command\ContentHubVersion
  *
@@ -86,7 +86,7 @@ class ContentHubVersionTest extends TestCase {
           $this->runWithMemoryOutputMocks($lift_version_output[1])
         );
     }
-    else if(array_key_exists('--lift-support', $alias_options)) {
+    elseif (array_key_exists('--lift-support', $alias_options)) {
       $this
         ->platformCommandExecutioner
         ->runWithMemoryOutput(Argument::any(), Argument::any(), Argument::any())
@@ -122,19 +122,34 @@ class ContentHubVersionTest extends TestCase {
    */
   private function runWithMemoryOutputMocks(array $output): object {
     return new class($output['exit_code'], $output['command_output']) {
+
+      /**
+       *
+       */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
         $this->command_output = $command_output;
       }
 
-      public function getReturnCode() {return $this->exit_code;}
+      /**
+       *
+       */
+      public function getReturnCode() {
+        return $this->exit_code;
+      }
 
-      public function __toString() {return $this->command_output;}
+      /**
+       *
+       */
+      public function __toString() {
+        return $this->command_output;
+      }
+
     };
   }
 
   /**
-   * A data provider for ::testContentHubVersion
+   * A data provider for ::testContentHubVersion.
    *
    * @return array[]
    */
@@ -195,7 +210,7 @@ class ContentHubVersionTest extends TestCase {
         // ContentHubModuleVersion output.
         ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'],
         // ContentHubLiftVersion output. Since in the first iteration Lift version is 3, command becomes interactive.
-        [['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":3,"configured":true,"base_url":"dev.acquiacloud.com"}}'],['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":4,"configured":true,"base_url":"dev.acquiacloud.com"}}']],
+        [['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":3,"configured":true,"base_url":"dev.acquiacloud.com"}}'], ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":4,"configured":true,"base_url":"dev.acquiacloud.com"}}']],
         // Exit code of overall ContentHubVersion command.
         0,
         // Needle.
@@ -204,7 +219,7 @@ class ContentHubVersionTest extends TestCase {
         . PHP_EOL
         . PHP_EOL . '[success] Cache rebuild complete.'
         . PHP_EOL . 'The following sites do not have 4.x version of Lift'
-        . PHP_EOL .   '+---------------------+
+        . PHP_EOL . '+---------------------+
 | Url                 |
 +---------------------+
 | dev.acquiacloud.com |
@@ -225,10 +240,15 @@ class ContentHubVersionTest extends TestCase {
    */
   private function getCommand(): ContentHubVersion {
     return new class($this->dispatcher->reveal(), $this->platformCommandExecutioner->reveal()) extends ContentHubVersion {
+
+      /**
+       *
+       */
       public function configure() {
         parent::configure();
         $this->addOption('uri', NULL, InputOption::VALUE_OPTIONAL, 'The url from which to mock a request.');
       }
+
     };
   }
 

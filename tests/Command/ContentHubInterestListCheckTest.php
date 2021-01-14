@@ -8,7 +8,7 @@ use Acquia\Console\ContentHub\Tests\ContentHubCommandTestBase;
 use Prophecy\Argument;
 
 /**
- * Class ContentHubInterestListCheckTest
+ * Class ContentHubInterestListCheckTest.
  *
  * @coversDefaultClass \Acquia\Console\ContentHub\Command\ContentHubInterestListCheck
  *
@@ -124,4 +124,5 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
       ],
     ];
   }
+
 }

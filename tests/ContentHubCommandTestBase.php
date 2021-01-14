@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Acquia\Console\ContentHub\Tests;
-
 
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
 use Acquia\Console\ContentHub\Client\ContentHubServiceInterface;

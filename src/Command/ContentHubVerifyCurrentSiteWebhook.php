@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ContentHubVerifyWebhooksDefaultFilters
+ * Class ContentHubVerifyWebhooksDefaultFilters.
  *
  * @package Acquia\Console\ContentHub\Command
  */
