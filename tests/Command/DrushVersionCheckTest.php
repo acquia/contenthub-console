@@ -23,11 +23,15 @@ class DrushVersionCheckTest extends TestCase {
   use CommandTestHelperTrait;
 
   /**
+   * Platform Command Executioner double.
+   *
    * @var \Prophecy\Prophecy\ObjectProphecy
    */
   protected $platformCommandExecutioner;
 
   /**
+   * Event dispatcher double.
+   *
    * @var \Prophecy\Prophecy\ObjectProphecy
    */
   protected $dispatcher;
@@ -72,18 +76,26 @@ class DrushVersionCheckTest extends TestCase {
   }
 
   /**
+   * Mock of runWithMemoryOutput function.
+   *
    * @param int $exit_code
    *   Mock Exit code of Drush Wrapper command.
    * @param string $drush_output
    *   Mock Output of Drush Wrapper command.
    *
    * @return object
+   *   Inline class containing response.
    */
   private function runWithMemoryOutputMocks(int $exit_code, string $drush_output): object {
     return new class($exit_code, $drush_output) {
 
       /**
+       * Constructor.
        *
+       * @param int $exit_code
+       *   Exit code.
+       * @param string $drush_output
+       *   Drush output.
        */
       public function __construct(int $exit_code, string $drush_output) {
         $this->exit_code = $exit_code;
@@ -92,14 +104,14 @@ class DrushVersionCheckTest extends TestCase {
       }
 
       /**
-       *
+       * Returns the response return code.
        */
-      public function getReturnCode() {
+      public function getReturnCode(): int {
         return $this->exit_code;
       }
 
       /**
-       *
+       * Returns the response body.
        */
       public function __toString() {
         return $this->drush_output;
@@ -112,8 +124,9 @@ class DrushVersionCheckTest extends TestCase {
    * A data provider for ::testDrushVersionCheck()
    *
    * @return array[]
+   *   Array for data provider.
    */
-  public function dataProvider() {
+  public function dataProvider(): array {
     return [
       [
         0,

@@ -114,7 +114,12 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
     return new class($output['exit_code'], $output['command_output']) {
 
       /**
+       * Constructor.
        *
+       * @param int $exit_code
+       *   Exit code.
+       * @param string $command_output
+       *   Command output.
        */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
@@ -122,16 +127,16 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
       }
 
       /**
-       *
+       * Mock of getReturnCode().
        */
-      public function getReturnCode() {
+      public function getReturnCode(): int {
         return $this->exit_code;
       }
 
       /**
-       *
+       * Mock of __toString().
        */
-      public function __toString() {
+      public function __toString(): string {
         return $this->command_output;
       }
 
@@ -153,12 +158,21 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         [FALSE],
         // ACSF DB Creation output.
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}']
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}'
+          ]
         ],
         // Snapshot creation output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
+        ],
         // Sites array for listSites() method called on $acsfClient.
         [
           // Site 1.
@@ -209,12 +223,21 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         [TRUE, FALSE],
         // ACSF DB Creation output.
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}']
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}'
+          ]
         ],
         // Snapshot creation output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
+        ],
         // Sites array for listSites() method called on $acsfClient.
         [
           // Site 1.
@@ -268,9 +291,15 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         [FALSE],
         // ACSF DB Creation output.
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}']
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}'
+          ]
         ],
         // Snapshot creation output.
         ['exit_code' => 1, 'command_output' => ''],
@@ -326,12 +355,21 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         [FALSE],
         // ACSF DB Creation output.
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}']
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1306,1291,1276,1261,1246,1231,1216,1201,1186,1171],"356":[1311,1296,1281,1266,1251,1236,1221,1206,1191,1176]}}'
+          ]
         ],
         // Snapshot creation output.
-        ['exit_code' => 0, 'command_output' => '{"success":false,"error":{"message":"Couldn\'t create snapshot."}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":false,"error":{"message":"Couldn\'t create snapshot."}}'
+        ],
         // Sites array for listSites() method called on $acsfClient.
         [
           // Site 1.
@@ -384,9 +422,15 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         [FALSE],
         // ACSF DB Creation output.
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}']
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"351":[1291,1276,1261,1246,1231,1216,1201,1186,1171,1156],"356":[1296,1281,1266,1251,1236,1221,1206,1191,1176,1161]}}'
+          ]
         ],
         // Snapshot creation output.
         [],

@@ -105,6 +105,7 @@ class ContentHubVerifyWebhooksDefaultFiltersTest extends ContentHubCommandTestBa
        *   Drupal state name.
        *
        * @return array
+       *   Array of filters.
        */
       public function get(string $state_name): array {
         return $this->filters[$state_name];
@@ -117,6 +118,7 @@ class ContentHubVerifyWebhooksDefaultFiltersTest extends ContentHubCommandTestBa
    * A data provider for ::testContentHubVerifyWebhooksDefaultFilters()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider(): array {
     return [

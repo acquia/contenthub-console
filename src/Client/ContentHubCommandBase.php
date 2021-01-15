@@ -46,6 +46,7 @@ abstract class ContentHubCommandBase extends Command implements PlatformBootStra
    * Sets achClientService instance.
    *
    * @param \Acquia\Console\ContentHub\Client\ContentHubServiceInterface $content_hub_service
+   *   Content Hub Client Service.
    */
   public function setAchClientService(ContentHubServiceInterface $content_hub_service) {
     $this->achClientService = $content_hub_service;
@@ -55,6 +56,7 @@ abstract class ContentHubCommandBase extends Command implements PlatformBootStra
    * Sets drupalServiceFactory instance.
    *
    * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
+   *   Drupal service factory.
    */
   public function setDrupalServiceFactory(DrupalServiceFactory $drupalServiceFactory): void {
     $this->drupalServiceFactory = $drupalServiceFactory;

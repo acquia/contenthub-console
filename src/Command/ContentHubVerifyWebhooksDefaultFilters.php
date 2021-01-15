@@ -47,8 +47,10 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
    * Verify webhooks default filters.
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   Output Stream.
    *
    * @return int
+   *   Return code.
    */
   protected function verifyWebhookDefaultFilters(OutputInterface $output) {
     $webhooks = $this->achClientService->getWebhooks();
@@ -90,8 +92,10 @@ class ContentHubVerifyWebhooksDefaultFilters extends ContentHubCommandBase imple
    * Verify filters migration from 1.x to 2.x.
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   Output Stream.
    *
    * @return int
+   *   Return code.
    */
   protected function verifyFiltersMigration(OutputInterface $output) {
     $unmigrated_filters = $this->drupalServiceFactory->getDrupalService('state')->get('acquia_contenthub_subscriber_82002_unmigrated_filters');

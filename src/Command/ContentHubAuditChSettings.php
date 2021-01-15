@@ -59,7 +59,10 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
     if (!empty($diff) && $attempt_fix === FALSE) {
       $output->writeln('<comment>Configuration does not match the one stored in the database.</comment>');
       $table = new Table($output);
-      $table->setHeaders(['Config Key', 'Value in Database', 'Overwritten Value']);
+      $table->setHeaders(['Config Key',
+        'Value in Database',
+        'Overwritten Value'
+      ]);
       foreach ($diff as $key => $val) {
         $table->addRow([$key, $config_raw[$key] ?? '', $val]);
       }
@@ -103,12 +106,10 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
   /**
    * Synchronize settings.
    *
-   * @param \Drupal\Core\Config\Config
+   * @param \Drupal\Core\Config\Config $config
    *   The configuration object.
    * @param array $overwrites
    *   The values to use as overwrites.
-   *
-   * @return void
    */
   protected function syncSettings(Config $config, array $overwrites): void {
     foreach ($overwrites as $key => $value) {

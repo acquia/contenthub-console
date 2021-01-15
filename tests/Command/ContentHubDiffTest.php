@@ -44,7 +44,10 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
     $command->setAchClientService($this->contentHubService->reveal());
 
     /** @var \Symfony\Component\Console\Tester\CommandTester $command_tester */
-    $command_tester = $this->doRunCommand($command, [], ['alias' => 'test', '--uri' => "dev.acquiacloud.com"]);
+    $command_tester = $this->doRunCommand($command, [], [
+      'alias' => 'test',
+      '--uri' => "dev.acquiacloud.com"
+    ]);
     $this->assertStringContainsString($needle, $command_tester->getDisplay());
     $this->assertEquals($exit_code, $command_tester->getStatusCode());
   }
@@ -52,7 +55,7 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
   /**
    * Returns mock instance for getDrupalService().
    *
-   * @param $module_exist
+   * @param bool $module_exist
    *   Return value for exists().
    *
    * @return object
@@ -62,14 +65,17 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
     return new class ($module_exist) {
 
       /**
+       * Constructor.
        *
+       * @param bool $module_exist
+       *   Module exists.
        */
       public function __construct(bool $module_exist) {
         $this->exists = $module_exist;
       }
 
       /**
-       *
+       * Mock for exists().
        */
       public function exists(): bool {
         return $this->exists;
@@ -82,6 +88,7 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
    * A data provider for ::testContentHubDiff()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider() {
     return [
@@ -108,7 +115,7 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
     return new class extends ContentHubDiff {
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function configure() {
         parent::configure();

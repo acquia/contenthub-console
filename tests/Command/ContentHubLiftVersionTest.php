@@ -48,7 +48,10 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
     $command->setAchClientService($this->contentHubService->reveal());
 
     /** @var \Symfony\Component\Console\Tester\CommandTester $command_tester */
-    $command_tester = $this->doRunCommand($command, [], ['alias' => 'test', '--uri' => 'dev.acquiacloud.com']);
+    $command_tester = $this->doRunCommand($command, [], [
+      'alias' => 'test',
+      '--uri' => 'dev.acquiacloud.com'
+    ]);
     $this->assertStringContainsString($needle, $command_tester->getDisplay());
     $this->assertEquals($exit_code, $command_tester->getStatusCode());
 
@@ -71,7 +74,7 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
     return new class ($module_exist, $module_enabled, $lift_account_id) {
 
       /**
-       *
+       * Constructor.
        */
       public function __construct(array $module_exist, bool $module_enabled, string $lift_account_id) {
         $this->module_exist = $module_exist;
@@ -80,28 +83,34 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
       }
 
       /**
+       * Mock for exists().
        *
+       * @param string $module_name
+       *   Module name.
+       *
+       * @return bool
+       *   Module exists or not.
        */
       public function exists(string $module_name): bool {
         return $this->module_exist[$module_name];
       }
 
       /**
-       *
+       * Mock for exists().
        */
       public function moduleExists(): bool {
         return $this->enabled;
       }
 
       /**
-       *
+       * Mock for getEditable().
        */
       public function getEditable(): object {
         return $this;
       }
 
       /**
-       *
+       * Mock for get().
        */
       public function get(): string {
         return $this->lift_account_id;
@@ -114,6 +123,7 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
    * A data provider for ::testContentHubLiftVersion()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider() {
     return [
@@ -184,15 +194,16 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
   }
 
   /**
-   * Helper method to get object of ContentHubLiftVersion Command with URI InputOption.
+   * Helper method to get object of ContentHubLiftVersion Command with URI.
    *
    * @return \Acquia\Console\ContentHub\Command\ContentHubLiftVersion
+   *   ContentHubLiftVersion object with URI option.
    */
   private function getCommand() : ContentHubLiftVersion {
     return new class extends ContentHubLiftVersion {
 
       /**
-       *
+       * {@inheritDoc}
        */
       protected function configure() {
         parent::configure();

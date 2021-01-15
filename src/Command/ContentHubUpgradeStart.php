@@ -365,6 +365,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *   TRUE if we need to execute this stage, false otherwise.
    *
    * @return int
+   *   Return code.
    *
    * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */

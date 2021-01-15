@@ -74,7 +74,12 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
     return new class ($overridden_conf, $conf) {
 
       /**
+       * Constructor.
        *
+       * @param array|object $overridden_conf
+       *   Overridden conf.
+       * @param array|object $conf
+       *   Configuration.
        */
       public function __construct($overridden_conf, $conf) {
         $this->overridden_conf = $overridden_conf;
@@ -82,42 +87,42 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
       }
 
       /**
-       *
+       * Mock for getOriginal().
        */
       public function getOriginal() {
         return $this->overridden_conf;
       }
 
       /**
-       *
+       *  Mock for getSettings().
        */
       public function getSettings() {
         return $this->overridden_conf;
       }
 
       /**
-       *
+       * Mock for getRawData().
        */
       public function getRawData() {
         return is_object($this->conf) ? $this->normalize($this->conf) : $this->conf;
       }
 
       /**
-       *
+       * Mock for get().
        */
       public function get(): object {
         return $this;
       }
 
       /**
-       *
+       * Mock for getEditable().
        */
       public function getEditable(): object {
         return $this;
       }
 
       /**
-       *
+       * Mock for normalize().
        */
       protected function normalize($settings):array {
         return [
@@ -145,7 +150,7 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
    * @return array|Settings
    *   Array or Settings object with configuration values.
    */
-  public function getChConfigurationSettings($overrides = [], $settings = FALSE) {
+  public function getChConfigurationSettings(array $overrides = [], $settings = FALSE): array {
     $config = [
       'hostname' => 'http://test.url',
       'api_key' => 'test_api',
@@ -178,6 +183,7 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
    * A data provider for ::ContentHubAuditChSettingsTest()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider() {
     $ch_config1 = $this->getChConfigurationSettings();
@@ -214,7 +220,10 @@ Configuration does not match the one stored in the database.
       ],
       [
         1,
-        $this->getChConfigurationSettings(['client_name' => 'test_clientname_new', 'origin' => '1111-00000000-0000-0000-0000-000000000000']),
+        $this->getChConfigurationSettings([
+          'client_name' => 'test_clientname_new',
+          'origin' => '1111-00000000-0000-0000-0000-000000000000'
+        ]),
         $ch_config1,
         "Configuration does not match the one stored in the database.
 +-------------+-------------------------------------------+-------------------------------------------+
@@ -258,7 +267,10 @@ Configuration does not match the one stored in the database.
       ],
       [
         2,
-        $this->getChConfigurationSettings(['client_name' => 'test_clientname_new', 'origin' => '1111-00000000-0000-0000-0000-000000000000'], TRUE),
+        $this->getChConfigurationSettings([
+          'client_name' => 'test_clientname_new',
+          'origin' => '1111-00000000-0000-0000-0000-000000000000'
+        ], TRUE),
         $ch_config2,
         "Configuration does not match the one stored in the database.
 +-------------+-------------------------------------------+-------------------------------------------+

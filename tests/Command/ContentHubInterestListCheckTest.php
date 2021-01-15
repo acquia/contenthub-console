@@ -67,6 +67,7 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
    * A data provider for ::testContentHubInterestListCheck()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider(): array {
     return [

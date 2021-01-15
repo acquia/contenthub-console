@@ -20,7 +20,7 @@ class BackupList extends Command {
    *
    * @var array
    */
-  protected $config_dir = [
+  protected $configDir = [
     '.acquia',
     'contenthub',
     'backups'
@@ -65,14 +65,21 @@ class BackupList extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     /** @var \Consolidation\Config\Config[] $backup_configs */
-    $backup_configs = $this->storage->loadAll($this->config_dir);
+    $backup_configs = $this->storage->loadAll($this->configDir);
     if (!$backup_configs) {
       $output->writeln('<warning>No configuration found.</warning>');
       return 0;
     }
 
     $table = new Table($output);
-    $table->setHeaders(['Backup name', 'Platform alias', 'Platform type', 'Module version', 'Site count', 'Created']);
+    $table->setHeaders([
+      'Backup name',
+      'Platform alias',
+      'Platform type',
+      'Module version',
+      'Site count',
+      'Created'
+    ]);
 
     $rows = [];
     foreach ($backup_configs as $config) {

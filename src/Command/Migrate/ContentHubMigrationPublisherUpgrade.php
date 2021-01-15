@@ -168,15 +168,15 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
   /**
    * Helper function to execute drush command.
    *
-   * @param $drush_options
+   * @param array $drush_options
    *   Drush options with drush command and args.
-   * @param $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Output stream.
    *
    * @return int
    *   Exit code from drush execution.
    */
-  private function executeDrushCommand($drush_options, $output) {
+  private function executeDrushCommand(array $drush_options, OutputInterface $output) {
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, NULL, $drush_options);
     $exit_code = $raw->getReturnCode();
     $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));

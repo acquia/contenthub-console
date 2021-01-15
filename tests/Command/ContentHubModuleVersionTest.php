@@ -54,7 +54,10 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
     $command->setAchClientService($this->contentHubService->reveal());
 
     /** @var \Symfony\Component\Console\Tester\CommandTester $command_tester */
-    $command_tester = $this->doRunCommand($command, [], ['alias' => 'test', '--uri' => 'dev.acquiacloud.com']);
+    $command_tester = $this->doRunCommand($command, [], [
+      'alias' => 'test',
+      '--uri' => 'dev.acquiacloud.com'
+    ]);
     $this->assertStringContainsString($needle, $command_tester->getDisplay());
     $this->assertEquals($exit_code, $command_tester->getStatusCode());
   }
@@ -76,8 +79,9 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
    * A data provider for ::testContentHubModuleVersion.
    *
    * @return array[]
+   *   Array for data provider.
    */
-  public function dataProvider() {
+  public function dataProvider(): array {
     return [
       [
         TRUE,
@@ -107,15 +111,16 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
   }
 
   /**
-   * Helper method to get object of ContentHubModuleVersion Command with URI InputOption.
+   * Helper method to get object of ContentHubModuleVersion with URI.
    *
    * @return \Acquia\Console\ContentHub\Command\ContentHubModuleVersion
+   *   Modified version of ContentHubModuleVersion command.
    */
   private function getCommand(): ContentHubModuleVersion {
     return new class extends ContentHubModuleVersion {
 
       /**
-       *
+       * {@inheritDoc}
        */
       protected function configure() {
         parent::configure();

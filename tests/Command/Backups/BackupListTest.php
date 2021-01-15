@@ -26,8 +26,9 @@ class BackupListTest extends TestCase {
    * @covers ::execute
    *
    * @param array $load_all_value
-   *
+   *   Array.
    * @param string $expected
+   *   Expected needle.
    *
    * @dataProvider dataProvider
    */
@@ -46,6 +47,7 @@ class BackupListTest extends TestCase {
    * A data provider for ::testBackupList()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider() {
     return [

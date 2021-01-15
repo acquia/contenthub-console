@@ -26,7 +26,8 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    *
    * @param array $load_all_value
    *   Configuration status.
-   * @param $load_value
+   * @param \Consolidation\Config\Config $load_value
+   *   Load value.
    * @param array $local_data
    *   runLocallyWithMemoryOutput() mock return.
    * @param array $platform_data
@@ -40,7 +41,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    *
    * @dataProvider dataProvider
    */
-  public function testBackupRestore(array $load_all_value, $load_value, array $local_data, array $platform_data, string $needle, int $exit_code) {
+  public function testBackupRestore(array $load_all_value, Config $load_value, array $local_data, array $platform_data, string $needle, int $exit_code) {
     $environment_response = $this->getFixture('ace_environment_response.php')['111111-11111111-c36a-401a-9724-fd8072a607d7'];
     $arguments = [
       'create backup' => [
@@ -66,7 +67,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
       'platform_data' => $platform_data,
     ];
 
-    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudBackupRestore::class, $arguments, $arr);
+    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudBackupRestore::class, $arr, $arguments);
     $tester->setInputs(['Test'])->execute([]);
     $output = $tester->getDisplay();
     $this->assertEquals($needle, $output);
@@ -78,8 +79,9 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    * A data provider for ::testBackupList()
    *
    * @return array[]
+   *   Array for data provider.
    */
-  public function dataProvider() {
+  public function dataProvider(): array {
     return [
       [
         // loadAll mock data.
@@ -247,7 +249,12 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
     return new class($output['exit_code'], $output['command_output']) {
 
       /**
+       * Constructor.
        *
+       * @param int $exit_code
+       *   Exit code.
+       * @param string $command_output
+       *   Command output.
        */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
@@ -255,16 +262,16 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
       }
 
       /**
-       *
+       * Mock of getReturnCode().
        */
-      public function getReturnCode() {
+      public function getReturnCode(): int {
         return $this->exit_code;
       }
 
       /**
-       *
+       * Mock of __toString().
        */
-      public function __toString() {
+      public function __toString(): string {
         return $this->command_output;
       }
 
@@ -284,7 +291,12 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
     return new class($output['exit_code'], $output['command_output']) {
 
       /**
+       * Constructor.
        *
+       * @param int $exit_code
+       *   Exit code.
+       * @param string $command_output
+       *   Command output.
        */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
@@ -292,16 +304,16 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
       }
 
       /**
-       *
+       * Mock of getReturnCode().
        */
-      public function getReturnCode() {
+      public function getReturnCode(): int {
         return $this->exit_code;
       }
 
       /**
-       *
+       * Mock of __toString().
        */
-      public function __toString() {
+      public function __toString(): string {
         return $this->command_output;
       }
 

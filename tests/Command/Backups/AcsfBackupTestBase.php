@@ -154,8 +154,9 @@ abstract class AcsfBackupTestBase extends TestCase {
    * Helper function to get the PlatformCommandExecutioner service mock.
    *
    * @param array $local_data
-   *   Data passed from data provider.
+   *   Local Data to mock passed from data provider.
    * @param array $platform_data
+   *   Platform data to mock passed from data provider.
    *
    * @return object
    *   Mock object of the command running.

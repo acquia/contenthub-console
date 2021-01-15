@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- *
+ * Class ContentHubAudit.
  */
 class ContentHubAudit extends Command implements PlatformBootStrapCommandInterface {
 
@@ -159,8 +159,9 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
    *   The file to tokenize.
    *
    * @return array
+   *   Array.
    */
-  protected function getModuleFunctions(string $file) {
+  protected function getModuleFunctions(string $file): array {
     $source = file_get_contents($file);
     $tokens = token_get_all($source);
 

@@ -13,7 +13,6 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Prophecy\Argument;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 
 /**
@@ -28,6 +27,8 @@ use Symfony\Component\Console\Output\StreamOutput;
 class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
 
   /**
+   * Output stream.
+   *
    * @var \Symfony\Component\Console\Output\OutputInterface
    */
   protected $output;
@@ -95,7 +96,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
   }
 
   /**
-   * Retuns mock instance of removeWebhookSuppression().
+   * Returns mock instance of removeWebhookSuppression().
    *
    * @return array
    *   Success array.
@@ -113,7 +114,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * @return array
    *   Mock of getWebhooks() function return.
    */
-  private function getWebhooksMocks(array $webhooks_data) {
+  private function getWebhooksMocks(array $webhooks_data): array {
     return $webhooks_data;
   }
 
@@ -126,7 +127,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * @return \GuzzleHttp\Client
    *   Returns Mocked Guzzle Client with predefined response for suppressed webhooks.
    */
-  private function setGuzzleClientMock(array $webhook_data) {
+  private function setGuzzleClientMock(array $webhook_data): Client {
     $response_array = [];
     $response_array_options = [
       'success' => new Response(200, [], 'Webhook Online'),
@@ -153,6 +154,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    *  - Exit code.
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider() {
     return [
@@ -199,8 +201,10 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    * Helper function to check count of online suppressed webhooks to mock Guzzle Client.
    *
    * @param array $webhook_data
+   *   Webhook data.
    *
    * @return int
+   *   Count for suppressed webhooks.
    */
   private function getRemoveWebhookSuppressionCount(array $webhook_data) : int {
     $count = 0;
@@ -216,7 +220,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
   /**
    * Helper function to provide array of webhooks.
    *
-   * @param $webhook_count
+   * @param int $webhook_count
    *   Number of webhooks.
    *
    * @return array
@@ -246,6 +250,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    *   Lenght of the string required.
    *
    * @return string
+   *   Random string.
    */
   private function getRandomString(int $length): string {
     return substr(md5(time()), 0, $length);
@@ -256,8 +261,6 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    *
    * @param array $webhook_data
    *   Webhooks array.
-   *
-   * @throws \Exception
    */
   private function renderWebhooksTable(array $webhook_data): void {
     $table = new Table($this->output);
@@ -297,8 +300,7 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    *   Field (suppressed_until) value from response.
    *
    * @return string
-   *
-   * @throws \Exception
+   *   Date format.
    */
   private function formatTimestamp(int $timestamp): string {
     $date = new \DateTime();
@@ -311,10 +313,8 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    *
    * @param array $alias_options
    *   Alias options passed in the command.
-   *
    * @param array $webhook_data
    *   Mocked webhook data.
-   *
    * @param string $needle
    *   Initial string provided in the data provider.
    *

@@ -26,6 +26,8 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
    *   Expected return value of exists() method.
    * @param bool $module_enabled
    *   Expected return value of moduleExists() method.
+   * @param bool $enable_depcalc
+   *   Enable depcalc module.
    * @param string $needle
    *   String to look for within display.
    * @param int $exit_code
@@ -68,6 +70,7 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
    * A data provider for ::testContentHubAuditDepcalc()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider() {
     return [

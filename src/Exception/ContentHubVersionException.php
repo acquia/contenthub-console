@@ -11,6 +11,11 @@ namespace Acquia\Console\ContentHub\Exception;
  */
 class ContentHubVersionException extends \Exception {
 
+  /**
+   * Message for exception.
+   *
+   * @var string
+   */
   protected $message = "Invalid version. Version '%s' should be used.";
 
   /**

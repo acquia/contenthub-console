@@ -24,11 +24,15 @@ class ContentHubVersionTest extends TestCase {
   use CommandTestHelperTrait;
 
   /**
+   * Platform Command Executioner double.
+   *
    * @var \Prophecy\Prophecy\ObjectProphecy
    */
   protected $platformCommandExecutioner;
 
   /**
+   * Event Dispatcher double.
+   *
    * @var \Prophecy\Prophecy\ObjectProphecy
    */
   protected $dispatcher;
@@ -58,7 +62,6 @@ class ContentHubVersionTest extends TestCase {
    *   Output for ContentHubLiftVersion command.
    * @param int $exit_code
    *   Expected return value of execute() method.
-   *
    * @param string $needle
    *   Needle to assert.
    *
@@ -119,12 +122,18 @@ class ContentHubVersionTest extends TestCase {
    *   Array containing exit code and command output.
    *
    * @return object
+   *   Object with output.
    */
   private function runWithMemoryOutputMocks(array $output): object {
     return new class($output['exit_code'], $output['command_output']) {
 
       /**
+       * Constructor.
        *
+       * @param int $exit_code
+       *   Exit code.
+       * @param string $command_output
+       *   Command output.
        */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
@@ -132,16 +141,16 @@ class ContentHubVersionTest extends TestCase {
       }
 
       /**
-       *
+       * Mock of getReturnCode().
        */
-      public function getReturnCode() {
+      public function getReturnCode(): int {
         return $this->exit_code;
       }
 
       /**
-       *
+       * Mock of __toString().
        */
-      public function __toString() {
+      public function __toString(): string {
         return $this->command_output;
       }
 
@@ -152,19 +161,29 @@ class ContentHubVersionTest extends TestCase {
    * A data provider for ::testContentHubVersion.
    *
    * @return array[]
+   *   Array for data provider.
    */
-  public function dataProvider() {
+  public function dataProvider(): array {
     return [
       [
         // Test case to validate command works fine without Lift version.
         // Alias options.
         ['alias' => 'test', '--uri' => "dev.acquiacloud.com"],
         // DrushWrapper output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'
+        ],
         // ContentHubDiff output.
-        ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"dummy_output":"dummy"}'
+        ],
         // ContentHubModuleVersion output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'
+        ],
         // ContentHubLiftVersion output.
         [],
         // Exit code of overall ContentHubVersion command.
@@ -180,15 +199,28 @@ class ContentHubVersionTest extends TestCase {
       // Test case to validate lift module availability if lift-support input option is provided.
       [
         // Alias options.
-        ['alias' => 'test', '--uri' => "dev.acquiacloud.com", '--lift-support' => TRUE],
+        [
+          'alias' => 'test',
+          '--uri' => "dev.acquiacloud.com",
+          '--lift-support' => TRUE
+        ],
         // DrushWrapper output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'
+        ],
         // ContentHubDiff output.
         ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // ContentHubModuleVersion output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'
+        ],
         // ContentHubLiftVersion output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":4,"configured":true,"base_url":"dev.acquiacloud.com"}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"module_version":4,"configured":true,"base_url":"dev.acquiacloud.com"}}'
+        ],
         // Exit code of overall ContentHubVersion command.
         0,
         // Needle.
@@ -202,15 +234,35 @@ class ContentHubVersionTest extends TestCase {
       // Test case to check at first lift version is 3 then in 2nd iteration it is set to 4.
       [
         // Alias options. input set to yes so that command becomes interactive.
-        ['alias' => 'test', '--uri' => "dev.acquiacloud.com", '--lift-support' => TRUE, 'input' => 'yes'],
+        [
+          'alias' => 'test',
+          '--uri' => "dev.acquiacloud.com",
+          '--lift-support' => TRUE,
+          'input' => 'yes'
+        ],
         // DrushWrapper output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"drush_output":"","drush_error":"[success] Cache rebuild complete."}}'
+        ],
         // ContentHubDiff output.
         ['exit_code' => 0, 'command_output' => '{"dummy_output":"dummy"}'],
         // ContentHubModuleVersion output.
-        ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'],
+        [
+          'exit_code' => 0,
+          'command_output' => '{"success":true,"data":{"module_version":2,"base_url":"dev.acquiacloud.com"}}'
+        ],
         // ContentHubLiftVersion output. Since in the first iteration Lift version is 3, command becomes interactive.
-        [['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":3,"configured":true,"base_url":"dev.acquiacloud.com"}}'], ['exit_code' => 0, 'command_output' => '{"success":true,"data":{"module_version":4,"configured":true,"base_url":"dev.acquiacloud.com"}}']],
+        [
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"module_version":3,"configured":true,"base_url":"dev.acquiacloud.com"}}'
+          ],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":{"module_version":4,"configured":true,"base_url":"dev.acquiacloud.com"}}'
+          ]
+        ],
         // Exit code of overall ContentHubVersion command.
         0,
         // Needle.
@@ -237,12 +289,13 @@ class ContentHubVersionTest extends TestCase {
    * Helper method to get object of ContentHubVersion Command with URI InputOption.
    *
    * @return \Acquia\Console\ContentHub\Command\ContentHubVersion
+   *   ContentHubVersion object with URI option.
    */
   private function getCommand(): ContentHubVersion {
     return new class($this->dispatcher->reveal(), $this->platformCommandExecutioner->reveal()) extends ContentHubVersion {
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function configure() {
         parent::configure();

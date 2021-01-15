@@ -25,7 +25,7 @@ class ContentHubAuditStreamWrappers extends Command implements PlatformBootStrap
   protected static $defaultName = 'ach:audit:stream-wrappers';
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getPlatformBootstrapType(): string {
     return 'drupal8';

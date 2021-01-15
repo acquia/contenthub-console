@@ -15,6 +15,8 @@ class AcsfCronCreate extends AcquiaCloudCronCreate {
   use PlatformCmdOutputFormatterTrait;
 
   /**
+   * Acquia Cloud Client.
+   *
    * @var \AcquiaCloudApi\Connector\ClientInterface
    */
   protected $acquiaCloudClient;

@@ -16,13 +16,13 @@ trait ContentHubModuleTrait {
   /**
    * Checks if the given module is enabled or not.
    *
-   * @param $module
+   * @param string $module
    *   Module id.
    *
    * @return bool
    *   TRUE if enabled, FALSE otherwise.
    */
-  public function isModuleEnabled($module): bool {
+  public function isModuleEnabled(string $module): bool {
     return \Drupal::moduleHandler()->moduleExists($module);
   }
 

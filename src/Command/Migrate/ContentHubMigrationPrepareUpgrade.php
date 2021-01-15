@@ -107,6 +107,8 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
   }
 
   /**
+   * Handles module installation.
+   *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output to write status to.
    * @param array $modules_to_uninstall

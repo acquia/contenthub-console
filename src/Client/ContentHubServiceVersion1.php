@@ -176,7 +176,7 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   /**
    * {@inheritDoc}
    */
-  public function deleteSnapshot($name): array {
+  public function deleteSnapshot(string $name): array {
     return $this->client->deleteSnapshot($name);
   }
 
