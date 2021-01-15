@@ -11,6 +11,7 @@ before_script:
   # The following line will not be needed to get the console-helpers from its private repository:
   - composer config repositories.console-helpers '{"type":"vcs","url":"git@github.com:acquia/console-helpers.git","no-api":true}'
   - composer config repositories.cloud-console '{"type":"vcs","url":"git@github.com:acquia/cloud-console.git","no-api":true}'
+  - composer config repositories.acsf-console '{"type":"vcs","url":"git@github.com:acquia/acsf-console.git","no-api":true}'
   - composer require --dev php-coveralls/php-coveralls
   - composer install
 
