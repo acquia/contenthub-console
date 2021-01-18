@@ -3,7 +3,6 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubCommandBase;
-use Acquia\ContentHubClient\Settings;
 use Drupal\Core\Config\Config;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Helper\Table;
@@ -149,13 +148,13 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
   /**
    * Generates a compatible format out of the Settings object.
    *
-   * @param \Acquia\ContentHubClient\Settings $settings
+   * @param object $settings
    *   The content hub config representation.
    *
    * @return array
    *   The normalized config.
    */
-  protected function normalize(Settings $settings): array {
+  protected function normalize(object $settings): array {
     return [
       'hostname' => $settings->getUrl(),
       'api_key' => $settings->getApiKey(),

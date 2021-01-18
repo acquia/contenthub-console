@@ -4,7 +4,7 @@ namespace Acquia\Console\ContentHub\Tests\Command;
 
 use Acquia\Console\ContentHub\Command\ContentHubAuditChSettings;
 use Acquia\Console\ContentHub\Tests\ContentHubCommandTestBase;
-use Acquia\ContentHubClient\Settings;
+use Acquia\Console\ContentHub\Client\Settings;
 use Prophecy\Argument;
 
 /**
@@ -150,7 +150,7 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
    * @return array|Settings
    *   Array or Settings object with configuration values.
    */
-  public function getChConfigurationSettings(array $overrides = [], $settings = FALSE): array {
+  public function getChConfigurationSettings(array $overrides = [], $settings = FALSE) {
     $config = [
       'hostname' => 'http://test.url',
       'api_key' => 'test_api',
@@ -168,10 +168,10 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
     if ($settings) {
       return new Settings(
         $config_overridden['client_name'],
-        $config_overridden['origin'],
+        $config_overridden['hostname'],
         $config_overridden['api_key'],
         $config_overridden['secret_key'],
-        $config_overridden['hostname'],
+        $config_overridden['origin'],
         $config_overridden['shared_secret'],
         $config_overridden['webhook']
       );
@@ -185,7 +185,7 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
    * @return array[]
    *   Array for data provider.
    */
-  public function dataProvider() {
+  public function dataProvider(): array {
     $ch_config1 = $this->getChConfigurationSettings();
     $ch_config2 = $this->getChConfigurationSettings([], TRUE);
     return [

@@ -158,4 +158,52 @@ class Settings {
     return $this->webhook;
   }
 
+  /**
+   * Returns URL of the endpoint.
+   *
+   * @return string
+   *   URL of the endpoint.
+   */
+  public function getUrl(): ?string {
+    return $this->hostname;
+  }
+
+  /**
+   * Get Origin UUID.
+   *
+   * @return string
+   *   Origin UUID.
+   */
+  public function getUuid(): string {
+    return $this->origin;
+  }
+
+  /**
+   * Get the settings name.
+   *
+   * @return string
+   *   Name attribute.
+   */
+  public function getName() {
+    return $this->clientName;
+  }
+
+  /**
+   * Transforms settings object to array.
+   *
+   * @return array
+   *   Array representation.
+   */
+  public function toArray() {
+    return [
+      'name' => $this->getName(),
+      'uuid' => $this->getUuid(),
+      'apiKey' => $this->getApiKey(),
+      'secretKey' => $this->getSecretKey(),
+      'url' => $this->getUrl(),
+      'sharedSecret' => $this->getSharedSecret(),
+      'webhook' => $this->webhook,
+    ];
+  }
+
 }
