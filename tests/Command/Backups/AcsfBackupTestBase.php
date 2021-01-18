@@ -68,10 +68,13 @@ abstract class AcsfBackupTestBase extends TestCase {
         ACSFPlatform::SITEFACTORY_USER => 'user_name',
         ACSFPlatform::SITEFACTORY_TOKEN => 'secret_token',
         ACSFPlatform::SITEFACTORY_URL => 'https://example.com',
-        // Need to set Platform alias because getAlias() method is being called on platform.
+        // Need to set Platform alias because getAlias()
+        // method is being called on platform.
         PlatformInterface::PLATFORM_ALIAS_KEY => 'test',
-        // ACE creds are needed because AcsfBackupCreate extends AcquiaCloudBackupCreate
-        // which in turn extends AcquiaCloudCommandBase which asks for AceClient instead of AcsfClient.
+        // ACE creds are needed because AcsfBackupCreate
+        // extends AcquiaCloudBackupCreate
+        // which in turn extends AcquiaCloudCommandBase which
+        // asks for AceClient instead of AcsfClient.
         AcquiaCloudPlatform::ACE_API_KEY => 'test_key',
         AcquiaCloudPlatform::ACE_API_SECRET => 'test_secret',
         AcquiaCloudPlatform::ACE_APPLICATION_ID => ['test1'],
@@ -87,7 +90,8 @@ abstract class AcsfBackupTestBase extends TestCase {
 
   /**
    * Helper function to provide ACSFPlatform object.
-   * Overridden from method written in PlatformCommandTestHelperTrait due to some differences.
+   *
+   * Overridden from method written in PlatformCommandTestHelperTrait.
    *
    * @param array $platform_config
    *   Platform config array.
