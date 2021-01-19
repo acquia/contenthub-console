@@ -48,8 +48,6 @@ class ContentHubVersionTest extends TestCase {
   /**
    * Test ContentHubVersion command.
    *
-   * @covers ::execute
-   *
    * @param array $alias_options
    *   Alias options to be passed to command.
    * @param array $diff_output
@@ -64,6 +62,8 @@ class ContentHubVersionTest extends TestCase {
    *   Expected return value of execute() method.
    * @param string $needle
    *   Needle to assert.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

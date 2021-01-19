@@ -21,14 +21,14 @@ class ContentHubDiffTest extends ContentHubCommandTestBase {
   /**
    * Test whether the diff module codebase exists or not.
    *
-   * @covers ::execute
-   *
    * @param bool $module_exist
    *   Expected return value of exists() method.
    * @param string $needle
    *   String to look for within display.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

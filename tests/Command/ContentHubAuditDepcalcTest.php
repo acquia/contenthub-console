@@ -20,8 +20,6 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
   /**
    * Test depcalc module audit.
    *
-   * @covers ::execute
-   *
    * @param bool $module_exist
    *   Expected return value of exists() method.
    * @param bool $module_enabled
@@ -32,6 +30,8 @@ class ContentHubAuditDepcalcTest extends ContentHubCommandTestBase {
    *   String to look for within display.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

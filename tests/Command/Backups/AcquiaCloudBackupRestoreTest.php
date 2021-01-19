@@ -22,8 +22,6 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
   /**
    * Tests backup list.
    *
-   * @covers ::execute
-   *
    * @param array $load_all_value
    *   Configuration status.
    * @param \Consolidation\Config\Config $load_value
@@ -38,6 +36,8 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
    *   Expected return value of execute() method.
    *
    * @throws \ReflectionException
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

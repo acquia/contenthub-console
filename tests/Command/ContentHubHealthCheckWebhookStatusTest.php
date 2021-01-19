@@ -47,8 +47,6 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
   /**
    * Test ContentHubHealthCheckWebhookStatus Command.
    *
-   * @covers ::execute
-   *
    * @param array $alias_options
    *   Array of alias and options(if any) which needs to be passed in command.
    * @param array $webhook_data
@@ -57,6 +55,8 @@ class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
    *   Initial String which is part of the output.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

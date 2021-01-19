@@ -47,8 +47,6 @@ class DrushVersionCheckTest extends TestCase {
   /**
    * Test whether the drush version is correct or not.
    *
-   * @covers ::execute
-   *
    * @param int $drush_exit_code
    *   Exit code from DrushWrapper command.
    * @param int $exit_code
@@ -57,6 +55,8 @@ class DrushVersionCheckTest extends TestCase {
    *   Output from DrushWrapper command.
    * @param string $needle
    *   Needle to assert.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

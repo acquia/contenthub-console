@@ -21,8 +21,6 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
   /**
    * Test Content Hub Audit CH Settings.
    *
-   * @covers ::execute
-   *
    * @param int $version
    *   The Content Hub module version.
    * @param array|object $overridden_conf
@@ -33,6 +31,8 @@ class ContentHubAuditChSettingsTest extends ContentHubCommandTestBase {
    *   String to look for within display.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

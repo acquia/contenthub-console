@@ -23,12 +23,12 @@ class BackupListTest extends TestCase {
   /**
    * Tests backup list.
    *
-   * @covers ::execute
-   *
    * @param array $load_all_value
    *   Array.
    * @param string $expected
    *   Expected needle.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

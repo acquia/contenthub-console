@@ -21,8 +21,6 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
   /**
    * Tests backup list.
    *
-   * @covers ::execute
-   *
    * @param array $config_exists
    *   Configuration status.
    * @param array $backup_name
@@ -37,6 +35,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    *   Expected return value of execute() method.
    *
    * @throws \ReflectionException
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

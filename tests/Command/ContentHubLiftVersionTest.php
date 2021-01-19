@@ -21,8 +21,6 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
   /**
    * Test lift version module.
    *
-   * @covers ::execute
-   *
    * @param array $module_exist
    *   Array containing expected return value of exist method for each module.
    * @param bool $module_enabled
@@ -33,6 +31,8 @@ class ContentHubLiftVersionTest extends ContentHubCommandTestBase {
    *   String to look for within display.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

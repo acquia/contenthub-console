@@ -21,8 +21,6 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
   /**
    * Test content hub module version.
    *
-   * @covers ::execute
-   *
    * @param bool $module_exist
    *   Expected return value of exists() method.
    * @param int $module_version
@@ -31,6 +29,8 @@ class ContentHubModuleVersionTest extends ContentHubCommandTestBase {
    *   String to look for within display.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */

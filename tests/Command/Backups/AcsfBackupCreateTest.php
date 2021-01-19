@@ -40,6 +40,8 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
    *
    * @throws \ReflectionException
    *
+   * @covers ::execute
+   *
    * @dataProvider dataProvider
    */
   public function testAcsfBackupCreate(array $backup_config_name, array $config_exists, array $local_data, array $platform_data, array $sites_array, bool $config_save_method_call, int $exit_code, string $needle) {
