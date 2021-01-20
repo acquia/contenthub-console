@@ -27,20 +27,24 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
    *
    * @param string $cmd
    *   The command to instantiate.
-   * @param $arguments
-   *   Environment mock data.
    * @param array $arr
    *   Input data required for the command.
+   * @param array $arguments
+   *   Environment mock data.
    *
    * @return \Symfony\Component\Console\Tester\CommandTester
    *   The command tester.
    *
    * @throws \ReflectionException
    */
-  public function getCmdTesterInstanceOf(string $cmd, array $arguments = [], array $arr) {
+  public function getCmdTesterInstanceOf(string $cmd, array $arr, array $arguments = []) {
     $reflection = new \ReflectionClass($cmd);
     /** @var \Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupBase $cmd */
-    $cmd = $reflection->newInstanceArgs([$this->getDispatcher(), $this->getConfigStorage($arr), $this->getPlatformCommandExecutioner($arr)]);
+    $cmd = $reflection->newInstanceArgs([
+      $this->getDispatcher(),
+      $this->getConfigStorage($arr),
+      $this->getPlatformCommandExecutioner($arr)
+    ]);
     $platform = $this->getPlatform($arguments);
     $cmd->addPlatform('test', $platform);
     return $this->getCommandTester($cmd);
@@ -92,6 +96,8 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
   abstract public function getConfigStorage(array $arr): object;
 
   /**
+   * Get platform command executioner mock.
+   *
    * @param array $arr
    *   Array containing mock configuration data.
    *

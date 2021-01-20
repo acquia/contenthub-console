@@ -101,7 +101,7 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
    * @return array
    *   Snapshots list.
    */
-  protected function listSnapshots($output) {
+  protected function listSnapshots(OutputInterface $output) {
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubGetSnapshots::getDefaultName(),
       $this->getPlatform('source'), [
       '--list' => TRUE

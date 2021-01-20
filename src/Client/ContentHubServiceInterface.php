@@ -109,6 +109,7 @@ interface ContentHubServiceInterface {
    * Returns snapshots.
    *
    * @return array
+   *   Array of snapshots.
    */
   public function getSnapshots(): array;
 
@@ -116,27 +117,30 @@ interface ContentHubServiceInterface {
    * Create snapshots.
    *
    * @return array
+   *   Returns created snapshot.
    */
   public function createSnapshot(): array;
 
   /**
    * Delete snapshot.
    *
-   * @param $name
+   * @param string $name
    *   Snapshot name.
    *
    * @return array
+   *   Array of response.
    */
-  public function deleteSnapshot($name): array;
+  public function deleteSnapshot(string $name): array;
 
   /**
    * Restore snapshot.
    *
-   * @param $name
+   * @param string $name
    *   Snapshot name.
    *
    * @return array
+   *   Array of response.
    */
-  public function restoreSnapshot($name): array;
+  public function restoreSnapshot(string $name): array;
 
 }

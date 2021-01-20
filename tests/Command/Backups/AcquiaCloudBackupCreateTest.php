@@ -21,8 +21,6 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
   /**
    * Tests backup list.
    *
-   * @covers ::execute
-   *
    * @param array $config_exists
    *   Configuration status.
    * @param array $backup_name
@@ -38,6 +36,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    *
    * @throws \ReflectionException
    *
+   * @covers ::execute
+   *
    * @dataProvider dataProvider
    */
   public function testBackupCreate(array $config_exists, array $backup_name, array $local_data, array $platform_data, string $needle, int $exit_code) {
@@ -51,7 +51,10 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
           // Second case.
           ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           // Third case.
-          ['delete', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/chdemo1/backups/4676965']
+          [
+            'delete',
+            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/chdemo1/backups/4676965'
+          ]
         ],
         'returns' => [
           // First case.
@@ -70,7 +73,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
       'platform_data' => $platform_data,
     ];
 
-    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudBackupCreate::class, $arguments, $arr);
+    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudBackupCreate::class, $arr, $arguments);
     $tester->setInputs($backup_name)->execute([]);
     $output = $tester->getDisplay();
     $this->assertEquals($needle, $output);
@@ -82,16 +85,23 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
    * A data provider for ::testBackupList()
    *
    * @return array[]
+   *   Array for data provider.
    */
-  public function dataProvider() {
+  public function dataProvider(): array {
     return [
       [
         [FALSE],
         ['test'],
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'
+          ],
         ],
         [
           'exit_code' => 0,
@@ -108,9 +118,15 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         [TRUE, FALSE, FALSE],
         ['test', 'test test', 'test'],
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+          ],
         ],
         [
           'exit_code' => 0,
@@ -128,9 +144,15 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         [FALSE],
         ['test'],
         [
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+          ],
           ['exit_code' => 0, 'command_output' => ''],
-          ['exit_code' => 0, 'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'],
+          [
+            'exit_code' => 0,
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'
+          ],
         ],
         [
           'exit_code' => 0,
@@ -216,7 +238,12 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
     return new class($output['exit_code'], $output['command_output']) {
 
       /**
+       * Constructor.
        *
+       * @param int $exit_code
+       *   Exit code.
+       * @param string $command_output
+       *   Command output.
        */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
@@ -224,16 +251,16 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
       }
 
       /**
-       *
+       * Mock of getReturnCode().
        */
-      public function getReturnCode() {
+      public function getReturnCode(): int {
         return $this->exit_code;
       }
 
       /**
-       *
+       * Mock of __toString().
        */
-      public function __toString() {
+      public function __toString(): string {
         return $this->command_output;
       }
 
@@ -253,7 +280,12 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
     return new class($output['exit_code'], $output['command_output']) {
 
       /**
+       * Constructor.
        *
+       * @param int $exit_code
+       *   Exit code.
+       * @param string $command_output
+       *   Command output.
        */
       public function __construct(int $exit_code, string $command_output) {
         $this->exit_code = $exit_code;
@@ -261,16 +293,16 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
       }
 
       /**
-       *
+       * Mock of getReturnCode().
        */
-      public function getReturnCode() {
+      public function getReturnCode(): int {
         return $this->exit_code;
       }
 
       /**
-       *
+       * Mock of __toString().
        */
-      public function __toString() {
+      public function __toString(): string {
         return $this->command_output;
       }
 

@@ -50,7 +50,8 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
   /**
    * Sets guzzleClient instance.
    *
-   * @param \GuzzleHttp\Client
+   * @param \GuzzleHttp\Client $guzzleClient
+   *   Guzzle Client.
    */
   public function setGuzzleClient(Client $guzzleClient): void {
     $this->guzzleClient = $guzzleClient;
@@ -169,6 +170,7 @@ class ContentHubHealthCheckWebhookStatus extends ContentHubCommandBase {
    *   Field (suppressed_until) value from response.
    *
    * @return string
+   *   Formatted timestamp.
    *
    * @throws \Exception
    */

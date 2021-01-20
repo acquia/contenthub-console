@@ -21,8 +21,6 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
   /**
    * Test Content Hub interest list.
    *
-   * @covers ::execute
-   *
    * @param bool $check_client
    *   Expected return value of checkClient() method.
    * @param array $diff
@@ -31,6 +29,8 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
    *   String to look for within display.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */
@@ -67,6 +67,7 @@ class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
    * A data provider for ::testContentHubInterestListCheck()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider(): array {
     return [

@@ -26,7 +26,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    *
    * @var array
    */
-  protected $config_dir = [
+  protected $configDir = [
     '.acquia',
     'contenthub',
     'backups'
@@ -102,7 +102,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
     $answer = $helper->ask($input, $output, $question);
 
     try {
-      $config_to_delete = $this->storage->load($answer, $this->config_dir);
+      $config_to_delete = $this->storage->load($answer, $this->configDir);
       $uri = $this->getUri($sites);
       $output->writeln('<info>Starting Acquia Content Hub service snapshot deletion.</info>');
       $exit_code = $this->deleteSnapshot($config_to_delete->get('backups.ach_snapshot'), $this->platform, $uri);
@@ -125,7 +125,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
     }
 
     try {
-      $this->storage->delete($answer, $this->config_dir);
+      $this->storage->delete($answer, $this->configDir);
     }
     catch (\Exception $e) {
       $output->writeln('<warning>Backup configuration file deletion failed.</warning>');
@@ -168,8 +168,8 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    *   Array containing all backup for given platform.
    */
   protected function getPlatformBackupConfigs(string $alias): array {
-    array_push($this->config_dir, $alias);
-    return $this->storage->loadAll($this->config_dir);
+    array_push($this->configDir, $alias);
+    return $this->storage->loadAll($this->configDir);
   }
 
   /**
@@ -177,7 +177,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    *
    * @param string $snapshot_name
    *   Snapshot name.
-   * @param \EclipseGc\CommonConsole\PlatformInterface $plaform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform object.
    * @param string $uri
    *   Site uri from platform.
@@ -185,10 +185,13 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    * @return int
    *   Exit code.
    */
-  protected function deleteSnapshot(string $snapshot_name, PlatformInterface $plaform, string $uri): int {
+  protected function deleteSnapshot(string $snapshot_name, PlatformInterface $platform, string $uri): int {
     $raw = $this
       ->executioner
-      ->runWithMemoryOutput(ContentHubDeleteSnapshotHelper::getDefaultName(), $plaform, ['--name' => $snapshot_name, '--uri' => $uri]);
+      ->runWithMemoryOutput(ContentHubDeleteSnapshotHelper::getDefaultName(), $platform, [
+        '--name' => $snapshot_name,
+        '--uri' => $uri
+      ]);
     return $raw->getReturnCode();
   }
 

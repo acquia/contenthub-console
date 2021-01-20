@@ -59,6 +59,7 @@ class ContentHubAuditTmpFiles extends Command implements PlatformBootStrapComman
    * Returns temporary files with status of 0.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity Type manager service.
    *
    * @return array
    *   The array of temporary files.

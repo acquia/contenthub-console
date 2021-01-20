@@ -52,7 +52,12 @@ class AcquiaCloudCronCheck extends AcquiaCloudCommandBase {
 
     $output->writeln('<comment>Scheduled jobs running ACH queues:</comment>');
     $table = new Table($output);
-    $table->setHeaders(['Environment id', 'Environment name', 'Label', 'Cron ID']);
+    $table->setHeaders([
+      'Environment id',
+      'Environment name',
+      'Label',
+      'Cron ID'
+    ]);
     $table->addRows($filtered_crons);
     $table->render();
 

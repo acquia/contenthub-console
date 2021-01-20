@@ -37,10 +37,19 @@ class ContentHubSubscriptionSetTest extends TestCase {
     $command->addPlatform('test', $platform);
     /** @var \Symfony\Component\Console\Tester\CommandTester $command_tester */
 
-    $command_tester = $this->doRunCommand($command, ['hostname', 'api_key', 'secret_key', 'yes'], ['alias' => 'test']);
+    $command_tester = $this->doRunCommand($command, ['hostname',
+      'api_key',
+      'secret_key',
+      'yes'
+    ], ['alias' => 'test']);
     $this->assertStringContainsString('Please provide a valid Hostname', $command_tester->getDisplay());
+    $this->assertEquals(1, $command_tester->getStatusCode());
 
-    $command_tester = $this->doRunCommand($command, ['https://example.com', 'api_key', 'secret_key', 'yes'], ['alias' => 'test']);
+    $command_tester = $this->doRunCommand($command, ['https://example.com',
+      'api_key',
+      'secret_key',
+      'yes'
+    ], ['alias' => 'test']);
     $this->assertStringContainsString('https://example.com', $command_tester->getDisplay());
     $this->assertStringContainsString('api_key', $command_tester->getDisplay());
     $this->assertStringContainsString('secret_key', $command_tester->getDisplay());
@@ -52,8 +61,6 @@ class ContentHubSubscriptionSetTest extends TestCase {
     $this->assertEquals('https://example.com', $hostname, 'Hostname has been stored');
     $this->assertEquals('api_key', $api_key, 'API key has been stored');
     $this->assertEquals('secret_key', $secret_key, 'Secret key has been stored');
-
-    $this->doRunCommand($command, ['https://example.com', 'api_key', 'secret_key', 'yes'], ['alias' => 'test']);
   }
 
   /**

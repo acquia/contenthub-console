@@ -6,7 +6,6 @@ use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
 use Acquia\Console\ContentHub\Client\ContentHubServiceInterface;
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 
 /**
  * Class ContentHubCommandTestBase.
@@ -20,11 +19,15 @@ class ContentHubCommandTestBase extends TestCase {
   use CommandTestHelperTrait;
 
   /**
+   * Drupal Service Factory double.
+   *
    * @var \Prophecy\Prophecy\ObjectProphecy
    */
   protected $drupalServiceFactory;
 
   /**
+   * Content Hub Service double.
+   *
    * @var \Prophecy\Prophecy\ObjectProphecy
    */
   protected $contentHubService;

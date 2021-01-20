@@ -25,7 +25,7 @@ class ContentHubLiftVersion extends ContentHubCommandBase implements PlatformBoo
   protected static $defaultName = 'ach:lift-version';
 
   /**
-   *
+   * {@inheritDoc}
    */
   protected function configure() {
     $this->setDescription('Checks for the Acquia Lift module 4.x version.');
@@ -59,7 +59,12 @@ class ContentHubLiftVersion extends ContentHubCommandBase implements PlatformBoo
   }
 
   /**
+   * Check if Acquia Lift is configured.
    *
+   * @return bool
+   *   Return True if Acquia Lift is configured.
+   *
+   * @throws \Exception
    */
   protected function isAcquiaLiftConfigured(): bool {
     $config = $this->drupalServiceFactory->getDrupalService('config.factory')->getEditable('acquia_lift.settings');

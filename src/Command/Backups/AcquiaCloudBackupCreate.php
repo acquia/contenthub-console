@@ -39,7 +39,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @var array
    */
-  protected $config_dir = [
+  protected $configDir = [
     '.acquia',
     'contenthub',
     'backups'
@@ -92,7 +92,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     $output->writeln('Please name this backup in order to restore it later (alphanumeric characters only)!');
 
     $config = new Config();
-    $this->config_dir[] = $this->platform->getAlias();
+    $this->configDir[] = $this->platform->getAlias();
 
     $helper = $this->getHelper('question');
     $question = new Question('Please enter a name:');
@@ -107,7 +107,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
           'Name cannot contain white spaces!'
         );
       }
-      if ($this->storage->configExists($this->config_dir, $answer)) {
+      if ($this->storage->configExists($this->configDir, $answer)) {
         throw new \RuntimeException(
           'Configuration with given name already exists!'
         );
@@ -161,7 +161,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     $config->set('name', $answer);
     $config->set('platform', $platform_info);
     $config->set('backups', $backup_info);
-    $this->storage->save($config, $answer, $this->config_dir);
+    $this->storage->save($config, $answer, $this->configDir);
 
     return 0;
   }

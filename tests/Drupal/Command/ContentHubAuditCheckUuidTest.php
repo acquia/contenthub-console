@@ -70,6 +70,7 @@ class ContentHubAuditCheckUuidTest extends EntityKernelTestBase {
    * Returns a new command tester object.
    *
    * @return \Symfony\Component\Console\Tester\CommandTester
+   *   Command tester for Audit UUID command.
    */
   protected function getCommandTester(): CommandTester {
     $cmd = new ContentHubAuditCheckUuid();
@@ -83,6 +84,7 @@ class ContentHubAuditCheckUuidTest extends EntityKernelTestBase {
    *   The values to set.
    *
    * @return \Drupal\node\Entity\NodeType
+   *   Node created.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
@@ -112,10 +114,10 @@ class ContentHubAuditCheckUuidTest extends EntityKernelTestBase {
    *   The name of the configuration.
    * @param string $key
    *   The key of the configuration.
-   * @param $value
+   * @param string|null $value
    *   The value to set.
    */
-  protected function setConfig(string $name, string $key, $value): void {
+  protected function setConfig(string $name, string $key, string $value): void {
     \Drupal::configFactory()->getEditable($name)->set($key, $value)->save();
   }
 

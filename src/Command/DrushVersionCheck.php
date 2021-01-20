@@ -69,7 +69,10 @@ class DrushVersionCheck extends Command implements PlatformCommandInterface {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln('Checking drush version...');
-    $drush_options = ['--drush_command' => 'version', '--drush_args' => ['--format=string']];
+    $drush_options = [
+      '--drush_command' => 'version',
+      '--drush_args' => ['--format=string']
+    ];
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, $this->getPlatform('source'), $drush_options);
     $exit_code = $raw->getReturnCode();
     $result = $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options), FALSE);

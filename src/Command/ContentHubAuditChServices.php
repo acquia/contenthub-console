@@ -81,6 +81,8 @@ class ContentHubAuditChServices extends ContentHubCommandBase implements Platfor
   }
 
   /**
+   * Returns regex pattern.
+   *
    * @return string
    *   Returns a regex pattern which search for ACH services.
    */

@@ -48,6 +48,7 @@ class ContentHubVerifyCurrentSiteWebhook extends ContentHubCommandBase implement
    * Verify current site webhook.
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   Output stream.
    *
    * @return int
    *   Returns 1 if current site webhook not found in ACH Service otherwise 0.

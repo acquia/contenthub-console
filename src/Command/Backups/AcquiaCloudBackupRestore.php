@@ -26,7 +26,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    *
    * @var array
    */
-  protected $config_dir = [
+  protected $configDir = [
     '.acquia',
     'contenthub',
     'backups'
@@ -102,7 +102,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
     $answer = $helper->ask($input, $output, $question);
 
     try {
-      $config_to_restore = $this->storage->load($answer, $this->config_dir);
+      $config_to_restore = $this->storage->load($answer, $this->configDir);
       $uri = $this->getUri($sites);
       $output->writeln('<info>Starting Acquia Content Hub service restoration.</info>');
       $exit_code = $this->restoreSnapshot($config_to_restore->get('backups.ach_snapshot'), $this->platform, $uri);
@@ -138,8 +138,8 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    *   Array containing all backup for given platform.
    */
   protected function getPlatformBackupConfigs(string $alias): array {
-    array_push($this->config_dir, $alias);
-    return $this->storage->loadAll($this->config_dir);
+    array_push($this->configDir, $alias);
+    return $this->storage->loadAll($this->configDir);
   }
 
   /**
@@ -167,17 +167,21 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    *
    * @param string $snapshot_name
    *   Snapshot name.
-   * @param \EclipseGc\CommonConsole\PlatformInterface $plaform
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
+   *   Platform instance.
    * @param string $uri
    *   Site uri from platform.
    *
    * @return int
    *   Exit code.
    */
-  protected function restoreSnapshot(string $snapshot_name, PlatformInterface $plaform, string $uri): int {
+  protected function restoreSnapshot(string $snapshot_name, PlatformInterface $platform, string $uri): int {
     $raw = $this
       ->executioner
-      ->runWithMemoryOutput(ContentHubRestoreSnapshotHelper::getDefaultName(), $plaform, ['--name' => $snapshot_name, '--uri' => $uri]);
+      ->runWithMemoryOutput(ContentHubRestoreSnapshotHelper::getDefaultName(), $platform, [
+        '--name' => $snapshot_name,
+        '--uri' => $uri
+      ]);
     return $raw->getReturnCode();
   }
 
@@ -185,6 +189,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    * Helper function to get sites on the platform.
    *
    * @return array
+   *   Array of sites on the platform.
    */
   protected function getPlatformSitesForRestore(): array {
     return $this->getPlatformSites('source');
@@ -197,6 +202,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    *   Array of sites in the platform.
    *
    * @return string
+   *   URI of one of the sites.
    */
   protected function getUri(array $sites): string {
     $site_info = reset($sites);

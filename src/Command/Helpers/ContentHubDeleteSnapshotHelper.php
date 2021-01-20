@@ -28,7 +28,7 @@ class ContentHubDeleteSnapshotHelper extends ContentHubCommandBase implements Pl
   }
 
   /**
-   *
+   * {@inheritDoc}
    */
   protected function configure() {
     $this->setDescription('Acquia Content Hub delete snapshots helper.')

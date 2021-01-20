@@ -148,10 +148,10 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output.
-   * @param string
+   * @param string $command_name
    *   Command to get module version.
-   * @param int
-   *   Version to compare to
+   * @param int|null $version
+   *   Version to compare to.
    *
    * @return array
    *   Array contains sites, which do not have ACH 2.x.

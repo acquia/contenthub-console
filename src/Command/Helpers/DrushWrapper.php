@@ -10,12 +10,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
 /**
- *
+ * Class DrushWrapper.
  */
 class DrushWrapper extends Command {
 
   use PlatformCmdOutputFormatterTrait;
 
+  /**
+   * {@inheritDoc}
+   */
   public static $defaultName = 'ach:drush';
 
   /**
@@ -51,7 +54,11 @@ class DrushWrapper extends Command {
     }
 
     // This can be removed if we leverage DrushVersionCheck command in migration start command.
-    $check_drush_version_process = new Process([$path_to_drush, 'version', '--format=string']);
+    $check_drush_version_process = new Process([
+      $path_to_drush,
+      'version',
+      '--format=string'
+    ]);
     $check_drush_version_process->run();
     $version = $check_drush_version_process->getOutput();
     if (version_compare($version, '9.0.0', '<')) {

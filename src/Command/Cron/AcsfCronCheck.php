@@ -27,7 +27,7 @@ class AcsfCronCheck extends AcquiaCloudCronCheck {
   }
 
   /**
-   *
+   * {@inheritDoc}
    */
   public static function getExpectedPlatformOptions(): array {
     return ['source' => ACSFPlatform::getPlatformId()];

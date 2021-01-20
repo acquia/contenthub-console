@@ -22,8 +22,6 @@ class ContentHubVerifyWebhooksDefaultFiltersTest extends ContentHubCommandTestBa
   /**
    * Tests whether all default filters are successfully attached to their corresponding webhooks.
    *
-   * @covers ::execute
-   *
    * @param array $webhooks_data
    *   Expected return value of getWebhooks() method.
    * @param array $filters_data
@@ -34,6 +32,8 @@ class ContentHubVerifyWebhooksDefaultFiltersTest extends ContentHubCommandTestBa
    *   String to look for within display.
    * @param int $exit_code
    *   Expected return value of execute() method.
+   *
+   * @covers ::execute
    *
    * @dataProvider dataProvider
    */
@@ -105,6 +105,7 @@ class ContentHubVerifyWebhooksDefaultFiltersTest extends ContentHubCommandTestBa
        *   Drupal state name.
        *
        * @return array
+       *   Array of filters.
        */
       public function get(string $state_name): array {
         return $this->filters[$state_name];
@@ -117,6 +118,7 @@ class ContentHubVerifyWebhooksDefaultFiltersTest extends ContentHubCommandTestBa
    * A data provider for ::testContentHubVerifyWebhooksDefaultFilters()
    *
    * @return array[]
+   *   Array for data provider.
    */
   public function dataProvider(): array {
     return [
