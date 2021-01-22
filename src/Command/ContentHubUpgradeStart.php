@@ -2,13 +2,13 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Acquia\Console\Acsf\Command\AcsfDatabaseBackupCreate;
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
+use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate;
+use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreateMultiSite;
+use Acquia\Console\ContentHub\Command\Backups\AcsfBackupCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreateMultiSite;
-use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
-use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupCreate;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
@@ -312,21 +312,19 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       $backup_command = NULL;
       $cmd_input = [
         'alias' => $input->getArgument('alias'),
-        '--all' => TRUE,
       ];
-      $output->writeln('Starting backups for all sites in the platform.');
+      $output->writeln('Starting database backups for all sites in the platform and a snapshot of the subscription.');
       switch ($platform_type) {
         case AcquiaCloudPlatform::PLATFORM_NAME:
-          $backup_command = AcquiaCloudDatabaseBackupCreate::getDefaultName();
-          $cmd_input['--wait'] = TRUE;
+          $backup_command = AcquiaCloudBackupCreate::getDefaultName();
           break;
 
         case ACSFPlatform::PLATFORM_NAME:
-          $backup_command = AcsfDatabaseBackupCreate::getDefaultName();
+          $backup_command = AcsfBackupCreate::getDefaultName();
           break;
 
         case AcquiaCloudMultiSitePlatform::PLATFORM_NAME:
-          $backup_command = AcquiaCloudMultisiteDatabaseBackupCreate::getDefaultName();
+          $backup_command = AcquiaCloudBackupCreateMultiSite::getDefaultName();
           break;
       }
       if (empty($backup_command)) {
@@ -337,13 +335,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
         $backup_executor->addPlatform($input->getArgument('alias'), $platform);
         $status = $backup_executor->run(new ArrayInput($cmd_input), $output);
         if ($status === 0) {
-          if ($platform_type == AcquiaCloudPlatform::PLATFORM_NAME) {
-            $output->writeln('<info>Site backups completed.</info>');
-          }
-          else {
-            $output->writeln('Site backups queued.');
-            $output->writeln('<warning>Please ensure the backup jobs have finished before proceeding to the next step.</warning>');
-          }
+          $output->writeln('<info>Database backups and service snapshot completed.</info>');
         }
       }
       $platform->set('acquia.content_hub.upgrade.stage', 2)->save();
