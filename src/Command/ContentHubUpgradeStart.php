@@ -124,7 +124,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     $pass = $this->executeStage($stage, 0);
     $this->executeContentHubAuditCommand($platform, $input, $output, $helper, $pass);
 
-    // Generate Database Backups.
+    // Generate Database Backups and service snapshot.
     $pass = $this->executeStage($stage, 1);
     $this->executeDatabaseBackups($application, $platform, $input, $output, $pass);
 
@@ -291,7 +291,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   }
 
   /**
-   * Generates Database Backups.
+   * Generates Database Backups and service snapshot.
    *
    * @param \Symfony\Component\Console\Application $application
    *   The Console Application.
