@@ -61,8 +61,10 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Creates a snapshot of Acquia Content Hub Service and database backups for all sites within the platform.');
-    $this->setAliases(['ace-bc']);
+    $this
+      ->setDescription('Creates a snapshot of Acquia Content Hub Service and database backups for all sites within the platform.')
+      ->setHidden(TRUE)
+      ->setAliases(['ace-bc']);
   }
 
   /**
