@@ -9,7 +9,7 @@ use EclipseGc\CommonConsole\PlatformInterface;
 /**
  * Class AcsfBackupRestore.
  *
- * @package Acquia\Console\Acsf\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcsfBackupRestore extends AcquiaCloudBackupRestore {
 

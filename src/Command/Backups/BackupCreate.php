@@ -3,22 +3,23 @@
 namespace Acquia\Console\ContentHub\Command\Backups;
 
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
-use Acquia\Console\Cloud\Command\Helpers\AcquiaCloudDbBackupDeleteHelper;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
+use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class BackupList.
+ * Class BackupCreate.
  *
- * @package Acquia\Console\Cloud\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
-class BackupCreate extends Command {
+class BackupCreate extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
 
@@ -28,33 +29,30 @@ class BackupCreate extends Command {
   protected static $defaultName = 'backup:create';
 
   /**
-   * Command executioner service.
-   *
-   * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
+   * {@inheritdoc}
    */
-  protected $executioner;
+  public static function getExpectedPlatformOptions(): array {
+    return ['source' => PlatformCommandInterface::ANY_PLATFORM];
+  }
 
   /**
-   * AcquiaCloudBackupDelete constructor.
+   * BackupCreate constructor.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   *   Event dispatcher.
-   * @param \Acquia\Console\Helpers\PlatformCommandExecutioner $executioner
-   *   Command executioner service instance.
+   *   Event Dispatcher service.
    * @param string|null $name
    *   Command name.
    */
-  public function __construct(EventDispatcherInterface $event_dispatcher, PlatformCommandExecutioner $executioner, string $name = NULL) {
-    parent::__construct($event_dispatcher, $name);
-
-    $this->executioner = $executioner;
+  public function __construct(EventDispatcherInterface $event_dispatcher, string $name = NULL) {
+    parent::__construct($name);
+    $this->dispatcher = $event_dispatcher;
   }
 
   /**
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('List available backup bundles of Content Hub Service snapshots and database site backups.');
+    $this->setDescription('Create backup bundle of Content Hub Service snapshots and database site backups.');
     $this->setAliases(['bc']);
   }
 
@@ -63,27 +61,24 @@ class BackupCreate extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $platform = $this->getPlatform('source');
-    switch ($platform) {
+    $backup_command = NULL;
+    switch ($platform->getPlatformId()) {
       case AcquiaCloudPlatform::getPlatformId():
-        return $this->executioner->runLocallyWithMemoryOutput(AcquiaCloudBackupCreate::getDefaultName(), $platform, $input);
-
-      break;
+        $backup_command = $this->getApplication()->find(AcquiaCloudBackupCreate::getDefaultName());
+        break;
 
       case AcquiaCloudMultiSitePlatform::getPlatformId():
-        return $this->executioner->runLocallyWithMemoryOutput(AcquiaCloudBackupCreateMultiSite::getDefaultName(), $platform, $input);
-
-      break;
+        $backup_command = $this->getApplication()->find(AcquiaCloudBackupCreateMultiSite::getDefaultName());
+        break;
 
       case ACSFPlatform::getPlatformId():
-        return $this->executioner->runLocallyWithMemoryOutput(AcquiaCloudBackupCreate::getDefaultName(), $platform, $input);
-
-      break;
-
-      default:
+        $backup_command = $this->getApplication()->find(AcsfBackupCreate::getDefaultName());
         break;
     }
 
-    return 0;
+    $backup_command->addPlatform($input->getArgument('alias'), $platform);
+    return $backup_command->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
+
   }
 
 }

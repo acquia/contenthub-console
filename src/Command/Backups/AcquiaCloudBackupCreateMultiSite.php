@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class AcquiaCloudBackupCreateMultiSite.
  *
- * @package Acquia\Console\Cloud\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
 
@@ -31,8 +31,10 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Creates a snapshot of Acquia Content Hub Service and database backups for all sites within ACE Multi-site environment.');
-    $this->setAliases(['ace-bcm']);
+    $this
+      ->setDescription('Creates a snapshot of Acquia Content Hub Service and database backups for all sites within ACE Multi-site environment.')
+      ->setHidden(TRUE)
+      ->setAliases(['ace-bcm']);
   }
 
   /**

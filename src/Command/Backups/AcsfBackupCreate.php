@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class AcsfBackupCreate.
  *
- * @package Acquia\Console\Acsf\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcsfBackupCreate extends AcquiaCloudBackupCreate {
 
@@ -35,8 +35,10 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Creates a snapshot of Acquia Content Hub Service and database backups for all sites within the ACSF platform.');
-    $this->setAliases(['acsf-bc']);
+    $this
+      ->setDescription('Creates a snapshot of Acquia Content Hub Service and database backups for all sites within the ACSF platform.')
+      ->setHidden(TRUE)
+      ->setAliases(['acsf-bc']);
   }
 
   /**
