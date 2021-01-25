@@ -7,7 +7,7 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 /**
  * Class AcquiaCloudBackupDeleteMultisite.
  *
- * @package Acquia\Console\Cloud\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupDeleteMultisite extends AcquiaCloudBackupDelete {
 

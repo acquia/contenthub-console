@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class AcquiaCloudBackupCreate.
  *
- * @package Acquia\Console\Cloud\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
 

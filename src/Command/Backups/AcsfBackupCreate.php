@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class AcsfBackupCreate.
  *
- * @package Acquia\Console\Acsf\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcsfBackupCreate extends AcquiaCloudBackupCreate {
 

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class BackupList.
  *
- * @package Acquia\Console\Cloud\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class BackupList extends Command {
 

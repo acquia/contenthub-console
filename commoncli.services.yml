@@ -14,6 +14,12 @@ services:
     arguments: ['@config.storage']
     tags:
       - { name: common_console_command }
+  command.contenthub.backup.create:
+    class: Acquia\Console\ContentHub\Command\Backups\BackupCreate
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
   command.contenthub.ace.backup.create:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate
     public: true

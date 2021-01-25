@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class AcquiaCloudBackupDelete.
  *
- * @package Acquia\Console\Cloud\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
 

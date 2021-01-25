@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 /**
  * Class AcsfCronCheck.
  *
- * @package Acquia\Console\Acsf\Command
+ * @package Acquia\Console\ContentHub\Command\Cron
  */
 class AcsfCronCheck extends AcquiaCloudCronCheck {
 

@@ -9,7 +9,7 @@ use EclipseGc\CommonConsole\PlatformInterface;
 /**
  * Class AcsfBackupDelete.
  *
- * @package Acquia\Console\Acsf\Command\Backups
+ * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcsfBackupDelete extends AcquiaCloudBackupDelete {
 
