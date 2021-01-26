@@ -6,7 +6,7 @@ particular platform, like
   - Acquia Site Factory 
 
 One of the most important commands that is provided by this tool is the one that allows you to upgrade your sites from
-Content Hub 1.x to 2.x by executing a single command and performing all the operations that it asks you to do. 
+Content Hub 1.x to 2.x by executing a single command and performing all the operations that are required by the upgrade. 
 
 # Installation
 Install the package with the latest version of composer:
@@ -14,9 +14,8 @@ Install the package with the latest version of composer:
     $composer require acquia/contenthub-console
     $composer install
 
-Notice that you have to install those packages in your codebase deployed to your platform of choice in Acquia Cloud and 
-also in your local computer so that you can execute the commands in your local terminal but they will be executed in the 
-Cloud platform. 
+Note that this package must be installed locally and in the codebase on your remote platform (Acquia Cloud or Acquia 
+Site Factory) in order for commands to work.
 
 # Create a Platform
 
