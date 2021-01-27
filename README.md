@@ -19,8 +19,8 @@ Site Factory) in order for commands to work.
 
 # Create a Platform
 
-In order for this tool to execute commands remotely on your Acquia Cloud Platform, you would need to first create a 
-platform with the following command:
+In order for this tool to execute commands remotely on your Acquia Cloud Platform, first create a platform with the 
+following command:
 
     $./vendor/bin/commoncli pc
     
