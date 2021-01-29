@@ -3,6 +3,13 @@
     "description": "A package providing Acquia ContentHub commands for the CommonConsole command line interface.",
     "type": "project",
     "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Acquia Engineering",
+            "homepage": "https://www.acquia.com",
+            "role": "Maintainer"
+        }
+    ],
     "require": {
         "acquia/acsf-contenthub-console": "dev-main",
         "ext-json": "*",
