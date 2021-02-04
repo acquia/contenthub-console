@@ -55,8 +55,9 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Delete snapshot of ACH service and database backups for all site within the platform.');
-    $this->setAliases(['ace-bd']);
+    $this->setDescription('Deletes a snapshot of Acquia Content Hub service and database backups for all site within the platform.')
+      ->setHidden(TRUE)
+      ->setAliases(['ace-bd']);
   }
 
   /**

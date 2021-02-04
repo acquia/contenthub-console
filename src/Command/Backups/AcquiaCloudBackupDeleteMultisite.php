@@ -27,8 +27,9 @@ class AcquiaCloudBackupDeleteMultisite extends AcquiaCloudBackupDelete {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Delete snapshot of ACH service and database backups for all sites within ACE Multi-site environment.');
-    $this->setAliases(['ace-bdm']);
+    $this->setDescription('Deletes a snapshot of Acquia Content Hub service and database backups for all sites within ACE Multi-site environment.')
+      ->setHidden(TRUE)
+      ->setAliases(['ace-bdm']);
   }
 
   /**

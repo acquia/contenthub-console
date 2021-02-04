@@ -14,18 +14,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class BackupCreate.
+ * Class BackupDelete.
  *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
-class BackupCreate extends Command implements PlatformCommandInterface {
+class BackupDelete  extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
 
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'backup:create';
+  protected static $defaultName = 'backup:delete';
 
   /**
    * {@inheritdoc}
@@ -51,7 +51,7 @@ class BackupCreate extends Command implements PlatformCommandInterface {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Creates a backup bundle of Acquia Content Hub Service snapshot and database site backups.');
+    $this->setDescription('Deletes backups bundles of Content Hub Service snapshots and database site backups.');
     $this->setAliases(['bc']);
   }
 
@@ -63,15 +63,15 @@ class BackupCreate extends Command implements PlatformCommandInterface {
     $backup_command = NULL;
     switch ($platform->getPlatformId()) {
       case AcquiaCloudPlatform::getPlatformId():
-        $backup_command = $this->getApplication()->find(AcquiaCloudBackupCreate::getDefaultName());
+        $backup_command = $this->getApplication()->find(AcquiaCloudBackupDelete::getDefaultName());
         break;
 
       case AcquiaCloudMultiSitePlatform::getPlatformId():
-        $backup_command = $this->getApplication()->find(AcquiaCloudBackupCreateMultiSite::getDefaultName());
+        $backup_command = $this->getApplication()->find(AcquiaCloudBackupDeleteMultisite::getDefaultName());
         break;
 
       case ACSFPlatform::getPlatformId():
-        $backup_command = $this->getApplication()->find(AcsfBackupCreate::getDefaultName());
+        $backup_command = $this->getApplication()->find(AcsfBackupDelete::getDefaultName());
         break;
     }
 
