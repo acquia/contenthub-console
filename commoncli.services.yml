@@ -20,6 +20,18 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
+  command.contenthub.backup.delete:
+    class: Acquia\Console\ContentHub\Command\Backups\BackupDelete
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+  command.contenthub.backup.restore:
+    class: Acquia\Console\ContentHub\Command\Backups\BackupRestore
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
   command.contenthub.ace.backup.create:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate
     public: true
