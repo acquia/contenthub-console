@@ -53,7 +53,7 @@ class BackupRestore extends Command implements PlatformCommandInterface {
    */
   protected function configure() {
     $this->setDescription('Restores a backup bundle of Content Hub Service snapshots and database site backups created previously.');
-    $this->setAliases(['bc']);
+    $this->setAliases(['br']);
   }
 
   /**

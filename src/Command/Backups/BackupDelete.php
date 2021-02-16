@@ -52,7 +52,7 @@ class BackupDelete  extends Command implements PlatformCommandInterface {
    */
   protected function configure() {
     $this->setDescription('Deletes backups bundles of Content Hub Service snapshots and database site backups.');
-    $this->setAliases(['bc']);
+    $this->setAliases(['bd']);
   }
 
   /**
