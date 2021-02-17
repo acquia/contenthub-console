@@ -55,8 +55,9 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restore snapshot of ACH service and database backups for all site within the platform.');
-    $this->setAliases(['ace-br']);
+    $this->setDescription('Restores a snapshot of Acquia Content Hub service and database backups for all site within the platform.')
+      ->setHidden(TRUE)
+      ->setAliases(['ace-br']);
   }
 
   /**
@@ -95,6 +96,11 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
     $configs = array_map(function (Config $config) {
        return $config->get('name');
     }, $backups);
+
+    if (!$configs) {
+      $output->writeln('<error>The requested backup does not exist. Please retry.</error>');
+      return 1;
+    }
 
     /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');

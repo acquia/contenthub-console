@@ -8,10 +8,6 @@ php:
 
 before_script:
   - phpenv config-add .travis.php.ini
-  # The following line will not be needed to get the console-helpers from its private repository:
-  - composer config repositories.contenthub-console-helpers '{"type":"vcs","url":"git@github.com:acquia/contenthub-console-helpers.git","no-api":true}'
-  - composer config repositories.cloud-contenthub-console '{"type":"vcs","url":"git@github.com:acquia/cloud-contenthub-console.git","no-api":true}'
-  - composer config repositories.acsf-contenthub-console '{"type":"vcs","url":"git@github.com:acquia/acsf-contenthub-console.git","no-api":true}'
   - composer require --dev php-coveralls/php-coveralls
   - composer install
 

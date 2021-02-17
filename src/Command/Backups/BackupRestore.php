@@ -14,18 +14,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class BackupCreate.
+ * Class BackupRestore.
  *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
-class BackupCreate extends Command implements PlatformCommandInterface {
+class BackupRestore extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
 
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'backup:create';
+  protected static $defaultName = 'backup:restore'
+  ;
 
   /**
    * {@inheritdoc}
@@ -35,7 +36,7 @@ class BackupCreate extends Command implements PlatformCommandInterface {
   }
 
   /**
-   * BackupCreate constructor.
+   * BackupRestore constructor.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event Dispatcher service.
@@ -51,8 +52,8 @@ class BackupCreate extends Command implements PlatformCommandInterface {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Creates a backup bundle of Acquia Content Hub Service snapshot and database site backups.');
-    $this->setAliases(['bc']);
+    $this->setDescription('Restores a backup bundle of Acquia Content Hub Service snapshot and database site backups.');
+    $this->setAliases(['br']);
   }
 
   /**
@@ -63,15 +64,15 @@ class BackupCreate extends Command implements PlatformCommandInterface {
     $backup_command = NULL;
     switch ($platform->getPlatformId()) {
       case AcquiaCloudPlatform::getPlatformId():
-        $backup_command = $this->getApplication()->find(AcquiaCloudBackupCreate::getDefaultName());
+        $backup_command = $this->getApplication()->find(AcquiaCloudBackupRestore::getDefaultName());
         break;
 
       case AcquiaCloudMultiSitePlatform::getPlatformId():
-        $backup_command = $this->getApplication()->find(AcquiaCloudBackupCreateMultiSite::getDefaultName());
+        $backup_command = $this->getApplication()->find(AcquiaCloudBackupRestoreMultisite::getDefaultName());
         break;
 
       case ACSFPlatform::getPlatformId():
-        $backup_command = $this->getApplication()->find(AcsfBackupCreate::getDefaultName());
+        $backup_command = $this->getApplication()->find(AcsfBackupRestore::getDefaultName());
         break;
     }
 

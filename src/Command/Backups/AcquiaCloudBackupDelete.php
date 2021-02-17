@@ -55,8 +55,9 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Delete snapshot of ACH service and database backups for all site within the platform.');
-    $this->setAliases(['ace-bd']);
+    $this->setDescription('Deletes a snapshot of Acquia Content Hub service and database backups for all site within the platform.')
+      ->setHidden(TRUE)
+      ->setAliases(['ace-bd']);
   }
 
   /**
@@ -95,6 +96,11 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
     $configs = array_map(function (Config $config) {
       return $config->get('name');
     }, $backups);
+
+    if (!$configs) {
+      $output->writeln('<error>The requested backup does not exist. Please retry.</error>');
+      return 1;
+    }
 
     /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');

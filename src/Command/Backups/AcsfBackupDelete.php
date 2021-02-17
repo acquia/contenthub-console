@@ -29,8 +29,9 @@ class AcsfBackupDelete extends AcquiaCloudBackupDelete {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Delete snapshot of Acquia Content Hub service and database backups for all sites within the ACSF platform.');
-    $this->setAliases(['acsf-bd']);
+    $this->setDescription('Deletes a snapshot of Acquia Content Hub service and database backups for all sites within the ACSF platform.')
+      ->setHidden(TRUE)
+      ->setAliases(['acsf-bd']);
   }
 
   /**
