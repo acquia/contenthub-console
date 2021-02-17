@@ -35,7 +35,7 @@ class BackupDelete  extends Command implements PlatformCommandInterface {
   }
 
   /**
-   * BackupCreate constructor.
+   * BackupDelete constructor.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event Dispatcher service.

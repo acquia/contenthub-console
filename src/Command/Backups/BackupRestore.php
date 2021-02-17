@@ -36,7 +36,7 @@ class BackupRestore extends Command implements PlatformCommandInterface {
   }
 
   /**
-   * BackupCreate constructor.
+   * BackupRestore constructor.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event Dispatcher service.
