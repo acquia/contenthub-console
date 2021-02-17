@@ -97,6 +97,11 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
       return $config->get('name');
     }, $backups);
 
+    if (!$configs) {
+      $output->writeln('<error>The requested backup does not exist. Please retry.</error>');
+      return 1;
+    }
+
     /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');
     $question = new ChoiceQuestion('Please pick a configuration to delete:', $configs);
