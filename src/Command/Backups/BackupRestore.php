@@ -52,7 +52,7 @@ class BackupRestore extends Command implements PlatformCommandInterface {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restores a backup bundle of Content Hub Service snapshots and database site backups created previously.');
+    $this->setDescription('Restores a backup bundle of Acquia Content Hub Service snapshot and database site backups.');
     $this->setAliases(['br']);
   }
 

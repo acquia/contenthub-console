@@ -51,7 +51,7 @@ class BackupDelete  extends Command implements PlatformCommandInterface {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Deletes backups bundles of Content Hub Service snapshots and database site backups.');
+    $this->setDescription('Deletes a backup bundle of Acquia Content Hub Service snapshot and database site backups.');
     $this->setAliases(['bd']);
   }
 
