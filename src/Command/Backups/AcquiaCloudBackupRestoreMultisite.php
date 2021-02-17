@@ -27,8 +27,9 @@ class AcquiaCloudBackupRestoreMultisite extends AcquiaCloudBackupRestore {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restores a snapshot of Acquia Content Hub Service and database backups for all sites within ACE Multi-site environment.');
-    $this->setAliases(['ace-brm']);
+    $this->setDescription('Restores a snapshot of Acquia Content Hub Service and database backups for all sites within ACE Multi-site environment.')
+      ->setHidden(TRUE)
+      ->setAliases(['ace-brm']);
   }
 
   /**

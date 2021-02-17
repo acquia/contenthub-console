@@ -34,37 +34,37 @@ services:
       - { name: common_console_command }
   command.contenthub.ace.backup.create:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate
-    public: true
+    public: false
     arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.ace_multi.backup.create:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreateMultiSite
-    public: true
+    public: false
     arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.ace.backup.restore:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestore
-    public: true
+    public: false
     arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.ace_multi.backup.restore:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupRestoreMultisite
-    public: true
+    public: false
     arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
     tags:
       - { name: common_console_command }
   command.contenthub.ace.backup.delete:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupDelete
-    public: true
+    public: false
     arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
     tags:
       - { name: common_console_command }
   command.contenthub.ace_multi.backup.delete:
     class: Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupDeleteMultisite
-    public: true
+    public: false
     arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
     tags:
       - { name: common_console_command }
@@ -88,19 +88,19 @@ services:
       - { name: common_console_command }
   command.contenthub.acsf.backup.create:
     class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupCreate
-    public: true
+    public: false
     arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.acsf.backup.restore:
     class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupRestore
-    public: true
+    public: false
     arguments: ['@event_dispatcher', '@config.storage', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.acsf.backup.delete:
     class: Acquia\Console\ContentHub\Command\Backups\AcsfBackupDelete
-    public: true
+    public: false
     arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
     tags:
       - { name: common_console_command }
@@ -156,18 +156,18 @@ services:
       - { name: common_console_command }
   command.contenthub.audit.client-compare:
     class: Acquia\Console\ContentHub\Command\ContentHubClientCompare
-    public: true
+    public: false
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.audit.ssl_cert:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditSslCertificate
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.audit.depcalc:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditDepcalc
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.audit.content_hub_settings:
@@ -192,17 +192,17 @@ services:
       - { name: common_console_command }
   command.contenthub.audit.stream_wrappers:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditStreamWrappers
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.audit.services:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditChServices
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.health_check.interest_list:
     class: Acquia\Console\ContentHub\Command\ContentHubInterestListCheck
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.health_check.interest_diff:
@@ -217,7 +217,7 @@ services:
       - { name: common_console_command }
   command.contenthub.verify.default_filters:
     class: Acquia\Console\ContentHub\Command\ContentHubVerifyWebhooksDefaultFilters
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.verify_current_site_webhook:
@@ -242,7 +242,7 @@ services:
       - { name: common_console_command }
   command.contenthub.diff_module:
     class: Acquia\Console\ContentHub\Command\ContentHubDiff
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.verify_publisher_queues:
@@ -292,7 +292,7 @@ services:
       - { name: common_console_command }
   command.contenthub.queue:
     class: Acquia\Console\ContentHub\Command\ContentHubQueue
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.migrate.enable_unsubscribe:
@@ -313,7 +313,7 @@ services:
       - { name: common_console_command }
   command.contenthub.module_exist:
     class: Acquia\Console\ContentHub\Command\ContentHubModuleVersion
-    public: true
+    public: false
     tags:
       - { name: common_console_command }
   command.contenthub.lift_module_version:
