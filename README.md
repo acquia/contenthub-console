@@ -51,8 +51,6 @@ The following are some of the commands that are available to you:
       help                               Displays help for a command
       list                               Lists commands
      ace
-      ace:backup:delete                  [ace-bd] Delete snapshot of ACH service and database backups for all site within the platform.
-      ace:backup:restore                 [ace-br] Restore snapshot of ACH service and database backups for all site within the platform.
       ace:cron:check                     [ace-cch] Checks for Scheduled Jobs which are running Content Hub queues.
       ace:cron:create                    [ace-cc] Creates Scheduled Jobs for Acquia Content Hub Export/Import queues.
       ace:cron:list                      [ace-cl] Lists Scheduled Jobs.
@@ -61,8 +59,6 @@ The following are some of the commands that are available to you:
       ace:database:backup:list           [ace-dbl] Lists database backups.
       ace:database:backup:restore        [ace-dbres] Restores database backups.
      ace-multi
-      ace-multi:backup:delete            [ace-bdm] Delete snapshot of ACH service and database backups for all sites within ACE Multi-site environment.
-      ace-multi:backup:restore           [ace-brm] Restores a snapshot of Acquia Content Hub Service and database backups for all sites within ACE Multi-site environment.
       ace-multi:cron:create              [ace-ccm] Create cron jobs for queues in multi-site environment.
       ace-multi:database:backup:create   [ace-dbcrm] Creates database backups for ACE Multi-site environments.
       ace-multi:database:backup:delete   [ace-dbdelm] Deletes database backups for ACE Multi-site environments.
@@ -87,8 +83,6 @@ The following are some of the commands that are available to you:
       ach:verify-current-site-webhook    [ach-vcsw] Verify if this site's webhook as defined in the configuration is actually registered in the Content Hub service.
       ach:webhook:status                 [ach-ws] Uses the Content Hub Service to collect information about the status of webhooks.
      acsf
-      acsf:backup:delete                 [acsf-bd] Delete snapshot of Acquia Content Hub service and database backups for all sites within the ACSF platform.
-      acsf:backup:restore                [acsf-br] Restore snapshot of Acquia Content Hub service service and database backups for all sites within the ACSF platform.
       acsf:cron:check                    [acsf-cch] Checks for Scheduled Jobs which are running Content Hub queues.
       acsf:cron:create                   [acsf-cc] Creates Scheduled Jobs for Acquia Content Hub Export/Import queues.
       acsf:cron:list                     [acsf-cl] List Scheduled Jobs
@@ -97,8 +91,10 @@ The following are some of the commands that are available to you:
       acsf:database:backup:list          [acsf-dbl] List database backups for ACSF sites.
       acsf:database:backup:restore       [acsf-dbr] Restores database backups for ACSF sites.
      backup
-      backup:create                      [bc] Create backup bundle of Content Hub Service snapshots and database site backups.
+      backup:create                      [bc] Creates a backup bundle of Acquia Content Hub Service snapshot and database site backups.
+      backup:delete                      [bd] Deletes a backup bundle of Acquia Content Hub Service snapshot and database site backups.
       backup:list                        [bl] List available backup bundles of Content Hub Service snapshots and database site backups.
+      backup:restore                     [br] Restores a backup bundle of Acquia Content Hub Service snapshot and database site backups.
      drush
       drush:version                      Checks drush version on the server.
      platform
