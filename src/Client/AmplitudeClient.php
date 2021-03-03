@@ -33,7 +33,7 @@ class AmplitudeClient {
    *
    * @var \Zumba\Amplitude\Amplitude
    */
-  protected Amplitude $amplitude;
+  protected $amplitude;
 
   /**
    * Constructs an instance of Amplitude Client.
