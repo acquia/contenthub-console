@@ -57,14 +57,14 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *
    * @var array
    */
-  protected array $userDetails = [];
+  protected $userDetails = [];
 
   /**
    * Amplitude Client to log events.
    *
    * @var \Acquia\Console\ContentHub\Client\AmplitudeClient
    */
-  protected AmplitudeClient $amplitudeClient;
+  protected $amplitudeClient;
 
   /**
    * {@inheritdoc}
