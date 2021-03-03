@@ -25,8 +25,7 @@ class BackupRestore extends Command implements PlatformCommandInterface {
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'backup:restore'
-  ;
+  protected static $defaultName = 'backup:restore';
 
   /**
    * {@inheritdoc}

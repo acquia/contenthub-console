@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
-class BackupDelete  extends Command implements PlatformCommandInterface {
+class BackupDelete extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
 
