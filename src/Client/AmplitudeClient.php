@@ -26,14 +26,14 @@ class AmplitudeClient {
    *
    * @var string
    */
-  private string $amplitudeApiKey = '';
+  protected $amplitudeApiKey = '';
 
   /**
    * The Zumba Amplitude client.
    *
    * @var \Zumba\Amplitude\Amplitude
    */
-  private Amplitude $amplitude;
+  protected Amplitude $amplitude;
 
   /**
    * Constructs an instance of Amplitude Client.
