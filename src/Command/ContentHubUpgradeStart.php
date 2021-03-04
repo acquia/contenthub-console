@@ -128,31 +128,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    * {@inheritDoc}
    */
   public function initialize(InputInterface $input, OutputInterface $output) {
-    if (empty($this->amplitudeClient)) {
-      $platform = $this->getPlatform('source');
-      $client_origin_uuid = $platform->get(self::SERVICE_UUID_KEY);
-      if (!$client_origin_uuid) {
-        $event = new ServiceClientUuidEvent($platform, $output);
-        $this->dispatcher->dispatch(ContentHubConsoleEvents::GET_SERVICE_CLIENT_UUID, $event);
-        $service_uuid = $event->getClientServiceUuid();
-        if (!empty($service_uuid)) {
-          $client_origin_uuid = $service_uuid;
-          $platform->set(self::SERVICE_UUID_KEY, $client_origin_uuid);
-          $platform->save();
-        }
-      }
-      $user_details = [];
-      if ($platform->getPlatformId() === ACSFPlatform::PLATFORM_NAME) {
-        $application_id = $platform->get(AcquiaCloudPlatform::ACE_APPLICATION_ID);
-        $environment_id = $platform->get(AcquiaCloudPlatform::ACE_ENVIRONMENT_NAME);
-        $user_details[$application_id] = $environment_id;
-      }
-      else {
-        $user_details = $platform->get(AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS);
-      }
-      $this->userDetails = $user_details;
-      $this->amplitudeClient = new AmplitudeClient($client_origin_uuid);
-    }
+    $this->initializeAmplitudeClient($output);
   }
 
   /**
@@ -810,6 +786,40 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
         'step' => $step,
         'message' => $message,
       ]));
+  }
+
+  /**
+   * Initializes Amplitude Client.
+   *
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   Output stream.
+   */
+  private function initializeAmplitudeClient(OutputInterface $output) {
+    if (empty($this->amplitudeClient)) {
+      $platform = $this->getPlatform('source');
+      $client_origin_uuid = $platform->get(self::SERVICE_UUID_KEY);
+      if (!$client_origin_uuid) {
+        $event = new ServiceClientUuidEvent($platform, $output);
+        $this->dispatcher->dispatch(ContentHubConsoleEvents::GET_SERVICE_CLIENT_UUID, $event);
+        $client_origin_uuid = $event->getClientServiceUuid();
+        if (empty($client_origin_uuid)) {
+          throw new \Exception(sprintf('Service Subscription UUID missing.'));
+        }
+        $platform->set(self::SERVICE_UUID_KEY, $client_origin_uuid);
+        $platform->save();
+      }
+      $user_details = [];
+      if ($platform->getPlatformId() === ACSFPlatform::PLATFORM_NAME) {
+        $application_id = $platform->get(AcquiaCloudPlatform::ACE_APPLICATION_ID);
+        $environment_id = $platform->get(AcquiaCloudPlatform::ACE_ENVIRONMENT_NAME);
+        $user_details[$application_id] = $environment_id;
+      }
+      else {
+        $user_details = $platform->get(AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS);
+      }
+      $this->userDetails = $user_details;
+      $this->amplitudeClient = new AmplitudeClient($client_origin_uuid);
+    }
   }
 
 }

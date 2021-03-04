@@ -36,7 +36,7 @@ class ContentHubServiceUuid extends ContentHubCommandBase implements PlatformBoo
     $module_version = $this->drupalServiceFactory->getModuleVersion();
     if ($module_version === 2) {
       $remote_settings = $this->achClientService->getRemoteSettings();
-      $uuid = $remote_settings['uuid'];
+      $uuid = array_key_exists('uuid', $remote_settings) ? $remote_settings['uuid'] : '';
     }
     else {
       $settings_service = $this->drupalServiceFactory->getDrupalService('acquia_contenthub.acquia_contenthub_subscription');

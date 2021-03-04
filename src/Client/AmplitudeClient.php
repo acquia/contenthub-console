@@ -48,16 +48,6 @@ class AmplitudeClient {
   }
 
   /**
-   * Determines whether or not amplitude client is ready.
-   *
-   * @return bool
-   *   TRUE if Amplitude is ready or FALSE if not.
-   */
-  public function isReady(): bool {
-    return (bool) $this->amplitude;
-  }
-
-  /**
    * Logs an event.
    *
    * @param string $name
