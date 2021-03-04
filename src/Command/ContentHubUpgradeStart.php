@@ -136,7 +136,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->sendLogsToAmplitude('CHUC Upgrade process', 0, 'Upgrade process started.');
-    $output->writeln('Welcome to the Acquia Content Hub Upgrade Beta!');
+    $output->writeln('Welcome to the Acquia Content Hub Upgrade!');
     $output->writeln('This command line utility is designed to help you upgrade from Content Hub 1.x to 2.x.');
     $output->writeln('If you encounter any issues, please file a ticket with Acquia Support.');
 
