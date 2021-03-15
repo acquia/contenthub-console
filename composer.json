@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "acquia/acsf-contenthub-console": "dev-main",
+        "acquia/acsf-contenthub-console": "^1.0",
         "ext-json": "*",
         "spatie/ssl-certificate": "1.21"
     },
