@@ -13,7 +13,7 @@
     "require": {
         "acquia/acsf-contenthub-console": "dev-main",
         "ext-json": "*",
-        "spatie/ssl-certificate": "^1.19"
+        "spatie/ssl-certificate": "1.21"
     },
     "autoload": {
         "psr-4": {
