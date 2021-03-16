@@ -9,7 +9,7 @@ use Prophecy\Argument;
 /**
  * Class ContentHubServiceUuidTest.
  *
- * @coversDefaultClass \Acquia\Console\ContentHub\Command\ContentHubVersion
+ * @coversDefaultClass \Acquia\Console\ContentHub\Command\ContentHubServiceUuid
  *
  * @group acquia-console-contenthub
  *
@@ -18,7 +18,7 @@ use Prophecy\Argument;
 class ContentHubServiceUuidTest extends ContentHubCommandTestBase {
 
   /**
-   * Test lift version module.
+   * Test Content Hub Service Uuid Command.
    *
    * @param int $module_version
    *   Module version for CH.

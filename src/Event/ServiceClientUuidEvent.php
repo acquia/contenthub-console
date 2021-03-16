@@ -30,7 +30,7 @@ class ServiceClientUuidEvent extends Event {
    *
    * @var string
    */
-  protected $clientServiceUuid;
+  protected $clientServiceUuid = '';
 
   /**
    * ServiceClientUuidEvent constructor.
