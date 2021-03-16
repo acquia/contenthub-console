@@ -3,14 +3,14 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
-use Acquia\Console\ContentHub\Client\AmplitudeClient;
 use Acquia\Console\ContentHub\Command\Backups\BackupCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreateMultiSite;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
-use Acquia\Console\ContentHub\Command\Helpers\CommandExecutionTrait;
+use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientInterface;
+use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientTrait;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe;
@@ -37,13 +37,11 @@ use Symfony\Component\Console\Input\ArrayInput;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubUpgradeStart extends Command implements PlatformCommandInterface {
+class ContentHubUpgradeStart extends Command implements PlatformCommandInterface, AmplitudeClientInterface {
 
   use PlatformCommandTrait;
   use PlatformCmdOutputFormatterTrait;
-  use CommandExecutionTrait;
-
-  protected const SERVICE_UUID_KEY = 'acquia.cloud.service.uuid';
+  use AmplitudeClientTrait;
 
   /**
    * The platform command executioner.
@@ -51,20 +49,6 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    * @var \Acquia\Console\Helpers\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
-
-  /**
-   * User details for amplitude tracking.
-   *
-   * @var array
-   */
-  protected $userDetails = [];
-
-  /**
-   * Amplitude Client to log events.
-   *
-   * @var \Acquia\Console\ContentHub\Client\AmplitudeClient
-   */
-  protected $amplitudeClient;
 
   /**
    * {@inheritdoc}
@@ -115,19 +99,10 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   }
 
   /**
-   * Sets the amplitude client property.
-   *
-   * @param \Acquia\Console\ContentHub\Client\AmplitudeClient $amplitude_client
-   *   Amplitude Client.
-   */
-  public function setAmplitudeClient(AmplitudeClient $amplitude_client) {
-    $this->amplitudeClient = $amplitude_client;
-  }
-
-  /**
    * {@inheritDoc}
    */
   public function initialize(InputInterface $input, OutputInterface $output) {
+    // Initialize the Amplitude Client.
     $this->initializeAmplitudeClient($output);
   }
 
@@ -767,25 +742,6 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       $ready = TRUE;
       $platform->set('acquia.content_hub.upgrade.stage', 12)->save();
     }
-  }
-
-  /**
-   * Helper method to send logs to amplitude.
-   *
-   * @param string $event_name
-   *   Event to send to amplitude.
-   * @param int $step
-   *   Upgrade step user currently is on.
-   * @param string $message
-   *   Message to be shown for this step.
-   */
-  private function sendLogsToAmplitude(string $event_name, int $step, string $message) {
-    $this
-      ->amplitudeClient
-      ->logEvent($event_name, array_merge($this->userDetails, [
-        'step' => $step,
-        'message' => $message,
-      ]));
   }
 
 }
