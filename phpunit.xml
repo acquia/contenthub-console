@@ -12,6 +12,7 @@
     <testsuites>
         <testsuite name="ContentHub Console Library">
             <directory suffix="Test.php">tests/Command</directory>
+            <directory suffix="Test.php">tests/EventSubscriber</directory>
         </testsuite>
         <testsuite name="ContentHub Console - Drupal">
             <directory suffix="Test.php">tests/Drupal</directory>
