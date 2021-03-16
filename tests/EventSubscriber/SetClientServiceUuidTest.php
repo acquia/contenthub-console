@@ -15,7 +15,9 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class SetClientServiceUuidTest.
+ * Class SetClientServiceUuidTest to test service uuid.
+ *
+ * @coversDefaultClass \Acquia\Console\ContentHub\EventSubscriber\SetClientServiceUuid
  *
  * @package Acquia\Console\ContentHub\Tests\EventSubscriber
  */
@@ -79,7 +81,7 @@ class SetClientServiceUuidTest extends TestCase {
    * @param string $expected_service_uuid
    *   Service Uuid.
    *
-   * @covers ::execute
+   * @covers ::getClientServiceUuid
    *
    * @dataProvider dataProvider
    */
