@@ -10,7 +10,11 @@ use Acquia\Console\ContentHub\Event\ServiceClientUuidEvent;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
+ * Trait AmplitudeClientTrait.
  *
+ * Used for initializing Amplitude Client and common methods.
+ *
+ * @package Acquia\Console\ContentHub\Command\Helpers
  */
 trait AmplitudeClientTrait {
 
