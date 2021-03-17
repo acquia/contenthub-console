@@ -278,4 +278,14 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
     return $this->client->getWebhookStatus();
   }
 
+  /**
+   * Returns remote settings for current subscription.
+   *
+   * @return array
+   *   Array of /v2/settings.
+   */
+  public function getRemoteSettings(): array {
+    return $this->client->getRemoteSettings();
+  }
+
 }

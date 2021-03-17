@@ -6,6 +6,11 @@ services:
   drupal_service_factory:
     class: Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
     public: true
+  contenthub_service_uuid_setter:
+    class: Acquia\Console\ContentHub\EventSubscriber\SetClientServiceUuid
+    arguments: ['@platform_command_executioner']
+    tags:
+      - { name: kernel.event_subscriber }
 
   #  Commands
   command.contenthub.backup.list:
@@ -313,6 +318,11 @@ services:
       - { name: common_console_command }
   command.contenthub.module_exist:
     class: Acquia\Console\ContentHub\Command\ContentHubModuleVersion
+    public: false
+    tags:
+      - { name: common_console_command }
+  command.contenthub.service_uuid:
+    class: Acquia\Console\ContentHub\Command\ContentHubServiceUuid
     public: false
     tags:
       - { name: common_console_command }
