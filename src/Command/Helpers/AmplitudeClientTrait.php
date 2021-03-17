@@ -74,12 +74,17 @@ trait AmplitudeClientTrait {
    * {@inheritDoc}
    */
   public function sendLogsToAmplitude(string $event_name, int $step, string $message): void {
-    $this
-      ->amplitudeClient
-      ->logEvent($event_name, array_merge($this->userDetails, [
-        'step' => $step,
-        'message' => $message,
-      ]));
+    // Get current stage from platform config
+    // and check if current step is greater than this.
+    $current_stage = $this->getPlatform('source')->get('acquia.content_hub.upgrade.stage');
+    if (!$current_stage || $step >= $current_stage) {
+      $this
+        ->amplitudeClient
+        ->logEvent($event_name, array_merge($this->userDetails, [
+          'step' => $step,
+          'message' => $message,
+        ]));
+    }
   }
 
 }

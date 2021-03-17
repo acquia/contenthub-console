@@ -122,8 +122,8 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
 
     // Reset stage tracking if restart option is used.
     if ($input->getOption('restart')) {
-      $this->sendLogsToAmplitude('CHUC Upgrade process', 0, 'Upgrade process restarted.');
       $platform->set('acquia.content_hub.upgrade.stage', 0)->save();
+      $this->sendLogsToAmplitude('CHUC Upgrade process', 0, 'Upgrade process restarted.');
     }
 
     // Set Content Hub Credentials for Upgrade.
