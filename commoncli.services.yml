@@ -342,3 +342,17 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+
+  command.contenthub.sites.inclusion:
+    class: Acquia\Console\ContentHub\Command\PlatformSitesInclusion
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+
+  command.contenthub.sites.deletion:
+    class: Acquia\Console\ContentHub\Command\PlatformSitesDeletion
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
