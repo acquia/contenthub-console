@@ -12,6 +12,12 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  # Input definition.
+  input.definition.grouping:
+    class: Acquia\Console\ContentHub\EventSubscriber\InputDefinition\GroupingOption
+    tags:
+      - { name: kernel.event_subscriber }
+
   #  Commands
   command.contenthub.backup.list:
     class: Acquia\Console\ContentHub\Command\Backups\BackupList
