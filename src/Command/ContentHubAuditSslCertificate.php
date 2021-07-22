@@ -47,7 +47,7 @@ class ContentHubAuditSslCertificate extends Command {
     }
     // @TODO: This needs to be fixed. The 'https' is not present in the URL.
     if (strpos($url, 'https') !== 0) {
-      $output->writeln("<warning>This site does not have an SSL Certificate.</warning>");
+      $output->writeln("<warning>This site does not have an SSL Certificate or isn't publicly accessibel.</warning>");
       return 0;
     }
     try {
@@ -55,6 +55,8 @@ class ContentHubAuditSslCertificate extends Command {
     }
     catch (\Exception $e) {
       $output->writeln("<warning>Something went wrong getting the SSL cert of $url</warning>");
+      $output->writeln($e->getMessage());
+      $output->writeln($e->getTraceAsString());
       return 1;
     }
 
