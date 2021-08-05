@@ -17,6 +17,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class AcquiaCloudBackupDelete.
  *
+ * Deletes a snapshot of Acquia Content Hub service and database
+ * backups for all site within the platform.
+ *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
@@ -190,6 +193,8 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    *
    * @return int
    *   Exit code.
+   *
+   * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
   protected function deleteSnapshot(string $snapshot_name, PlatformInterface $platform, string $uri): int {
     $raw = $this

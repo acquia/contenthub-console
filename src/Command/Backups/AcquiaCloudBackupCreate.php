@@ -20,6 +20,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class AcquiaCloudBackupCreate.
  *
+ * Creates a snapshot of Acquia Content Hub Service and database
+ * backups for all sites within the platform.
+ *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
@@ -120,17 +123,19 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     $answer = $helper->ask($input, $output, $question);
 
     try {
-      $backups = $this->getBackupId($this->platform, $output);
+      $backups = $this->getBackupId($this->platform, $input, $output);
       if (empty($backups)) {
         $output->writeln('<warning>Cannot find the recently created backup.</warning>');
         return 1;
       }
       $output->writeln('<info>Database backups are successfully created! Starting Content Hub service snapshot creation!</info>');
-      // In case there is an exception while creating the snapshot, database backup needs to be deleted.
+      // In case there is an exception while creating the snapshot,
+      // database backup needs to be deleted.
       $snapshot_failed = TRUE;
       try {
-        $snapshot = $this->runSnapshotCreateCommand($output);
-        $snapshot_failed = empty($snapshot) ? TRUE : FALSE;
+        $group_name = $input->getOption('group');
+        $snapshot = $this->runSnapshotCreateCommand($output, $group_name);
+        $snapshot_failed = empty($snapshot);
       }
       catch (\Exception $exception) {
         $output->writeln("<error>{$exception->getMessage()}</error>");
@@ -141,7 +146,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
         $output->writeln('<warning>The previously created database backups are being deleted because the service snapshot creation failed.</warning>');
         return 2;
       }
-      $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is {$snapshot['module_version']}.x .</info>");
+      $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is</info>");
 
     }
     catch (\Exception $exception) {
@@ -173,18 +178,20 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform instance.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Input instance.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   Output.
+   *   Output instance.
    *
    * @return array
    *   Info about newly created database backups.
    *
    * @throws \Exception
    */
-  protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
+  protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
     $output->writeln('<info>Starting the creation of database backups for all sites in the platform...</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
-    $raw = $this->runBackupCreateCommand($platform);
+    $raw = $this->runBackupCreateCommand($platform, $input);
 
     if ($raw->getReturnCode() !== 0) {
       throw new \Exception('Database backup creation failed.');
@@ -247,9 +254,9 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @throws \Exception
    */
-  protected function runBackupCreateCommand(PlatformInterface $platform): object {
+  protected function runBackupCreateCommand(PlatformInterface $platform, $input): object {
     $cmd_input = [
-      '--all' => TRUE,
+      '--all' => empty($input->getOption('group')),
       '--wait' => TRUE,
     ];
 
@@ -261,15 +268,17 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Output.
+   * @param string $group_name
+   *   Group name.
    *
    * @return array
    *   Array containing snapshot ID and module version.
    *
    * @throws \Exception
    */
-  protected function runSnapshotCreateCommand(OutputInterface $output): array {
+  protected function runSnapshotCreateCommand(OutputInterface $output, string $group_name): array {
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $this->getPlatform('source'), [
-      '--uri' => $this->getUri(),
+      '--uri' => $this->getUri($output, $group_name),
     ]);
 
     $exit_code = $raw->getReturnCode();
@@ -310,11 +319,25 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   /**
    * Gets one of the site URI from platform.
    *
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   Output instance.
+   * @param string $group_name
+   *   The group name.
+   *
    * @return string
    *   Returns URI.
    */
-  protected function getUri(): string {
+  protected function getUri(OutputInterface $output, string $group_name): string {
     $sites = $this->getPlatformSites('source');
+    if (!empty($group_name)) {
+      $alias = $this->platform->getAlias();
+      $platform_id = self::getExpectedPlatformOptions()['source'];
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
+      if (empty($sites)) {
+        return 1;
+      }
+    }
+
     $site_info = reset($sites);
     return $site_info['uri'];
   }

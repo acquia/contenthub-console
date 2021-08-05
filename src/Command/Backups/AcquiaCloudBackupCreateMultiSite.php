@@ -6,10 +6,14 @@ use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBack
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupList;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use EclipseGc\CommonConsole\PlatformInterface;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class AcquiaCloudBackupCreateMultiSite.
+ *
+ * Creates a snapshot of Acquia Content Hub Service and database
+ * backups for all sites within ACE Multi-site environment.
  *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
@@ -40,10 +44,10 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
   /**
    * {@inheritdoc}
    */
-  protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
+  protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
     $output->writeln('<info>Starting database backup creation.</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
-    $raw = $this->runBackupCreateCommand($platform);
+    $raw = $this->runBackupCreateCommand($platform, $input);
 
     if ($raw->getReturnCode() !== 0) {
       throw new \Exception('Database backup creation failed.');
@@ -86,7 +90,7 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
   /**
    * {@inheritdoc}
    */
-  protected function runBackupCreateCommand(PlatformInterface $platform): object {
+  protected function runBackupCreateCommand(PlatformInterface $platform, $input): object {
     $cmd_input = [
       '--all' => TRUE,
       '--wait' => TRUE,
@@ -97,7 +101,7 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
   /**
    * {@inheritdoc}
    */
-  protected function getUri(): string {
+  protected function getUri(OutputInterface $output, string $group_name): string {
     $sites = $this->platform->getMultiSites();
     return reset($sites);
   }
