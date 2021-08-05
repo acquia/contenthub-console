@@ -18,6 +18,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class ContentHubVersion.
  *
+ * Checks if platform sites have the Content Hub module 2.x version.
+ *
  * @package Acquia\Console\ContentHub\Command
  */
 class ContentHubVersion extends Command implements PlatformCommandInterface {
@@ -87,6 +89,10 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
       $drush_options = ['--drush_command' => 'cr'];
       $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, $this->getPlatform('source'), $drush_options);
       $exit_code = $raw->getReturnCode();
+      if ($exit_code !== 0) {
+        $output->writeln('<error>' . $raw->__toString() . '</error>');
+        return $exit_code;
+      }
       $this->getDrushOutput($raw, $output, $exit_code, reset($drush_options));
 
       $sites_without_diff_module = $this->getNotUpToDateSites($output, ContentHubDiff::getDefaultName());
@@ -97,23 +103,20 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
       }
 
       $sites_not_ready_ach = $this->getNotUpToDateSites($output, ContentHubModuleVersion::getDefaultName(), 2);
-
-      $sites_not_ready_lift = [];
-      if ($input->getOption('lift-support')) {
-        $sites_not_ready_lift = $this->getNotUpToDateSites($output, ContentHubLiftVersion::getDefaultName(), 4);
-      }
-
       if (!empty($sites_not_ready_ach)) {
         $output->writeln('<error>The following sites do not have 2.x version of ContentHub</error>');
         $this->renderTable($output, $sites_not_ready_ach);
         $continue = TRUE;
       }
 
-      if (!empty($sites_not_ready_lift)) {
-        $output->writeln('<error>The following sites do not have 4.x version of Lift</error>');
-        $this->renderTable($output, $sites_not_ready_lift);
-        $output->writeln('Please include the up-to-date version of Acquia Lift (8.x-4.x) in the deploy!');
-        $continue = TRUE;
+      if ($input->getOption('lift-support')) {
+        $sites_not_ready_lift = $this->getNotUpToDateSites($output, ContentHubLiftVersion::getDefaultName(), 4);
+        if (!empty($sites_not_ready_lift)) {
+          $output->writeln('<error>The following sites do not have 4.x version of Lift</error>');
+          $this->renderTable($output, $sites_not_ready_lift);
+          $output->writeln('Please include the up-to-date version of Acquia Lift (8.x-4.x) in the deploy!');
+          $continue = TRUE;
+        }
       }
 
       if ($continue) {
@@ -124,6 +127,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
 
       $ready = TRUE;
     }
+
     $output->writeln('All sites are up-to-date. You may proceed.');
     return 0;
   }
