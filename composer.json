@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "acquia/acsf-contenthub-console": "dev-main",
+        "acquia/acsf-contenthub-console": "^1.2.0",
         "ext-json": "*",
         "spatie/ssl-certificate": "1.21|1.22.1",
         "zumba/amplitude-php": "^1"
