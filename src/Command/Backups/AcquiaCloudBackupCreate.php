@@ -45,7 +45,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   protected $configDir = [
     '.acquia',
     'contenthub',
-    'backups'
+    'backups',
   ];
 
   /**
@@ -146,7 +146,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
         $output->writeln('<warning>The previously created database backups are being deleted because the service snapshot creation failed.</warning>');
         return 2;
       }
-      $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is 2.x .</info>");
+      $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is {$snapshot['module_version']}.x .</info>");
 
     }
     catch (\Exception $exception) {

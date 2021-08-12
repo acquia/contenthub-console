@@ -6,8 +6,6 @@ use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
 use Prophecy\Argument;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class AcquiaCloudBackupCreateTest.
@@ -19,50 +17,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @package Acquia\Console\ContentHub\Tests\Command\Backups
  */
 class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
-
-  /**
-   * Platform Command Executioner double.
-   *
-   * @var \Prophecy\Prophecy\ObjectProphecy
-   */
-  protected $platformCommandExecutioner;
-
-  /**
-   * Event Dispatcher double.
-   *
-   * @var \Prophecy\Prophecy\ObjectProphecy
-   */
-  protected $dispatcher;
-
-  /**
-   * The config storage.
-   *
-   * @var \EclipseGc\CommonConsole\Config\ConfigStorage
-   */
-  protected $storage;
-
-  /**
-   * Drupal Service Factory double.
-   *
-   * @var \Prophecy\Prophecy\ObjectProphecy
-   */
-  protected $drupalServiceFactory;
-
-  /**
-   * Content Hub Service double.
-   *
-   * @var \Prophecy\Prophecy\ObjectProphecy
-   */
-  protected $contentHubService;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUp(): void {
-    $this->platformCommandExecutioner = $this->prophesize(PlatformCommandExecutioner::class);
-    $this->storage = $this->prophesize(ConfigStorage::class);
-    $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
-  }
 
   /**
    * Tests backup list.

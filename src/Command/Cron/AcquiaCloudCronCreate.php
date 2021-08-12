@@ -72,8 +72,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubQueue::getDefaultName(), $this->getPlatform('source'));
     $sites = $this->getSiteInfo();
 
-    $group_name = $input->getOption('group');
-    if ($group_name) {
+    if ($group_name = $input->getOption('group')) {
       $alias = $this->getPlatform('source')->getAlias();
       $platform_id = self::getExpectedPlatformOptions()['source'];
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
