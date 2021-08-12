@@ -150,7 +150,7 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
    */
   protected function runAcsfBackupCreateCommand(PlatformInterface $platform, InputInterface $input): object {
     $cmd_input = [
-      '--all' => empty($input->getOption('group')),
+      '--all' => TRUE,
       '--wait' => 300,
       '--silent' => TRUE,
     ];

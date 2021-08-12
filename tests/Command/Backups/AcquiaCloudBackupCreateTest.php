@@ -6,6 +6,8 @@ use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
 use Prophecy\Argument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class AcquiaCloudBackupCreateTest.
@@ -17,6 +19,50 @@ use Prophecy\Argument;
  * @package Acquia\Console\ContentHub\Tests\Command\Backups
  */
 class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
+
+  /**
+   * Platform Command Executioner double.
+   *
+   * @var \Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $platformCommandExecutioner;
+
+  /**
+   * Event Dispatcher double.
+   *
+   * @var \Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $dispatcher;
+
+  /**
+   * The config storage.
+   *
+   * @var \EclipseGc\CommonConsole\Config\ConfigStorage
+   */
+  protected $storage;
+
+  /**
+   * Drupal Service Factory double.
+   *
+   * @var \Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $drupalServiceFactory;
+
+  /**
+   * Content Hub Service double.
+   *
+   * @var \Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $contentHubService;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp(): void {
+    $this->platformCommandExecutioner = $this->prophesize(PlatformCommandExecutioner::class);
+    $this->storage = $this->prophesize(ConfigStorage::class);
+    $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+  }
 
   /**
    * Tests backup list.
@@ -53,8 +99,8 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
           // Third case.
           [
             'delete',
-            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/chdemo1/backups/4676965'
-          ]
+            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/chdemo1/backups/4676965',
+          ],
         ],
         'returns' => [
           // First case.
@@ -62,7 +108,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
           // Second case.
           $environment_response,
           // Third case.
-          (object) ['message' => 'DB backup deleted']
+          (object) ['message' => 'DB backup deleted'],
         ],
       ],
     ];
@@ -73,12 +119,11 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
       'platform_data' => $platform_data,
     ];
 
+    /** @var \Symfony\Component\Console\Tester\CommandTester $command_tester */
     $tester = $this->getCmdTesterInstanceOf(AcquiaCloudBackupCreate::class, $arr, $arguments);
     $tester->setInputs($backup_name)->execute([]);
-    $output = $tester->getDisplay();
-    $this->assertEquals($needle, $output);
+    $this->assertEquals($needle, $tester->getDisplay());
     $this->assertEquals($exit_code, $tester->getStatusCode());
-
   }
 
   /**
@@ -95,24 +140,24 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         [
           [
             'exit_code' => 0,
-            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}',
           ],
           ['exit_code' => 0, 'command_output' => ''],
           [
             'exit_code' => 0,
-            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}',
           ],
         ],
         [
           'exit_code' => 0,
-        'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
+          'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}',
         ],
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
-         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
-         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform...'
-         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!'
-         . PHP_EOL . 'Content Hub Service Snapshot is successfully created. Current Content Hub version is 2.x .' . PHP_EOL,
-        0
+        . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
+        . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform...'
+        . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!'
+        . PHP_EOL . 'Content Hub Service Snapshot is successfully created. Current Content Hub version is 2.x .' . PHP_EOL,
+        0,
       ],
       [
         [TRUE, FALSE, FALSE],
@@ -120,17 +165,17 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         [
           [
             'exit_code' => 0,
-            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}',
           ],
           ['exit_code' => 0, 'command_output' => ''],
           [
             'exit_code' => 0,
-            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}',
           ],
         ],
         [
           'exit_code' => 0,
-        'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}'
+          'command_output' => '{"success":true,"data":{"snapshot_id": "12312312312", "module_version": 2}}',
         ],
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
@@ -138,7 +183,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         . PHP_EOL . 'Please enter a name:Name cannot contain white spaces!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform...'
         . PHP_EOL . '<warning>Cannot find the recently created backup.</warning>' . PHP_EOL,
-        1
+        1,
       ],
       [
         [FALSE],
@@ -146,17 +191,17 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         [
           [
             'exit_code' => 0,
-            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}'
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676964}]}',
           ],
           ['exit_code' => 0, 'command_output' => ''],
           [
             'exit_code' => 0,
-            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}'
+            'command_output' => '{"success":true,"data":[{"env_id":"111111-11111111-c36a-401a-9724-fd8072a607d7","database":"chdemo1","completed_at":"2020-12-16T13:45:53+00:00","backup_id":4676965}]}',
           ],
         ],
         [
           'exit_code' => 0,
-        'command_output' => ''
+          'command_output' => '',
         ],
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
@@ -164,7 +209,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!' . PHP_EOL . ''
         . PHP_EOL . '<warning>Cannot create Content Hub service snapshot. Please check your Content Hub service credentials and try again.</warning>'
         . PHP_EOL . '<warning>The previously created database backups are being deleted because the service snapshot creation failed.</warning>' . PHP_EOL,
-        2
+        2,
       ],
     ];
   }

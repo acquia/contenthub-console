@@ -47,7 +47,7 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
   protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
     $output->writeln('<info>Starting database backup creation.</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
-    $raw = $this->runBackupCreateCommand($platform, $input);
+    $raw = $this->runBackupCreateCommand($platform);
 
     if ($raw->getReturnCode() !== 0) {
       throw new \Exception('Database backup creation failed.');
@@ -90,7 +90,7 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
   /**
    * {@inheritdoc}
    */
-  protected function runBackupCreateCommand(PlatformInterface $platform, $input): object {
+  protected function runBackupCreateCommand(PlatformInterface $platform): object {
     $cmd_input = [
       '--all' => TRUE,
       '--wait' => TRUE,

@@ -133,7 +133,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       // database backup needs to be deleted.
       $snapshot_failed = TRUE;
       try {
-        $group_name = $input->getOption('group');
+        $group_name = $input->hasOption('group') ? $input->getOption('group') : '';
         $snapshot = $this->runSnapshotCreateCommand($output, $group_name);
         $snapshot_failed = empty($snapshot);
       }
@@ -146,7 +146,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
         $output->writeln('<warning>The previously created database backups are being deleted because the service snapshot creation failed.</warning>');
         return 2;
       }
-      $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is</info>");
+      $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is 2.x .</info>");
 
     }
     catch (\Exception $exception) {
@@ -191,7 +191,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
     $output->writeln('<info>Starting the creation of database backups for all sites in the platform...</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
-    $raw = $this->runBackupCreateCommand($platform, $input);
+    $raw = $this->runBackupCreateCommand($platform);
 
     if ($raw->getReturnCode() !== 0) {
       throw new \Exception('Database backup creation failed.');
@@ -254,9 +254,9 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @throws \Exception
    */
-  protected function runBackupCreateCommand(PlatformInterface $platform, $input): object {
+  protected function runBackupCreateCommand(PlatformInterface $platform): object {
     $cmd_input = [
-      '--all' => empty($input->getOption('group')),
+      '--all' => TRUE,
       '--wait' => TRUE,
     ];
 
