@@ -56,7 +56,14 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
    * {@inheritDoc}
    */
   public function getClients(): array {
-    return \Drupal::service('acquia_contenthub.acquia_contenthub_subscription')->getClients();
+    $clients = [];
+    foreach (\Drupal::service('acquia_contenthub.acquia_contenthub_subscription')->getSettings()->getWebhooks() as $webhook) {
+      $path = parse_url($webhook['url']);
+      $url = $path['scheme'] . "://" . $path['host'];
+      $clients[$webhook['client_name']] = $url;
+    }
+
+    return $clients;
   }
 
   /**
