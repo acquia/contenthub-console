@@ -2,7 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command;
 
-use Spatie\SslCertificate\SslCertificate;
+use Acquia\Console\ContentHub\Command\Helpers\ContentHubAuditSslTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,6 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Acquia\Console\ContentHub\Command
  */
 class ContentHubAuditSslCertificate extends Command {
+
+  use ContentHubAuditSslTrait;
 
   /**
    * List of trusted providers.
@@ -74,34 +76,6 @@ class ContentHubAuditSslCertificate extends Command {
     $output->writeln("<info>Your SSL certificate is okay. Expires in $days_until_expiration days!</info>");
 
     return 0;
-  }
-
-  /**
-   * Gets SSL cert of a site by hostname.
-   *
-   * @param string $hostname
-   *   Hostname.
-   *
-   * @return \Spatie\SslCertificate\SslCertificate
-   *   SSL cert object of given host.
-   */
-  public function getCertByHostname(string $hostname): SslCertificate {
-    return SslCertificate::createForHostName($hostname);
-  }
-
-  /**
-   * Determines if organization trusted or not.
-   *
-   * @param \Spatie\SslCertificate\SslCertificate $cert
-   *   Organization name.
-   *
-   * @return bool
-   *   True if organization name found in trusted providers list.
-   */
-  protected function isTrustedOrganization(SslCertificate $cert): bool {
-    $fields = $cert->getRawCertificateFields();
-    $provider = $fields['issuer']['O'] ?? '';
-    return in_array($provider, self::TRUSTED_SSL_PROVIDERS, TRUE);
   }
 
 }
