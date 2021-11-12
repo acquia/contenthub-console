@@ -7,6 +7,8 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Client\AmplitudeClient;
 use Acquia\Console\ContentHub\ContentHubConsoleEvents;
 use Acquia\Console\ContentHub\Event\ServiceClientUuidEvent;
+use Acquia\Console\Helpers\Command\PlatformGroupTrait;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -35,12 +37,12 @@ trait AmplitudeClientTrait {
   /**
    * {@inheritDoc}
    */
-  public function initializeAmplitudeClient(OutputInterface $output): void {
+  public function initializeAmplitudeClient(InputInterface $input, OutputInterface $output): void {
     if (empty($this->amplitudeClient)) {
       $platform = $this->getPlatform('source');
       $client_origin_uuid = $platform->get(self::SERVICE_UUID_KEY);
       if (!$client_origin_uuid) {
-        $event = new ServiceClientUuidEvent($platform, $output);
+        $event = new ServiceClientUuidEvent($platform, $input, $output);
         $this->dispatcher->dispatch(ContentHubConsoleEvents::GET_SERVICE_CLIENT_UUID, $event);
         $client_origin_uuid = $event->getClientServiceUuid();
         if (empty($client_origin_uuid)) {

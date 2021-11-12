@@ -103,7 +103,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    */
   public function initialize(InputInterface $input, OutputInterface $output) {
     // Initialize the Amplitude Client.
-    $this->initializeAmplitudeClient($output);
+    $this->initializeAmplitudeClient($input, $output);
   }
 
   /**

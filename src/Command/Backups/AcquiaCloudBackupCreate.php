@@ -2,10 +2,13 @@
 
 namespace Acquia\Console\ContentHub\Command\Backups;
 
+use Acquia\Console\Acsf\Platform\ACSFPlatform;
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupHelperTrait;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupList;
+use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
+use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubCreateSnapshot;
@@ -328,10 +331,21 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *   Returns URI.
    */
   protected function getUri(OutputInterface $output, string $group_name): string {
-    $sites = $this->getPlatformSites('source');
+    $sites = [];
+    $platform_id = $this->platform::getPlatformId();
+    switch ($platform_id) {
+      case AcquiaCloudMultiSitePlatform::PLATFORM_NAME:
+        $sites = $this->platform->getMultiSites();
+        break;
+
+      case AcquiaCloudPlatform::PLATFORM_NAME:
+      case ACSFPlatform::PLATFORM_NAME:
+        $sites = $this->platform->getPlatformSites();
+        break;
+    }
+
     if (!empty($group_name)) {
       $alias = $this->platform->getAlias();
-      $platform_id = self::getExpectedPlatformOptions()['source'];
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
       if (empty($sites)) {
         return 1;
@@ -339,7 +353,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     }
 
     $site_info = reset($sites);
-    return $site_info['uri'];
+    return $site_info['uri'] ?? $site_info;
   }
 
 }

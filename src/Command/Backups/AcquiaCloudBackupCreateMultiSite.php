@@ -98,12 +98,4 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
     return $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudMultisiteDatabaseBackupCreate::getDefaultName(), $platform, $cmd_input);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function getUri(OutputInterface $output, string $group_name): string {
-    $sites = $this->platform->getMultiSites();
-    return reset($sites);
-  }
-
 }

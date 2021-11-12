@@ -3,6 +3,7 @@
 namespace Acquia\Console\ContentHub\Command\Helpers;
 
 use Acquia\Console\ContentHub\Client\AmplitudeClient;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -15,10 +16,12 @@ interface AmplitudeClientInterface {
   /**
    * Initializes Amplitude Client.
    *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Input stream instance.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Output stream instance.
    */
-  public function initializeAmplitudeClient(OutputInterface $output): void;
+  public function initializeAmplitudeClient(InputInterface $input, OutputInterface $output): void;
 
   /**
    * Sets the amplitude client object.
