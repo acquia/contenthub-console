@@ -340,7 +340,12 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       $backup_command = $application->find(BackupCreate::getDefaultName());
       $alias = $input->getArgument('alias');
       $backup_command->addPlatform($alias, $platform);
-      $status = $backup_command->run($input, $output);
+      $group = $input->hasOption('group') ? $input->getOption('group') : '';
+      $input_array = new ArrayInput([
+        'alias' => $alias,
+        '--group' => $group,
+      ]);
+      $status = $backup_command->run($input_array, $output);
       if ($status > 0) {
         $question = new Question('Please resolve the problems highlighted and make sure the code is up-to-date! Then you can proceed.');
         $helper->ask($input, $output, $question);
