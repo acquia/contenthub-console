@@ -65,6 +65,7 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
    */
   protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
     $output->writeln('<info>Starting the creation of database backups for all sites in the platform.</info>');
+    $output->writeln('<info>This may take a while...</info>');
     $list_before = $this->runAcsfBackupListCommand($platform, $output);
     $raw = $this->runAcsfBackupCreateCommand($platform, $input);
 
