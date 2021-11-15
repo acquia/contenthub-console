@@ -138,7 +138,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
 
     // Generate Database Backups and service snapshot.
     $pass = $this->executeStage($stage, 1);
-    $this->executeDatabaseBackups($application, $platform, $input, $output, $pass);
+    $this->executeDatabaseBackups($application, $platform, $input, $output, $helper, $pass);
     $this->sendLogsToAmplitude('CHUC Upgrade process', 2, 'Database and Service Snapshot completed.');
 
     // Purge Subscription and delete Webhooks.
@@ -327,20 +327,27 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *   The Input interface.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
+   *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
    *
    * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
-  protected function executeDatabaseBackups(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output, bool $execute) {
-    if ($execute) {
+  protected function executeDatabaseBackups(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
+    $ready = FALSE;
+    while (!$ready && $execute) {
       $backup_command = $application->find(BackupCreate::getDefaultName());
       $alias = $input->getArgument('alias');
       $backup_command->addPlatform($alias, $platform);
-      $status = $backup_command->run(new ArrayInput(['alias' => $alias]), $output);
-      if ($status === 0) {
-        $output->writeln('<info>Database backups and service snapshot completed.</info>');
+      $status = $backup_command->run($input, $output);
+      if ($status > 0) {
+        $question = new Question('Please resolve the problems highlighted and make sure the code is up-to-date! Then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
       }
+      $output->writeln('<info>Database backups and service snapshot completed.</info>');
+      $ready = TRUE;
       $platform->set('acquia.content_hub.upgrade.stage', 2)->save();
     }
   }

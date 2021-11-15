@@ -77,7 +77,7 @@ class BackupCreate extends Command implements PlatformCommandInterface {
         break;
     }
 
-    return $this->runBackupCommand($backup_command, $input, $output);
+    return $this->runCommand($backup_command, $input, $output);
   }
 
 }
