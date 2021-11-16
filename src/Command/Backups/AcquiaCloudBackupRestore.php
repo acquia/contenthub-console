@@ -201,18 +201,4 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
     return $this->getPlatformSites('source');
   }
 
-  /**
-   * Gets one of the site URI from platform.
-   *
-   * @param array $sites
-   *   Array of sites in the platform.
-   *
-   * @return string
-   *   URI of one of the sites.
-   */
-  protected function getUri(array $sites): string {
-    $site_info = reset($sites);
-    return $site_info['uri'];
-  }
-
 }

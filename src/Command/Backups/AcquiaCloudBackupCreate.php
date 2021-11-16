@@ -2,13 +2,10 @@
 
 namespace Acquia\Console\ContentHub\Command\Backups;
 
-use Acquia\Console\Acsf\Platform\ACSFPlatform;
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupHelperTrait;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupList;
-use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
-use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubCreateSnapshot;
@@ -136,8 +133,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       // database backup needs to be deleted.
       $snapshot_failed = TRUE;
       try {
-        $group_name = $input->hasOption('group') ? $input->getOption('group') : '';
-        $snapshot = $this->runSnapshotCreateCommand($output, $group_name);
+        $snapshot = $this->runSnapshotCreateCommand($input, $output);
         $snapshot_failed = empty($snapshot);
       }
       catch (\Exception $exception) {
@@ -270,19 +266,20 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   /**
    * Creates ACH service snapshot.
    *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Input stream.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   Output.
-   * @param string $group_name
-   *   Group name.
+   *   Output stream.
    *
    * @return array
    *   Array containing snapshot ID and module version.
    *
    * @throws \Exception
    */
-  protected function runSnapshotCreateCommand(OutputInterface $output, string $group_name): array {
-    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $this->getPlatform('source'), [
-      '--uri' => $this->getUri($output, $group_name),
+  protected function runSnapshotCreateCommand(InputInterface $input, OutputInterface $output): array {
+    $platform = $this->getPlatform('source');
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $platform, [
+      '--uri' => $this->getUri($platform, $input, $output),
     ]);
 
     $exit_code = $raw->getReturnCode();
@@ -318,43 +315,6 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     foreach ($backups as $backup_id => $data) {
       $this->delete($data['environment_id'], $data['database_name'], $backup_id);
     }
-  }
-
-  /**
-   * Gets one of the site URI from platform.
-   *
-   * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   Output instance.
-   * @param string $group_name
-   *   The group name.
-   *
-   * @return string
-   *   Returns URI.
-   */
-  protected function getUri(OutputInterface $output, string $group_name): string {
-    $sites = [];
-    $platform_id = $this->platform::getPlatformId();
-    switch ($platform_id) {
-      case AcquiaCloudMultiSitePlatform::PLATFORM_NAME:
-        $sites = $this->platform->getMultiSites();
-        break;
-
-      case AcquiaCloudPlatform::PLATFORM_NAME:
-      case ACSFPlatform::PLATFORM_NAME:
-        $sites = $this->platform->getPlatformSites();
-        break;
-    }
-
-    if (!empty($group_name)) {
-      $alias = $this->platform->getAlias();
-      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
-      if (empty($sites)) {
-        return 1;
-      }
-    }
-
-    $site_info = reset($sites);
-    return $site_info['uri'] ?? $site_info;
   }
 
 }
