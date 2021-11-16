@@ -11,6 +11,7 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientInterface;
 use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientTrait;
+use Acquia\Console\ContentHub\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe;
@@ -42,6 +43,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   use PlatformCommandTrait;
   use PlatformCmdOutputFormatterTrait;
   use AmplitudeClientTrait;
+  use PlatformSitesTrait;
 
   /**
    * The platform command executioner.
@@ -379,15 +381,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   protected function purgeSubscriptionDeleteWebhooks(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
-      $sites = $this->getPlatformSites('source');
+      $sites = $this->getUri($platform, $input, $output);
       if (empty($sites)) {
         $output->writeln('<Error>There are no sites in this platform.</Error>');
         return 1;
       }
-      // Getting URL of first site in the platform.
-      $site_info = reset($sites);
       $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubMigrationPurgeAndDeleteWebhooks::getDefaultName(), $platform, [
-        '--uri' => $site_info['uri'],
+        '--uri' => $sites,
       ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
@@ -667,10 +667,9 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     while (!$ready && $execute) {
       $output->writeln('Validating filters migration...');
       // Getting URL of first site in the platform.
-      $sites = $this->getPlatformSites('source');
-      $site_info = reset($sites);
+      $sites = $this->getUri($platform, $input, $output);
       $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubVerifyWebhooksDefaultFilters::getDefaultName(), $platform, [
-        '--uri' => $site_info['uri'],
+        '--uri' => $sites,
       ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
