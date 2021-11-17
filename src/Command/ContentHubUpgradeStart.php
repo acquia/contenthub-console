@@ -3,6 +3,7 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
+use Acquia\Console\Cloud\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\ContentHub\Command\Backups\BackupCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate;
@@ -11,7 +12,6 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientInterface;
 use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;

@@ -2,8 +2,8 @@
 
 namespace Acquia\Console\ContentHub\EventSubscriber;
 
+use Acquia\Console\Cloud\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\ContentHub\Command\ContentHubServiceUuid;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\ContentHub\ContentHubConsoleEvents;
 use Acquia\Console\ContentHub\Event\ServiceClientUuidEvent;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
