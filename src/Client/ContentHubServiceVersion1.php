@@ -143,7 +143,7 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
     $response = $this->client->purge();
     if (!isset($response['success']) || $response['success'] !== TRUE) {
       $error_message = $response['error']['message'] ?? $response['error'] ?? $response;
-      throw new \Exception("Purge failed. Reason: {$error_message}");
+      throw new \Exception(sprintf('Purge failed. Reason: %s', $error_message));
     }
     return $response;
   }

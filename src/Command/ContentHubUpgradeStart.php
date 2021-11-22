@@ -3,7 +3,6 @@
 namespace Acquia\Console\ContentHub\Command;
 
 use Acquia\Console\Acsf\Platform\ACSFPlatform;
-use Acquia\Console\Cloud\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\ContentHub\Command\Backups\BackupCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate;
@@ -44,7 +43,6 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   use PlatformCommandTrait;
   use PlatformCmdOutputFormatterTrait;
   use AmplitudeClientTrait;
-  use PlatformSitesTrait;
   use PlatformGroupTrait;
 
   /**

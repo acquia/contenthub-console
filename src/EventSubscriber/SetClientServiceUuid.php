@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\ContentHub\EventSubscriber;
 
-use Acquia\Console\Cloud\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\ContentHub\Command\ContentHubServiceUuid;
 use Acquia\Console\ContentHub\ContentHubConsoleEvents;
 use Acquia\Console\ContentHub\Event\ServiceClientUuidEvent;
@@ -20,12 +19,6 @@ class SetClientServiceUuid implements EventSubscriberInterface {
 
   use PlatformCmdOutputFormatterTrait;
   use PlatformGroupTrait;
-  use PlatformSitesTrait;
-
-  public const GROUP_CONFIG_LOCATION = [
-    '.commonconsole',
-    'groups',
-  ];
 
   /**
    * Platform Command executioner service.
