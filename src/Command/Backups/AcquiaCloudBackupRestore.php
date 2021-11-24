@@ -108,10 +108,11 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
     $answer = $helper->ask($input, $output, $question);
 
     try {
+      $platform = $this->platform;
       $config_to_restore = $this->storage->load($answer, $this->configDir);
-      $uri = $this->getUri($sites);
+      $uri = $this->getUri($platform, $input, $output);
       $output->writeln('<info>Starting Acquia Content Hub service restoration.</info>');
-      $exit_code = $this->restoreSnapshot($config_to_restore->get('backups.ach_snapshot'), $this->platform, $uri);
+      $exit_code = $this->restoreSnapshot($config_to_restore->get('backups.ach_snapshot'), $platform, $uri);
       if ($exit_code !== 0) {
         $output->writeln(sprintf('<error>Acquia Content Hub service restoration failed with exit code: %s.</error>', $exit_code));
         return $exit_code;

@@ -12,6 +12,7 @@ use EclipseGc\CommonConsole\PlatformInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -93,7 +94,9 @@ class SetClientServiceUuidTest extends TestCase {
       ->willReturn($this->runWithMemoryOutputMocks($output));
 
     $this->clientUuidSetter = new SetClientServiceUuid($this->executioner->reveal());
-    $event = new ServiceClientUuidEvent($this->platform, $this->prophesize(OutputInterface::class)->reveal());
+    $input = $this->prophesize(InputInterface::class)->reveal();
+    $output = $this->prophesize(OutputInterface::class)->reveal();
+    $event = new ServiceClientUuidEvent($this->platform, $input, $output);
     $this->clientUuidSetter->getClientServiceUuid($event);
     $service_uuid = $event->getClientServiceUuid();
     $this->assertEquals($expected_service_uuid, $service_uuid);
