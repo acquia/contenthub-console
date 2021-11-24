@@ -214,6 +214,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!'
         . PHP_EOL . 'Content Hub Service Snapshot is successfully created. Current Content Hub version is 2.x .'
         . PHP_EOL
@@ -282,6 +283,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         . PHP_EOL . 'Please enter a name:Name cannot be empty!'
         . PHP_EOL . 'Please enter a name:Configuration with given name already exists!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!'
         . PHP_EOL . 'Content Hub Service Snapshot is successfully created. Current Content Hub version is 2.x .'
         . PHP_EOL
@@ -344,6 +346,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!'
         . PHP_EOL . 'Cannot create Content Hub service snapshot. Exit code: 1'
         . PHP_EOL . '<warning>Cannot create Content Hub service snapshot. Please check your Content Hub service credentials and try again.</warning>'
@@ -411,6 +414,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!'
         . PHP_EOL . 'Couldn\'t create snapshot.'
         . PHP_EOL . '<warning>Cannot create Content Hub service snapshot. Please check your Content Hub service credentials and try again.</warning>'
@@ -446,6 +450,7 @@ class AcsfBackupCreateTest extends AcsfBackupTestBase {
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform.'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . '<warning>Cannot find the recently created backup.</warning>'
         . PHP_EOL
       ]

@@ -109,6 +109,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform...'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!'
         . PHP_EOL . 'Content Hub Service Snapshot is successfully created. Current Content Hub version is 2.x .' . PHP_EOL,
         0,
@@ -136,6 +137,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         . PHP_EOL . 'Please enter a name:Configuration with given name already exists!'
         . PHP_EOL . 'Please enter a name:Name cannot contain white spaces!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform...'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . '<warning>Cannot find the recently created backup.</warning>' . PHP_EOL,
         1,
       ],
@@ -160,6 +162,7 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         'We are about to create a backup of all databases in this platform and a snapshot of the subscription.'
         . PHP_EOL . 'Please name this backup in order to restore it later (alphanumeric characters only)!'
         . PHP_EOL . 'Please enter a name:Starting the creation of database backups for all sites in the platform...'
+        . PHP_EOL . 'This may take a while...'
         . PHP_EOL . 'Database backups are successfully created! Starting Content Hub service snapshot creation!' . PHP_EOL . ''
         . PHP_EOL . '<warning>Cannot create Content Hub service snapshot. Please check your Content Hub service credentials and try again.</warning>'
         . PHP_EOL . '<warning>The previously created database backups are being deleted because the service snapshot creation failed.</warning>' . PHP_EOL,
