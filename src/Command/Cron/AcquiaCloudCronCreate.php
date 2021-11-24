@@ -19,6 +19,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class AcquiaCloudCronCreate.
  *
+ * Creates Scheduled Jobs for Acquia Content Hub Export/Import queues.
+ *
  * @package Acquia\Console\ContentHub\Command\Cron
  */
 class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
@@ -69,6 +71,15 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
 
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubQueue::getDefaultName(), $this->getPlatform('source'));
     $sites = $this->getSiteInfo();
+
+    if ($group_name = $input->getOption('group')) {
+      $alias = $this->getPlatform('source')->getAlias();
+      $platform_id = self::getExpectedPlatformOptions()['source'];
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
+      if (empty($sites)) {
+        return 1;
+      }
+    }
 
     $counter = 0;
     $lines = explode(PHP_EOL, trim($raw));

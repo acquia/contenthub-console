@@ -2,15 +2,12 @@
 
 namespace Acquia\Console\ContentHub\EventSubscriber;
 
-use Acquia\Console\Acsf\Platform\ACSFPlatform;
-use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
-use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\ContentHubServiceUuid;
 use Acquia\Console\ContentHub\ContentHubConsoleEvents;
 use Acquia\Console\ContentHub\Event\ServiceClientUuidEvent;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
-use EclipseGc\CommonConsole\PlatformInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -21,6 +18,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class SetClientServiceUuid implements EventSubscriberInterface {
 
   use PlatformCmdOutputFormatterTrait;
+  use PlatformGroupTrait;
 
   /**
    * Platform Command executioner service.
@@ -57,7 +55,9 @@ class SetClientServiceUuid implements EventSubscriberInterface {
    */
   public function getClientServiceUuid(ServiceClientUuidEvent $event) {
     $platform = $event->getPlatform();
-    $raw = $this->executioner->runWithMemoryOutput(ContentHubServiceUuid::getDefaultName(), $platform, ['--uri' => $this->getUri($platform)]);
+    $input = $event->getInput();
+    $output = $event->getOutput();
+    $raw = $this->executioner->runWithMemoryOutput(ContentHubServiceUuid::getDefaultName(), $platform, ['--uri' => $this->getUri($platform, $input, $output)]);
     $data = NULL;
     if (!$raw->getReturnCode()) {
       $lines = explode(PHP_EOL, trim($raw));
@@ -71,33 +71,6 @@ class SetClientServiceUuid implements EventSubscriberInterface {
         $event->setClientServiceUuid($data->service_client_uuid);
       }
     }
-  }
-
-  /**
-   * Gets the uri of one of the sites.
-   *
-   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
-   *   Platform object.
-   *
-   * @return string
-   *   URI to return.
-   */
-  private function getUri(PlatformInterface $platform): string {
-    $uri = '';
-    switch ($platform->getPlatformId()) {
-      case AcquiaCloudMultiSitePlatform::PLATFORM_NAME:
-        $sites = $platform->getMultiSites();
-        $uri = reset($sites);
-        break;
-
-      case AcquiaCloudPlatform::PLATFORM_NAME:
-      case ACSFPlatform::PLATFORM_NAME:
-        $sites = $platform->getPlatformSites();
-        $site = reset($sites);
-        $uri = $site['uri'];
-        break;
-    }
-    return $uri;
   }
 
 }

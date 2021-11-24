@@ -11,6 +11,7 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientInterface;
 use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientTrait;
+use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe;
@@ -42,6 +43,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   use PlatformCommandTrait;
   use PlatformCmdOutputFormatterTrait;
   use AmplitudeClientTrait;
+  use PlatformGroupTrait;
 
   /**
    * The platform command executioner.
@@ -103,7 +105,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    */
   public function initialize(InputInterface $input, OutputInterface $output) {
     // Initialize the Amplitude Client.
-    $this->initializeAmplitudeClient($output);
+    $this->initializeAmplitudeClient($input, $output);
   }
 
   /**
@@ -138,7 +140,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
 
     // Generate Database Backups and service snapshot.
     $pass = $this->executeStage($stage, 1);
-    $this->executeDatabaseBackups($application, $platform, $input, $output, $pass);
+    $this->executeDatabaseBackups($application, $platform, $input, $output, $helper, $pass);
     $this->sendLogsToAmplitude('CHUC Upgrade process', 2, 'Database and Service Snapshot completed.');
 
     // Purge Subscription and delete Webhooks.
@@ -327,20 +329,32 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *   The Input interface.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The Output interface.
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
+   *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
    *
    * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
-  protected function executeDatabaseBackups(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output, bool $execute) {
-    if ($execute) {
+  protected function executeDatabaseBackups(Application $application, PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
+    $ready = FALSE;
+    while (!$ready && $execute) {
       $backup_command = $application->find(BackupCreate::getDefaultName());
       $alias = $input->getArgument('alias');
       $backup_command->addPlatform($alias, $platform);
-      $status = $backup_command->run(new ArrayInput(['alias' => $alias]), $output);
-      if ($status === 0) {
-        $output->writeln('<info>Database backups and service snapshot completed.</info>');
+      $group = $input->hasOption('group') ? $input->getOption('group') : '';
+      $input_array = new ArrayInput([
+        'alias' => $alias,
+        '--group' => $group,
+      ]);
+      $status = $backup_command->run($input_array, $output);
+      if ($status > 0) {
+        $question = new Question('Please resolve the problems highlighted and make sure the code is up-to-date! Then you can proceed.');
+        $helper->ask($input, $output, $question);
+        continue;
       }
+      $output->writeln('<info>Database backups and service snapshot completed.</info>');
+      $ready = TRUE;
       $platform->set('acquia.content_hub.upgrade.stage', 2)->save();
     }
   }
@@ -367,15 +381,14 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   protected function purgeSubscriptionDeleteWebhooks(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
     $ready = FALSE;
     while (!$ready && $execute) {
-      $sites = $this->getPlatformSites('source');
-      if (empty($sites)) {
-        $output->writeln('<Error>There are no sites in this platform.</Error>');
+      // Getting URL of first site in the platform.
+      $uri = $this->getUri($platform, $input, $output);
+      if (empty($uri)) {
+        $output->writeln('<Error>There are no sites in this platform, so could not find any uri.</Error>');
         return 1;
       }
-      // Getting URL of first site in the platform.
-      $site_info = reset($sites);
       $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubMigrationPurgeAndDeleteWebhooks::getDefaultName(), $platform, [
-        '--uri' => $site_info['uri'],
+        '--uri' => $uri,
       ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {
@@ -655,10 +668,13 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     while (!$ready && $execute) {
       $output->writeln('Validating filters migration...');
       // Getting URL of first site in the platform.
-      $sites = $this->getPlatformSites('source');
-      $site_info = reset($sites);
+      $uri = $this->getUri($platform, $input, $output);
+      if (empty($uri)) {
+        $output->writeln('<Error>There are no sites in this platform, so could not find any uri.</Error>');
+        return 1;
+      }
       $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubVerifyWebhooksDefaultFilters::getDefaultName(), $platform, [
-        '--uri' => $site_info['uri'],
+        '--uri' => $uri,
       ]);
       $lines = explode(PHP_EOL, trim($raw));
       foreach ($lines as $line) {

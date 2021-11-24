@@ -17,6 +17,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class AcquiaCloudBackupDelete.
  *
+ * Deletes a snapshot of Acquia Content Hub service and database
+ * backups for all site within the platform.
+ *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
@@ -85,9 +88,9 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln('<warning>We are about to delete backups of all databases in this platform and a snapshot of the subscription.</warning>');
 
-    $sites = $this->getPlatformSitesForDelete();
-    if (empty($sites)) {
-      $output->writeln('<Error>There are no sites in this platform.</Error>');
+    $uri = $this->getUri($this->platform, $input, $output);
+    if (empty($uri)) {
+      $output->writeln('<Error>There are no sites in this platform, so could not find any uri.</Error>');
       return 1;
     }
 
@@ -109,7 +112,6 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
 
     try {
       $config_to_delete = $this->storage->load($answer, $this->configDir);
-      $uri = $this->getUri($sites);
       $output->writeln('<info>Starting Acquia Content Hub service snapshot deletion.</info>');
       $exit_code = $this->deleteSnapshot($config_to_delete->get('backups.ach_snapshot'), $this->platform, $uri);
       if ($exit_code !== 0) {
@@ -190,6 +192,8 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    *
    * @return int
    *   Exit code.
+   *
+   * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
   protected function deleteSnapshot(string $snapshot_name, PlatformInterface $platform, string $uri): int {
     $raw = $this
@@ -209,20 +213,6 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
    */
   protected function getPlatformSitesForDelete(): array {
     return $this->getPlatformSites('source');
-  }
-
-  /**
-   * Gets one of the site URI from platform.
-   *
-   * @param array $sites
-   *   Array of sites in the platform.
-   *
-   * @return string
-   *   Uri of site.
-   */
-  protected function getUri(array $sites): string {
-    $site_info = reset($sites);
-    return $site_info['uri'];
   }
 
 }

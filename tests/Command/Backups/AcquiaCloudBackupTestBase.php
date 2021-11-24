@@ -36,6 +36,7 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
    *   The command tester.
    *
    * @throws \ReflectionException
+   * @throws \Exception
    */
   public function getCmdTesterInstanceOf(string $cmd, array $arr, array $arguments = []) {
     $reflection = new \ReflectionClass($cmd);

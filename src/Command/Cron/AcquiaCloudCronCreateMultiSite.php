@@ -2,6 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command\Cron;
 
+use Acquia\Console\Cloud\Command\AcquiaCloudMultiSites;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\ContentHub\Command\ContentHubQueue;
@@ -11,6 +12,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 
 /**
  * Class AcquiaCloudCronCreateMultiSite.
+ *
+ * Create cron jobs for queues in multi-site environment.
  *
  * @package Acquia\Console\ContentHub\Command\Cron
  */

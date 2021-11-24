@@ -39,11 +39,4 @@ class AcquiaCloudBackupRestoreMultisite extends AcquiaCloudBackupRestore {
     return $this->platform->getMultiSites();
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function getUri(array $sites): string {
-    return reset($sites);
-  }
-
 }

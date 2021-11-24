@@ -20,6 +20,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class AcquiaCloudBackupCreate.
  *
+ * Creates a snapshot of Acquia Content Hub Service and database
+ * backups for all sites within the platform.
+ *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
@@ -42,7 +45,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   protected $configDir = [
     '.acquia',
     'contenthub',
-    'backups'
+    'backups',
   ];
 
   /**
@@ -120,17 +123,18 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     $answer = $helper->ask($input, $output, $question);
 
     try {
-      $backups = $this->getBackupId($this->platform, $output);
+      $backups = $this->getBackupId($this->platform, $input, $output);
       if (empty($backups)) {
         $output->writeln('<warning>Cannot find the recently created backup.</warning>');
         return 1;
       }
       $output->writeln('<info>Database backups are successfully created! Starting Content Hub service snapshot creation!</info>');
-      // In case there is an exception while creating the snapshot, database backup needs to be deleted.
+      // In case there is an exception while creating the snapshot,
+      // database backup needs to be deleted.
       $snapshot_failed = TRUE;
       try {
-        $snapshot = $this->runSnapshotCreateCommand($output);
-        $snapshot_failed = empty($snapshot) ? TRUE : FALSE;
+        $snapshot = $this->runSnapshotCreateCommand($input, $output);
+        $snapshot_failed = empty($snapshot);
       }
       catch (\Exception $exception) {
         $output->writeln("<error>{$exception->getMessage()}</error>");
@@ -173,16 +177,19 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform instance.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Input instance.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   Output.
+   *   Output instance.
    *
    * @return array
    *   Info about newly created database backups.
    *
    * @throws \Exception
    */
-  protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
+  protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
     $output->writeln('<info>Starting the creation of database backups for all sites in the platform...</info>');
+    $output->writeln('<info>This may take a while...</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
     $raw = $this->runBackupCreateCommand($platform);
 
@@ -259,17 +266,20 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   /**
    * Creates ACH service snapshot.
    *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Input stream.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   Output.
+   *   Output stream.
    *
    * @return array
    *   Array containing snapshot ID and module version.
    *
    * @throws \Exception
    */
-  protected function runSnapshotCreateCommand(OutputInterface $output): array {
-    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $this->getPlatform('source'), [
-      '--uri' => $this->getUri(),
+  protected function runSnapshotCreateCommand(InputInterface $input, OutputInterface $output): array {
+    $platform = $this->getPlatform('source');
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $platform, [
+      '--uri' => $this->getUri($platform, $input, $output),
     ]);
 
     $exit_code = $raw->getReturnCode();
@@ -305,18 +315,6 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     foreach ($backups as $backup_id => $data) {
       $this->delete($data['environment_id'], $data['database_name'], $backup_id);
     }
-  }
-
-  /**
-   * Gets one of the site URI from platform.
-   *
-   * @return string
-   *   Returns URI.
-   */
-  protected function getUri(): string {
-    $sites = $this->getPlatformSites('source');
-    $site_info = reset($sites);
-    return $site_info['uri'];
   }
 
 }

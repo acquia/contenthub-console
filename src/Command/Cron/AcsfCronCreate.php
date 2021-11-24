@@ -8,6 +8,8 @@ use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 /**
  * Class AcsfCronCreate.
  *
+ * Creates Scheduled Jobs for Acquia Content Hub Export/Import queues.
+ *
  * @package Acquia\Console\ContentHub\Command\Cron
  */
 class AcsfCronCreate extends AcquiaCloudCronCreate {
@@ -50,7 +52,7 @@ class AcsfCronCreate extends AcquiaCloudCronCreate {
 
     $site_info = [];
     foreach ($sites as $domain => $site) {
-      $site_info[] = [
+      $site_info[$site['id']] = [
         'active_domain' => $domain,
         'env_uuid' => $env_uuid,
       ];

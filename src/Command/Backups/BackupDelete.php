@@ -8,13 +8,15 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class BackupDelete.
+ *
+ * Deletes a backup bundle of Acquia Content Hub Service snapshot and
+ * database site backups.
  *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
@@ -75,9 +77,7 @@ class BackupDelete extends Command implements PlatformCommandInterface {
         break;
     }
 
-    $backup_command->addPlatform($input->getArgument('alias'), $platform);
-    return $backup_command->run(new ArrayInput(['alias' => $input->getArgument('alias')]), $output);
-
+    return $this->runCommand($backup_command, $input, $output);
   }
 
 }

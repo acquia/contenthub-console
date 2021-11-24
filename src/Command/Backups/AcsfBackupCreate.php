@@ -13,6 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class AcsfBackupCreate.
  *
+ * Creates a snapshot of Acquia Content Hub Service and database
+ * backups for all sites within the ACSF platform.
+ *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
 class AcsfBackupCreate extends AcquiaCloudBackupCreate {
@@ -60,10 +63,11 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
   /**
    * {@inheritdoc}
    */
-  protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
+  protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
     $output->writeln('<info>Starting the creation of database backups for all sites in the platform.</info>');
+    $output->writeln('<info>This may take a while...</info>');
     $list_before = $this->runAcsfBackupListCommand($platform, $output);
-    $raw = $this->runAcsfBackupCreateCommand($platform);
+    $raw = $this->runAcsfBackupCreateCommand($platform, $input);
 
     if ($raw->getReturnCode() !== 0) {
       throw new \Exception('Database backup creation failed.');
@@ -75,7 +79,9 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
   }
 
   /**
-   * Helper function to get the difference of backups list before and after backup creation.
+   * Helper function to get the difference of backups list before.
+   *
+   * And after backup creation.
    *
    * @param object $before
    *   List of backups before backup creation.
@@ -134,13 +140,16 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
    *
    * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform instance.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Input instance.
    *
    * @return object
    *   Object containing command run info.
    *
    * @throws \Exception
+   * @throws \Symfony\Component\Console\Exception\ExceptionInterface
    */
-  protected function runAcsfBackupCreateCommand(PlatformInterface $platform): object {
+  protected function runAcsfBackupCreateCommand(PlatformInterface $platform, InputInterface $input): object {
     $cmd_input = [
       '--all' => TRUE,
       '--wait' => 300,

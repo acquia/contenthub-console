@@ -3,6 +3,7 @@
 namespace Acquia\Console\ContentHub\Event;
 
 use EclipseGc\CommonConsole\PlatformInterface;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -17,6 +18,13 @@ class ServiceClientUuidEvent extends Event {
    * @var \EclipseGc\CommonConsole\PlatformInterface
    */
   protected $platform;
+
+  /**
+   * Input stream.
+   *
+   * @var \Symfony\Component\Console\Input\InputInterface
+   */
+  protected $input;
 
   /**
    * Output stream.
@@ -37,11 +45,14 @@ class ServiceClientUuidEvent extends Event {
    *
    * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform to run the command on.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Input stream.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Output stream.
    */
-  public function __construct(PlatformInterface $platform, OutputInterface $output) {
+  public function __construct(PlatformInterface $platform, InputInterface $input, OutputInterface $output) {
     $this->platform = $platform;
+    $this->input = $input;
     $this->output = $output;
   }
 
@@ -53,6 +64,16 @@ class ServiceClientUuidEvent extends Event {
    */
   public function getPlatform() {
     return $this->platform;
+  }
+
+  /**
+   * Returns the input stream event holds.
+   *
+   * @return \Symfony\Component\Console\Input\InputInterface
+   *   Input stream object.
+   */
+  public function getInput() {
+    return $this->input;
   }
 
   /**

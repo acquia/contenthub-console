@@ -6,10 +6,14 @@ use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBack
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupList;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use EclipseGc\CommonConsole\PlatformInterface;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class AcquiaCloudBackupCreateMultiSite.
+ *
+ * Creates a snapshot of Acquia Content Hub Service and database
+ * backups for all sites within ACE Multi-site environment.
  *
  * @package Acquia\Console\ContentHub\Command\Backups
  */
@@ -40,8 +44,9 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
   /**
    * {@inheritdoc}
    */
-  protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
-    $output->writeln('<info>Starting database backup creation.</info>');
+  protected function getBackupId(PlatformInterface $platform, InputInterface $input, OutputInterface $output): array {
+    $output->writeln('<info>Starting the creation of database backups for all sites in the platform...</info>');
+    $output->writeln('<info>This may take a while...</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
     $raw = $this->runBackupCreateCommand($platform);
 
@@ -92,14 +97,6 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
       '--wait' => TRUE,
     ];
     return $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudMultisiteDatabaseBackupCreate::getDefaultName(), $platform, $cmd_input);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getUri(): string {
-    $sites = $this->platform->getMultiSites();
-    return reset($sites);
   }
 
 }
