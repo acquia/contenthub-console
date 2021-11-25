@@ -1,0 +1,29 @@
+name: CHUC
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_RUN_ID: ${{ github.run_id }}
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+    strategy:
+      matrix:
+        php-version: [ '7.4' ]
+    steps:
+      # This step checks out a copy of your repository.
+      - uses: actions/checkout@v2
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      - name: Before script
+        run: |
+          composer install
+      - name: After script
+        run: |
+          vendor/bin/phpunit tests/
+          vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
+          vendor/bin/phpcs -n --standard=Drupal,DrupalPractice src/ tests/
