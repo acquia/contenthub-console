@@ -1,31 +1,35 @@
 name: CHUC
-on: [push]
+on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     env:
       COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_RUN_ID: ${{ github.run_id }}
-      GITHUB_EVENT_NAME: ${{ github.event_name }}
     strategy:
       matrix:
+        os: [ ubuntu-latest ]
         php-version: [ '7.4' ]
     steps:
       # This step checks out a copy of your repository.
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - uses: shivammathur/setup-php@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           coverage: xdebug
 
-      - name: Before script
+      - name: Install composer dependencies
         run: |
           composer require --dev php-coveralls/php-coveralls
           composer install
-      - name: After script
+      - name: Run phpcs
         run: |
-          vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
-          vendor/bin/phpcs -n --standard=Drupal,DrupalPractice src/ tests/
-          vendor/bin/phpunit
-          vendor/bin/php-coveralls -v
+          ./vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
+          ./vendor/bin/phpcs -n --standard=Drupal,DrupalPractice src/ tests/
+      - name: Run PHPUnit
+        run: ./vendor/bin/phpunit
+
+      - name: Run Coveralls
+        run: ./vendor/bin/php-coveralls -v
