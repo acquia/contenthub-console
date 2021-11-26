@@ -69,7 +69,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
 
     $tester = $this->getCmdTesterInstanceOf(AcquiaCloudBackupRestore::class, $arr, $arguments);
     $tester->setInputs(['Test'])->execute([]);
-    $output = $tester->getDisplay();
+    $output = sprintf($tester->getDisplay());
     $this->assertStringContainsString($needle, $output);
     $this->assertEquals($exit_code, $tester->getStatusCode());
 
@@ -110,7 +110,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
         '<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>'
         . PHP_EOL . 'Please pick a configuration to restore:'
         . PHP_EOL . '  [0] Test'
-        . PHP_EOL . ' > Test'
+        . PHP_EOL . ' > T[K7est8e[K7st8s[K7t8t[K78'
         . PHP_EOL . 'Starting Acquia Content Hub service restoration.'
         . PHP_EOL . 'Acquia Content Hub service restoration is completed successfully.'
         . PHP_EOL . 'Database backup restoration started. It can take several minutes to complete.'
@@ -144,7 +144,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
         '<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>'
         . PHP_EOL . 'Please pick a configuration to restore:'
         . PHP_EOL . '  [0] Test'
-        . PHP_EOL . ' > Test'
+        . PHP_EOL . ' > T[K7est8e[K7st8s[K7t8t[K78'
         . PHP_EOL . 'Starting Acquia Content Hub service restoration.'
         . PHP_EOL . 'Acquia Content Hub service restoration is completed successfully.'
         . PHP_EOL . 'Database backup restoration started. It can take several minutes to complete.'
@@ -178,7 +178,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
         '<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>'
         . PHP_EOL . 'Please pick a configuration to restore:'
         . PHP_EOL . '  [0] Test'
-        . PHP_EOL . ' > Test'
+        . PHP_EOL . ' > T[K7est8e[K7st8s[K7t8t[K78'
         . PHP_EOL . 'Starting Acquia Content Hub service restoration.'
         . PHP_EOL . 'Acquia Content Hub service restoration failed with exit code: 1.' . PHP_EOL,
         1
