@@ -70,7 +70,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
     $tester = $this->getCmdTesterInstanceOf(AcquiaCloudBackupRestore::class, $arr, $arguments);
     $tester->setInputs(['Test'])->execute([]);
     $output = $tester->getDisplay();
-    $this->assertStringContainsString($needle, $output);
+    $this->assertEquals($needle, $output);
     $this->assertEquals($exit_code, $tester->getStatusCode());
 
   }
