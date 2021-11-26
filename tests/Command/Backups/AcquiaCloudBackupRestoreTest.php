@@ -110,7 +110,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
         '<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>'
         . PHP_EOL . 'Please pick a configuration to restore:'
         . PHP_EOL . '  [0] Test'
-        . PHP_EOL . 'Starting Acquia Content Hub service restoration.'
+        . PHP_EOL . '> Starting Acquia Content Hub service restoration.'
         . PHP_EOL . 'Acquia Content Hub service restoration is completed successfully.'
         . PHP_EOL . 'Database backup restoration started. It can take several minutes to complete.'
         . PHP_EOL . 'Acquia Content Hub service and site\'s database backups have been restored successfully!' . PHP_EOL,
@@ -143,7 +143,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
         '<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>'
         . PHP_EOL . 'Please pick a configuration to restore:'
         . PHP_EOL . '  [0] Test'
-        . PHP_EOL . 'Starting Acquia Content Hub service restoration.'
+        . PHP_EOL . '> Starting Acquia Content Hub service restoration.'
         . PHP_EOL . 'Acquia Content Hub service restoration is completed successfully.'
         . PHP_EOL . 'Database backup restoration started. It can take several minutes to complete.'
         . PHP_EOL . 'Backup restoration command failed with exit code: 1.' . PHP_EOL,
@@ -176,7 +176,7 @@ class AcquiaCloudBackupRestoreTest extends AcquiaCloudBackupTestBase {
         '<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>'
         . PHP_EOL . 'Please pick a configuration to restore:'
         . PHP_EOL . '  [0] Test'
-        . PHP_EOL . 'Starting Acquia Content Hub service restoration.'
+        . PHP_EOL . '> Starting Acquia Content Hub service restoration.'
         . PHP_EOL . 'Acquia Content Hub service restoration failed with exit code: 1.' . PHP_EOL,
         1
       ],
