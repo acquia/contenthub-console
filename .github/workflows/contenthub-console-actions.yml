@@ -17,13 +17,15 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          coverage: none
+          coverage: xdebug
 
       - name: Before script
         run: |
+          composer require --dev php-coveralls/php-coveralls
           composer install
       - name: After script
         run: |
           vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
           vendor/bin/phpcs -n --standard=Drupal,DrupalPractice src/ tests/
           vendor/bin/phpunit
+          vendor/bin/php-coveralls -v
