@@ -85,9 +85,9 @@ class ContentHubVerifyPublisherQueue extends ContentHubCommandBase implements Pl
     if ($module_version == 1) {
       $query->condition('exp.status_import', '');
     }
-    $query->execute();
-    $query->allowRowCount = TRUE;
-    $count = $query->rowCount();
+    $result = $query->execute();
+    $result->allowRowCount = TRUE;
+    $count = $result->rowCount();
 
     if ($count) {
       $verb = ($count == 1) ? 'is' : 'are';
