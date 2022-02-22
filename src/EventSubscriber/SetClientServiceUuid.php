@@ -57,7 +57,9 @@ class SetClientServiceUuid implements EventSubscriberInterface {
     $platform = $event->getPlatform();
     $input = $event->getInput();
     $output = $event->getOutput();
-    $raw = $this->executioner->runWithMemoryOutput(ContentHubServiceUuid::getDefaultName(), $platform, ['--uri' => $this->getUri($platform, $input, $output)]);
+    $raw = $this->executioner->runWithMemoryOutput(ContentHubServiceUuid::getDefaultName(), $platform, [
+      '--uri' => $this->getUri($platform, $input, $output),
+    ]);
     $data = NULL;
     if (!$raw->getReturnCode()) {
       $lines = explode(PHP_EOL, trim($raw));
