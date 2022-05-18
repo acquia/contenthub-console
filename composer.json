@@ -13,6 +13,7 @@
     "require": {
         "acquia/acsf-contenthub-console": "dev-main",
         "ext-json": "*",
+        "php": ">=7.3",
         "spatie/ssl-certificate": "1.21|1.22.1",
         "zumba/amplitude-php": "^1"
     },
