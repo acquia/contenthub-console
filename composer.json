@@ -25,7 +25,8 @@
         "psr-4": {
             "Acquia\\Console\\ContentHub\\Tests\\": "tests",
             "Acquia\\Console\\Cloud\\Tests\\": "vendor/acquia/cloud-contenthub-console/tests",
-            "Acquia\\Console\\Acsf\\Tests\\": "vendor/acquia/acsf-contenthub-console/tests"
+            "Acquia\\Console\\Acsf\\Tests\\": "vendor/acquia/acsf-contenthub-console/tests",
+            "EclipseGc\\CommonConsole\\Tests\\": "vendor/eclipsegc/common-console/tests"
         }
     },
     "minimum-stability": "dev",

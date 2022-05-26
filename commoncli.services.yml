@@ -342,3 +342,16 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+
+  # Pre-qualification commands
+  command.contenthub.pq.all:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqBundle
+    public: true
+    tags:
+      - { name: common_console_command }
+
+  command.contenthub.pq.general:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqGeneral
+    public: true
+    tags:
+      - { name: common_console_command }
