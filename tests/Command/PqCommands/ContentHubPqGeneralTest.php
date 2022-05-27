@@ -9,4 +9,10 @@ use EclipseGc\CommonConsole\Tests\CommonConsoleTestBase;
  *
  * @group contenthub_console_pq_commands
  */
-class ContentHubPqGeneralTest extends CommonConsoleTestBase {}
+class ContentHubPqGeneralTest extends CommonConsoleTestBase {
+
+  public function testGetOldestSupportedDrupalVersion() {
+
+  }
+
+}

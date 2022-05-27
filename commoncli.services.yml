@@ -349,7 +349,6 @@ services:
     public: true
     tags:
       - { name: common_console_command }
-
   command.contenthub.pq.general:
     class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqGeneral
     public: true
