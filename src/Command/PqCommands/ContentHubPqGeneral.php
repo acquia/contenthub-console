@@ -19,6 +19,12 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
+    if ($input->getOption('format') === 'json') {
+      $output->write(json_encode(['some' => 'test']));
+    }
+    else {
+      $output->writeln('some: test');
+    }
     return 0;
   }
 

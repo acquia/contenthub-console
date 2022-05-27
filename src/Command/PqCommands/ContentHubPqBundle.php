@@ -5,12 +5,14 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 use Acquia\Console\ContentHub\Command\Helpers\ColorizedOutputTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\StreamOutput;
 use function Spatie\SslCertificate\length;
 
-class ContentHubPqBundle extends Command {
+class ContentHubPqBundle extends ContentHubPqCommandBase {
 
   use ColorizedOutputTrait;
 
@@ -30,6 +32,7 @@ class ContentHubPqBundle extends Command {
    * {@inheritdoc}
    */
   protected function configure() {
+    parent::configure();
     $this
       ->setDescription('Runs all the pre-qualification commands, or the ones specified by options.')
       ->addOption('exclude', 'e', InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Exclude the provided checks')
@@ -40,11 +43,56 @@ class ContentHubPqBundle extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
+    $format = $input->getOption('format');
+
+    try {
+      [$commandList, $filterMode] = $this->getCommandListAndFilterMode($input);
+    }
+    catch (InvalidOptionException $e) {
+      $output->writeln($this->error($e->getMessage()));
+      return 1;
+    }
+
+    $pqCommands = $this->getPqCommands($commandList, $filterMode);
+    $resultExitCode = 0;
+    $result = [];
+    foreach ($pqCommands as $command) {
+      if ($format === 'json') {
+        $tempOutput = new StreamOutput(fopen('php://memory', 'r+', FALSE));
+        $exit = $command->run($input, $tempOutput);
+        $result[$command::getDefaultName()] = $this->getJsonStreamContentsInArray($tempOutput);
+      }
+      else {
+        $exit = $command->run($input, $output);
+      }
+
+      if ($exit > 0) {
+        $resultExitCode = $exit;
+      }
+    }
+
+    if ($format === 'json') {
+      $output->writeln(json_encode($result));
+    }
+
+    return $resultExitCode;
+  }
+
+  /**
+   * Extracts list of commands to run from the input.
+   *
+   * @param $input
+   *   The input containing the options.
+   *
+   * @return array
+   *   A tuple with the list of commands and the filter mode.
+   */
+  protected function getCommandListAndFilterMode(InputInterface $input): array {
     $exclude = $input->getOption('exclude');
     $checks = $input->getOption('checks');
+
     if ($exclude && $checks) {
-      $output->writeln($this->error('The options "exclude" and "checks" cannot be used together'));
-      return 1;
+      throw new InvalidOptionException('The options "exclude" and "checks" cannot be used together');
     }
 
     $filterMode = '';
@@ -58,16 +106,7 @@ class ContentHubPqBundle extends Command {
       $commandList = $exclude;
     }
 
-    $pqCommands = $this->getPqCommands($commandList, $filterMode);
-    $resultExitCode = 0;
-    foreach ($pqCommands as $command) {
-      $exit = $command->run($input, $output);
-      if ($exit > 0) {
-        $resultExitCode = $exit;
-      }
-    }
-
-    return $resultExitCode;
+    return [$commandList, $filterMode];
   }
 
   /**
@@ -101,8 +140,31 @@ class ContentHubPqBundle extends Command {
     return $filteredCommands;
   }
 
-  protected function cutNamespace(string $cmdName) {
+  /**
+   * Removes pq namespace from string.
+   *
+   * @param string $cmdName
+   *   The command name containing the namespace.
+   *
+   * @return string
+   *   The resulting name.
+   */
+  protected function cutNamespace(string $cmdName): string {
     return substr($cmdName, length('ach:pq:'));
+  }
+
+  /**
+   * Extracts output from stream and decodes it from json.
+   *
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   The output stream to extract.
+   *
+   * @return array
+   *   The resulting array.
+   */
+  protected function getJsonStreamContentsInArray(OutputInterface $output): array {
+    rewind($output->getStream());
+    return json_decode(stream_get_contents($output->getStream()), TRUE) ?? [];
   }
 
 }
