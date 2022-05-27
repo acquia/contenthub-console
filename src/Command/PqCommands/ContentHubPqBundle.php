@@ -3,7 +3,6 @@
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\ColorizedOutputTrait;
-use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 use function Spatie\SslCertificate\length;
 
+/**
+ * Runs all ach:pq commands.
+ */
 class ContentHubPqBundle extends ContentHubPqCommandBase {
 
   use ColorizedOutputTrait;

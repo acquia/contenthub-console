@@ -6,6 +6,9 @@ use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 
+/**
+ * Base class for ach:pq commands.
+ */
 abstract class ContentHubPqCommandBase extends Command implements PlatformBootStrapCommandInterface {
 
   /**
