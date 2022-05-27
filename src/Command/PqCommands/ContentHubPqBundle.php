@@ -25,13 +25,6 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
   /**
    * {@inheritdoc}
    */
-  public function getPlatformBootstrapType(): string {
-    return 'drupal8';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function configure() {
     parent::configure();
     $this
@@ -44,8 +37,6 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    $format = $input->getOption('format');
-
     try {
       [$commandList, $filterMode] = $this->getCommandListAndFilterMode($input);
     }
@@ -54,6 +45,7 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
       return 1;
     }
 
+    $format = $input->getOption('format');
     $pqCommands = $this->getPqCommands($commandList, $filterMode);
     $resultExitCode = 0;
     $result = [];
@@ -61,7 +53,7 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
       if ($format === 'json') {
         $tempOutput = new StreamOutput(fopen('php://memory', 'r+', FALSE));
         $exit = $command->run($input, $tempOutput);
-        $result[$command::getDefaultName()] = $this->getJsonStreamContentsInArray($tempOutput);
+        $result[$command::getDefaultName()] = $this->getJsonStreamContentsAsArray($tempOutput);
       }
       else {
         $exit = $command->run($input, $output);
@@ -166,7 +158,7 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
    * @return array
    *   The resulting array.
    */
-  protected function getJsonStreamContentsInArray(OutputInterface $output): array {
+  protected function getJsonStreamContentsAsArray(OutputInterface $output): array {
     rewind($output->getStream());
     return json_decode(stream_get_contents($output->getStream()), TRUE) ?? [];
   }

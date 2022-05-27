@@ -98,6 +98,8 @@ class ContentHubPqBundleTest extends CommonConsoleTestBase {
 
   /**
    * Tests options when --checks and --exclude are both provided.
+   *
+   * @covers ::getCommandListAndFilterMode
    */
   public function testExecuteWithExcludeAndInclude() {
     /** @var \Symfony\Component\Console\Application $application */
