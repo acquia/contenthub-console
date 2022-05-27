@@ -11,14 +11,20 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 class ContentHubPqGeneral extends ContentHubPqCommandBase {
 
-  use ColorizedOutputTrait;
-
+  /**
+   * Drupal.org API update url.
+   */
   public const UPDATES_URL = 'https://updates.drupal.org';
 
   /**
    * {@inheritdoc}
    */
   protected static $defaultName = 'ach:pq:general';
+
+  protected function configure() {
+    parent::configure();
+    $this->setDescription('Runs general checks on the site');
+  }
 
   /**
    * {@inheritdoc}

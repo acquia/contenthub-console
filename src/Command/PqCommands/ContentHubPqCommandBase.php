@@ -74,7 +74,9 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
       return $val;
     }, $data);
     $table = new Table($output);
-    $table->setFooterTitle(static::getDefaultName());
+    $table->setFooterTitle(
+      sprintf('%s - %s', static::getDefaultName(), $this->getDescription())
+    );
     $table->setHeaders($headers);
     $table->setRows($data);
     $table->render();
