@@ -47,7 +47,7 @@ class ContentHubPqBundleTest extends CommonConsoleTestBase {
     ];
 
     $application = $this->prophesize(Application::class);
-    $application ->all(Argument::type('string'))
+    $application->all(Argument::type('string'))
       ->willReturn(array_values($this->testCommands));
     $application->getHelperSet()
       ->willReturn($this->prophesize(HelperSet::class)->reveal());

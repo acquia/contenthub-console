@@ -3,7 +3,6 @@
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\ColorizedOutputTrait;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,8 +36,8 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
     parent::configure();
     $this
       ->setDescription('Runs all the pre-qualification commands, or the ones specified by options.')
-      ->addOption('exclude', 'e', InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Exclude the provided checks')
-      ->addOption('checks', 'c', InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Run the provided checks');
+      ->addOption('exclude', 'e', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Exclude the provided checks')
+      ->addOption('checks', 'c', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Run the provided checks');
   }
 
   /**
@@ -83,7 +82,7 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
   /**
    * Extracts list of commands to run from the input.
    *
-   * @param $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The input containing the options.
    *
    * @return array
@@ -112,12 +111,15 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
   }
 
   /**
+   * Returns a list of filtered commands by the filter mode.
+   *
    * @param array $commandList
    *   The command name list to filter by.
    * @param string $filterMode
    *   The filter option.
    *
-   * @return Command[]
+   * @return \Symfony\Component\Console\Command\Command[]
+   *   The filtered list of commands.
    */
   public function getPqCommands(array $commandList, string $filterMode): array {
     $commands = $this->getApplication()->all('ach:pq');
