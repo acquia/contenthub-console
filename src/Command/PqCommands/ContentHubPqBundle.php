@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
-use function Spatie\SslCertificate\length;
 
 /**
  * Runs all ach:pq commands.
@@ -146,7 +145,7 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
    *   The resulting name.
    */
   protected function cutNamespace(string $cmdName): string {
-    return substr($cmdName, length('ach:pq:'));
+    return substr($cmdName, mb_strlen('ach:pq:'));
   }
 
   /**
