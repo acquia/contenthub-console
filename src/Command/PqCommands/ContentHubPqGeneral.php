@@ -2,8 +2,10 @@
 
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
-use GuzzleHttp\Client;
+use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
+use Acquia\Console\ContentHub\Command\Helpers\VersionFetcher;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Provides general checks for the drupal sites.
@@ -11,14 +13,40 @@ use Symfony\Component\Console\Input\InputInterface;
 class ContentHubPqGeneral extends ContentHubPqCommandBase {
 
   /**
-   * Drupal.org API update url.
-   */
-  public const UPDATES_URL = 'https://updates.drupal.org';
-
-  /**
    * {@inheritdoc}
    */
   protected static $defaultName = 'ach:pq:general';
+
+  /**
+   * The Drupal service factory service.
+   *
+   * @var \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
+   */
+  protected $serviceFactory;
+
+  /**
+   * The project version fetcher service.
+   *
+   * @var \Acquia\Console\ContentHub\Command\Helpers\VersionFetcher
+   */
+  protected $versionFetcher;
+
+  /**
+   * Constructs a ContentHubPqGeneral object.
+   *
+   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $serviceFactory
+   *   The Drupal service factory.
+   * @param \Acquia\Console\ContentHub\Command\Helpers\VersionFetcher $versionFetcher
+   *   The project version fetcher.
+   * @param string|null $name
+   *   The name of this command.
+   */
+  public function __construct(DrupalServiceFactory $serviceFactory, VersionFetcher $versionFetcher, string $name = NULL) {
+    parent::__construct($name);
+
+    $this->serviceFactory = $serviceFactory;
+    $this->versionFetcher = $versionFetcher;
+  }
 
   /**
    * {@inheritdoc}
@@ -32,23 +60,66 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    * {@inheritdoc}
    */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
-    $supportedVersion = $this->getOldestSupportedDrupalVersion();
-    $siteDrupalVersion = $this->getSiteDrupalVersion();
-    $kriName = 'Drupal Version';
-    $kriVal = sprintf('Supported Drupal version: >=%s - Site Drupal version: %s', $supportedVersion, $siteDrupalVersion);
+    $this->checkDrupalVersion($result);
 
-    if ($siteDrupalVersion < $supportedVersion) {
+    if ($this->serviceFactory->isModulePresentInCodebase('acquia_contenthub')) {
+      $this->checkChModuleVersion($result);
+    }
+
+    return 0;
+  }
+
+  /**
+   * Runs check against the oldest supported Drupal version.
+   *
+   * @param \Acquia\Console\ContentHub\Command\PqCommands\PqCommandResult $result
+   *   The result object to set the indicator for.
+   *
+   * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
+   */
+  protected function checkDrupalVersion(PqCommandResult $result): void {
+    $supportedVersion = $this->getOldestSupportedDrupalVersion();
+    $localVersion = $this->getSiteDrupalVersion();
+    $kriName = 'Drupal Version';
+    $kriVal = sprintf('Supported Drupal version: >=%s - Site Drupal version: %s', $supportedVersion, $localVersion);
+
+    if (version_compare($localVersion, $supportedVersion) === -1) {
       $result->setIndicator($kriName,
         $kriVal,
-        ContentHubPqCommandErrors::$drupalCompatibilityError['message'],
+        PqCommandResultViolations::$drupalCompatibility,
         TRUE,
       );
-      return ContentHubPqCommandErrors::$drupalCompatibilityError['code'];
+      return;
     }
 
     $result->setIndicator($kriName, $kriVal, 'Current Drupal version is supported!');
+  }
 
-    return 0;
+  /**
+   * Runs check against the latest acquia_contenthub module version.
+   *
+   * @param \Acquia\Console\ContentHub\Command\PqCommands\PqCommandResult $result
+   *   The result object to set the indicator for.
+   *
+   * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
+   */
+  protected function checkChModuleVersion(PqCommandResult $result): void {
+    $supportedVersion = $this->getLatestModuleVersion();
+    $localVersion = $this->getSiteModuleVersion();
+    $kriName = 'Content Hub Module Version';
+    $kriVal = sprintf('Supported Drupal version: >=%s - Site Drupal version: %s', $supportedVersion, $localVersion);
+
+    if (version_compare($localVersion, $supportedVersion) === -1) {
+      $result->setIndicator(
+        $kriName,
+        $kriVal,
+        PqCommandResultViolations::$moduleVersionOutdated,
+        TRUE,
+      );
+      return;
+    }
+
+    $result->setIndicator($kriName, $kriVal, 'Current Module version is the latest!');
   }
 
   /**
@@ -60,23 +131,14 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
    */
   public function getOldestSupportedDrupalVersion(): string {
-    $client = new Client([
-      'base_uri' => static::UPDATES_URL,
-    ]);
-    $response = $client->get('release-history/drupal/current');
-    $body = (string) $response->getBody();
-    $xml = simplexml_load_string($body);
-    $latestStableDrupalVersionXml = $xml->xpath('//release[security[@covered=1]][1]');
-    if (empty($latestStableDrupalVersionXml)) {
+    $latestStableDrupalVersion = $this->versionFetcher->fetchProjectVersion('drupal');
+    if ($latestStableDrupalVersion === '') {
       throw ContentHubPqCommandErrors::newException(
-        ContentHubPqCommandErrors::$drupalVersionRetrievalError
+        ContentHubPqCommandErrors::$versionRetrievalErrorWithContext,
+        ['drupal']
       );
     }
-
-    /** @var \SimpleXMLElement $first */
-    $first = current($latestStableDrupalVersionXml);
-    $version = $first->version;
-    [$major, $minor] = explode('.', $version);
+    [$major, $minor] = explode('.', $latestStableDrupalVersion);
     return sprintf('%s.%s.%s', $major, (int) $minor - 1, 0);
   }
 
@@ -88,6 +150,40 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    */
   public function getSiteDrupalVersion(): string {
     return \Drupal::VERSION;
+  }
+
+  /**
+   * Returns the latest acquia_contenthub module version.
+   *
+   * @return string
+   *   The version.
+   *
+   * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
+   */
+  public function getLatestModuleVersion(): string {
+    $version = $this->versionFetcher->fetchProjectVersion('acquia_contenthub');
+    if ($version === '') {
+      throw ContentHubPqCommandErrors::newException(
+        ContentHubPqCommandErrors::$versionRetrievalErrorWithContext,
+        ['acquia_contenthub module']
+      );
+    }
+    return substr($version, strlen('8.x-'));
+  }
+
+  /**
+   * Returns the version of acquia_contenthub available in the code base.
+   *
+   * @return string
+   *   The version.
+   *
+   * @throws \Exception
+   */
+  public function getSiteModuleVersion(): string {
+    $module = $this->serviceFactory->getDrupalService('module_handler')->getModule('acquia_contenthub');
+    $path = $module->getExtensionPathName();
+    $versions = Yaml::parseFile("$path/acquia_contenthub_versions.yml");
+    return $versions['acquia_contenthub'];
   }
 
 }

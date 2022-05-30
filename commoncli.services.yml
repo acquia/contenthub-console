@@ -6,6 +6,9 @@ services:
   drupal_service_factory:
     class: Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
     public: true
+  version_fetcher:
+    class: Acquia\Console\ContentHub\Command\Helpers\VersionFetcher
+    public: true
   contenthub_service_uuid_setter:
     class: Acquia\Console\ContentHub\EventSubscriber\SetClientServiceUuid
     arguments: ['@platform_command_executioner']
@@ -354,3 +357,4 @@ services:
     public: true
     tags:
       - { name: common_console_command }
+    arguments: ['@drupal_service_factory', '@version_fetcher']

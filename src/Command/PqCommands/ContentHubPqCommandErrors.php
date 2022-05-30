@@ -20,23 +20,13 @@ final class ContentHubPqCommandErrors {
   ];
 
   /**
-   * Drupal version compatibility error.
+   * Used when the version cannot be fetched.
    *
    * @var array
    */
-  public static $drupalCompatibilityError = [
+  public static $versionRetrievalErrorWithContext = [
     'code' => 3001,
-    'message' => 'Your version of drupal is not supported by the module team! Full compatibility cannot be guaranteed.',
-  ];
-
-  /**
-   * Used when the drupal version cannot be fetched.
-   *
-   * @var array
-   */
-  public static $drupalVersionRetrievalError = [
-    'code' => 3002,
-    'message' => 'Could not return latest drupal version',
+    'message' => 'Could not return latest %s version',
   ];
 
   /**
