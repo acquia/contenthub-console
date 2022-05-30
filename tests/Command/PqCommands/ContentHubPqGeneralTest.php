@@ -11,8 +11,9 @@ use EclipseGc\CommonConsole\Tests\CommonConsoleTestBase;
  */
 class ContentHubPqGeneralTest extends CommonConsoleTestBase {
 
-  public function testGetOldestSupportedDrupalVersion() {
-
-  }
+  /**
+   * Tests drupal version compatibility.
+   */
+  public function testGetOldestSupportedDrupalVersion() {}
 
 }

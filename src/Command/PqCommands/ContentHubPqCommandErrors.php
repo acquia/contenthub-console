@@ -36,7 +36,7 @@ final class ContentHubPqCommandErrors {
    */
   public static $drupalVersionRetrievalError = [
     'code' => 3002,
-    'message' => 'Could not return latest drupal version'
+    'message' => 'Could not return latest drupal version',
   ];
 
   /**
@@ -48,6 +48,7 @@ final class ContentHubPqCommandErrors {
    *   The context for the message. Used for formatting the message string.
    *
    * @return \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
+   *   The initialised PqCommandException instance.
    */
   public static function newException(array $error, array $context = []): PqCommandException {
     return new PqCommandException(

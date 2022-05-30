@@ -20,6 +20,9 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    */
   protected static $defaultName = 'ach:pq:general';
 
+  /**
+   * {@inheritdoc}
+   */
   protected function configure() {
     parent::configure();
     $this->setDescription('Runs general checks on the site');
@@ -48,6 +51,14 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
     return 0;
   }
 
+  /**
+   * Returns the oldest supported Drupal version.
+   *
+   * @return string
+   *   The version string: major.minor.patch.
+   *
+   * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
+   */
   public function getOldestSupportedDrupalVersion(): string {
     $client = new Client([
       'base_uri' => static::UPDATES_URL,
@@ -69,6 +80,12 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
     return sprintf('%s.%s.%s', $major, (int) $minor - 1, 0);
   }
 
+  /**
+   * Returns the site's current Drupal version.
+   *
+   * @return string
+   *   The version string: major.minor.patch.
+   */
   public function getSiteDrupalVersion(): string {
     return \Drupal::VERSION;
   }

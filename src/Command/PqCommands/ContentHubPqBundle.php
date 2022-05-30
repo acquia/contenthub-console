@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\StreamOutput;
 /**
  * Runs all ach:pq commands.
  */
-class ContentHubPqBundle extends Command implements PlatformBootStrapCommandInterface{
+class ContentHubPqBundle extends Command implements PlatformBootStrapCommandInterface {
 
   use ColorizedOutputTrait;
 

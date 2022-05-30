@@ -34,6 +34,9 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
     return 'drupal8';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $result = new PqCommandResult();
     $format = $input->getOption('format');
@@ -54,10 +57,28 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
       $output->write(json_encode($result->getResult()));
       return $exitCode;
     }
-    $this->toTable($this->getData($result->getResult()), $output);
+    $this->toTable($this->convertKrisToArray($result->getResult()), $output);
     return $exitCode;
   }
 
+  /**
+   * Runs the internal logic of the implementing command.
+   *
+   * The method receives a PqCommandResult object, which encapsulated the
+   * resulting key risk indicators. The outputting and formatting is handled in
+   * the parent class.
+   *
+   * Any command related - which is not check violation - exception should be
+   * thrown here using the ContentHubPqCommandErrors class.
+   *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   The input object containing the provided input for the command.
+   * @param \Acquia\Console\ContentHub\Command\PqCommands\PqCommandResult $result
+   *   The result object to set key risk indicators.
+   *
+   * @return int
+   *   The command exit code.
+   */
   abstract protected function runCommand(InputInterface $input, PqCommandResult $result): int;
 
   /**
@@ -86,9 +107,17 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
     $table->render();
   }
 
-  protected function toErrorTable(array $data, OutputInterface $output): void {
+  /**
+   * Outputs error in a table format to keep the output flow consistent.
+   *
+   * @param array $rows
+   *   The data to include into the table.
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   The output object to write to.
+   */
+  protected function toErrorTable(array $rows, OutputInterface $output): void {
     $headers = ['Command Execution Error', 'Error Code'];
-    $table = $this->createTable($output, $headers, $data);
+    $table = $this->createTable($output, $headers, $rows);
     $table->setFooterTitle(
       sprintf('%s - %s', static::getDefaultName(), $this->getDescription())
     );
@@ -96,9 +125,15 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
   }
 
   /**
+   * Converts KeyRiskIndicators to array and returns them.
+   *
    * @param \Acquia\Console\ContentHub\Command\PqCommands\KeyRiskIndicator[] $kris
+   *   The key risk indicators.
+   *
+   * @return array
+   *   The converted KeyRiskIndicators.
    */
-  protected function getData(array $kris) {
+  protected function convertKrisToArray(array $kris): array {
     $res = [];
     foreach ($kris as $kri) {
       $res[] = $kri->toArray();
