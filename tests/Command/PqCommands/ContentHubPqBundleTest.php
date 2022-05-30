@@ -59,7 +59,7 @@ class ContentHubPqBundleTest extends CommonConsoleTestBase {
   /**
    * Tests --exclude option.
    */
-  public function testGetPqCommandsWithExcludedCommands() {
+  public function testGetPqCommandsWithExcludedCommands(): void {
     $excluded = ['test1'];
     $list = $this->command->getPqCommands($excluded, 'exclude');
     $this->assertEquals([$this->testCommands['test2']], $list);
@@ -79,7 +79,7 @@ class ContentHubPqBundleTest extends CommonConsoleTestBase {
   /**
    * Tests --checks option.
    */
-  public function testGetPqCommandsWithIncludedCommands() {
+  public function testGetPqCommandsWithIncludedCommands(): void {
     $included = ['test1'];
     $list = $this->command->getPqCommands($included, 'checks');
     $this->assertEquals([$this->testCommands['test1']], $list);
@@ -101,7 +101,7 @@ class ContentHubPqBundleTest extends CommonConsoleTestBase {
    *
    * @covers ::getCommandListAndFilterMode
    */
-  public function testExecuteWithExcludeAndInclude() {
+  public function testExecuteWithExcludeAndInclude(): void {
     /** @var \Symfony\Component\Console\Application $application */
     $application = $this->getContainer()->get('common_console_application');
     $allCommand = $application->find('ach:pq:all');

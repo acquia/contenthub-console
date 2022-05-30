@@ -20,7 +20,7 @@ trait ColorizedOutputTrait {
    * @param string $options
    *   Set the options for the output.
    */
-  public function setOutputOptions(string $options) {
+  public function setOutputOptions(string $options): void {
     $this->options = $options;
   }
 
@@ -47,7 +47,7 @@ trait ColorizedOutputTrait {
    *   The formatted text.
    */
   public function info(string $text): string {
-    return sprintf('<info>%s</info>', dt($text));
+    return sprintf('<info>%s</info>', $text);
   }
 
   /**
