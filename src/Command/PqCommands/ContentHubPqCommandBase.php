@@ -3,10 +3,10 @@
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\ColorizedOutputTrait;
+use Acquia\Console\ContentHub\Command\Helpers\TableFormatterTrait;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,8 +16,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class ContentHubPqCommandBase extends Command implements PlatformBootStrapCommandInterface {
 
-  use PlatformCmdOutputFormatterTrait;
   use ColorizedOutputTrait;
+  use PlatformCmdOutputFormatterTrait;
+  use TableFormatterTrait;
 
   /**
    * {@inheritdoc}
@@ -33,17 +34,22 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
     return 'drupal8';
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $result = new PqCommandResult();
+    $format = $input->getOption('format');
     try {
       $exitCode = $this->runCommand($input, $result);
     }
-    catch (PqCommandException $e) {
-      $output->writeln($this->error($e->getMessage()));
+    catch (\Exception $e) {
+      if ($format === 'json') {
+        $output->write($this->toJsonError($e->getMessage(), ['error_code' => $e->getCode()]));
+      }
+      else {
+        $this->toErrorTable([[$e->getMessage(), $e->getCode()]], $output);
+      }
       return $e->getCode();
     }
 
-    $format = $input->getOption('format');
     if ($format === 'json') {
       $output->write(json_encode($result->getResult()));
       return $exitCode;
@@ -73,12 +79,19 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
       $val['risky'] = $val['risky'] ? $this->error('YES') : $this->info('NO');
       return $val;
     }, $data);
-    $table = new Table($output);
+    $table = $this->createTable($output, $headers, $data);
     $table->setFooterTitle(
       sprintf('%s - %s', static::getDefaultName(), $this->getDescription())
     );
-    $table->setHeaders($headers);
-    $table->setRows($data);
+    $table->render();
+  }
+
+  protected function toErrorTable(array $data, OutputInterface $output): void {
+    $headers = ['Command Execution Error', 'Error Code'];
+    $table = $this->createTable($output, $headers, $data);
+    $table->setFooterTitle(
+      sprintf('%s - %s', static::getDefaultName(), $this->getDescription())
+    );
     $table->render();
   }
 

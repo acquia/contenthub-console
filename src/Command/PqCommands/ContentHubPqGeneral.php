@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
-use Acquia\Console\ContentHub\Command\Helpers\ColorizedOutputTrait;
 use GuzzleHttp\Client;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -58,7 +57,9 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
     $xml = simplexml_load_string($body);
     $latestStableDrupalVersionXml = $xml->xpath('//release[security[@covered=1]][1]');
     if (empty($latestStableDrupalVersionXml)) {
-      throw new \Exception('Could not return latest drupal version');
+      throw ContentHubPqCommandErrors::newException(
+        ContentHubPqCommandErrors::$drupalVersionRetrievalError
+      );
     }
 
     /** @var \SimpleXMLElement $first */
