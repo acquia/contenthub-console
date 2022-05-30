@@ -3,6 +3,7 @@
 namespace Acquia\Console\ContentHub\Tests\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqBundle;
+use Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqCommandErrors;
 use EclipseGc\CommonConsole\Tests\CommonConsoleTestBase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Application;
@@ -112,10 +113,13 @@ class ContentHubPqBundleTest extends CommonConsoleTestBase {
     ]);
     $display = $commandTester->getDisplay();
     $this->assertStringContainsString(
-      'The options "exclude" and "checks" cannot be used together',
+      'Invalid options: "exclude" and "checks" cannot be used together',
       $display
     );
-    $this->assertEquals(1, $commandTester->getStatusCode());
+    $this->assertEquals(
+      ContentHubPqCommandErrors::$invalidOptionErrorWithContext['code'],
+      $commandTester->getStatusCode()
+    );
   }
 
 }
