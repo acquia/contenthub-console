@@ -45,7 +45,8 @@ abstract class ContentHubPqCommandBase extends Command implements PlatformBootSt
     }
     catch (\Exception $e) {
       if ($format === 'json') {
-        $output->write($this->toJsonError($e->getMessage(), ['error_code' => $e->getCode()]));
+        $eCode = $e->getCode() === 0 ? 1 : $e->getCode();
+        $output->write($this->toJsonError($e->getMessage(), ['error_code' => $eCode]));
       }
       else {
         $this->toErrorTable([[$e->getMessage(), $e->getCode()]], $output);

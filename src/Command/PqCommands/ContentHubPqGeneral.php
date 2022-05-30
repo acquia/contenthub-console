@@ -181,7 +181,7 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    */
   public function getSiteModuleVersion(): string {
     $module = $this->serviceFactory->getDrupalService('module_handler')->getModule('acquia_contenthub');
-    $path = $module->getExtensionPathName();
+    $path = $module->getPath();
     $versions = Yaml::parseFile("$path/acquia_contenthub_versions.yml");
     return $versions['acquia_contenthub'];
   }
