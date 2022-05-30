@@ -107,7 +107,7 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
     $supportedVersion = $this->getLatestModuleVersion();
     $localVersion = $this->getSiteModuleVersion();
     $kriName = 'Content Hub Module Version';
-    $kriVal = sprintf('Supported Drupal version: >=%s - Site Drupal version: %s', $supportedVersion, $localVersion);
+    $kriVal = sprintf('Latest module version: %s - Site module version: %s', $supportedVersion, $localVersion);
 
     if (version_compare($localVersion, $supportedVersion) === -1) {
       $result->setIndicator(
