@@ -2,12 +2,15 @@
 
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
-use Symfony\Component\Console\Output\OutputInterface;
-
+/**
+ * Represents the result of an ach:pq command run.
+ */
 class PqCommandResult {
 
   /**
-   * @var array
+   * List of key risk indicators.
+   *
+   * @var \Acquia\Console\ContentHub\Command\PqCommands\KeyRiskIndicator[]
    */
   private $data;
 
@@ -28,13 +31,23 @@ class PqCommandResult {
    *   Key risk indicator name.
    * @param mixed $kriValue
    *   Indicator value.
+   * @param string $message
+   *   The indicator message.
+   * @param bool $failed
+   *   Indicator whether the check failed, i.e. the observed indicator is risky.
    */
-  public function setIndicator(string $kriName, $kriValue, $message, $failed = FALSE): void {
+  public function setIndicator(string $kriName, $kriValue, string $message, bool $failed = FALSE): void {
     $this->data[] = new KeyRiskIndicator(
       $kriName, $kriValue, $failed, $message,
     );
   }
 
+  /**
+   * Returns the array of key risk indicators.
+   *
+   * @return array|\Acquia\Console\ContentHub\Command\PqCommands\KeyRiskIndicator[]
+   *   The list of indicators.
+   */
   public function getResult(): array {
     return $this->data;
   }
