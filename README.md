@@ -112,7 +112,7 @@ Where the platform "sample-platform" has been previously created.
 
 ## Documentation
 
-Documentation `docs/api` can be generated using [phpDocumentor v3](https://www.phpdoc.org/).  
+API documentation can be generated using [phpDocumentor v3](https://www.phpdoc.org/).  
 The fastest and easiest way to generate a documentation without pollution:
 ```bash
 docker run -it --rm -v $(pwd):/data phpdoc/phpdoc:3 -t docs/api -d .
