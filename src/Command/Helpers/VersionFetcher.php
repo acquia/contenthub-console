@@ -5,7 +5,7 @@ namespace Acquia\Console\ContentHub\Command\Helpers;
 use GuzzleHttp\Client;
 
 /**
- * Responsible for fetching module version related information from drupal.org.
+ * Responsible for fetching project version related information.
  */
 class VersionFetcher {
 

@@ -77,9 +77,9 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    *
    * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
    */
-  protected function checkDrupalVersion(PqCommandResult $result): void {
+  public function checkDrupalVersion(PqCommandResult $result): void {
     $supportedVersion = $this->getOldestSupportedDrupalVersion();
-    $localVersion = $this->getSiteDrupalVersion();
+    $localVersion = $this->serviceFactory->getDrupalVersion();
     $kriName = 'Drupal Version';
     $kriVal = sprintf('Supported Drupal version: >=%s - Site Drupal version: %s', $supportedVersion, $localVersion);
 
@@ -103,7 +103,7 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
    *
    * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
    */
-  protected function checkChModuleVersion(PqCommandResult $result): void {
+  public function checkChModuleVersion(PqCommandResult $result): void {
     $supportedVersion = $this->getLatestModuleVersion();
     $localVersion = $this->getSiteModuleVersion();
     $kriName = 'Content Hub Module Version';
@@ -140,16 +140,6 @@ class ContentHubPqGeneral extends ContentHubPqCommandBase {
     }
     [$major, $minor] = explode('.', $latestStableDrupalVersion);
     return sprintf('%s.%s.%s', $major, (int) $minor - 1, 0);
-  }
-
-  /**
-   * Returns the site's current Drupal version.
-   *
-   * @return string
-   *   The version string: major.minor.patch.
-   */
-  public function getSiteDrupalVersion(): string {
-    return \Drupal::VERSION;
   }
 
   /**
