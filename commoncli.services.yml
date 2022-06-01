@@ -1,4 +1,6 @@
 services:
+  _deafault:
+    public: true
 
   http_client_factory.content_hub:
     class: Acquia\Console\ContentHub\Client\ContentHubClientFactory
@@ -14,6 +16,9 @@ services:
     arguments: ['@platform_command_executioner']
     tags:
       - { name: kernel.event_subscriber }
+  module_discoverer:
+    class: Acquia\Console\ContentHub\Command\Helpers\ModuleDiscoverer
+    arguments: ['@drupal_service_factory']
 
   #  Commands
   command.contenthub.backup.list:
