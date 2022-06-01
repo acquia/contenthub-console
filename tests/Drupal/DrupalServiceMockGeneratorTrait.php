@@ -8,7 +8,7 @@ namespace Acquia\Console\ContentHub\Tests\Drupal;
 trait DrupalServiceMockGeneratorTrait {
 
   /**
-   * Generates an anonymous with the provided methods.
+   * Generates an anonymous object with the provided methods.
    *
    * @param array $methods
    *   The array of methods in the following format.
