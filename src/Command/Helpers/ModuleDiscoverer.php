@@ -44,10 +44,10 @@ class ModuleDiscoverer {
       }
 
       if (strpos($module->getPath(), 'core/modules') !== FALSE) {
-        $coreModules[$module->getName()] = $module->getName();
+        $coreModules[] = $module->getName();
       }
       else {
-        $nonCoreModules[$module->getName()] = $module->getName();
+        $nonCoreModules[] = $module->getName();
       }
     }
 

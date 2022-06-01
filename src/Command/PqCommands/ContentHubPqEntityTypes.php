@@ -76,9 +76,11 @@ class ContentHubPqEntityTypes extends ContentHubPqCommandBase {
    *
    * @throws \Exception
    */
-  protected function getAllUnsupportedEntityTypes(): array {
+  public function getAllUnsupportedEntityTypes(): array {
     $modules = $this->moduleDiscoverer->getAvailableModules();
     $supported = $modules['core'] + ModuleDiscoverer::getSupportedModules();
+    // Makes the process  more efficient at the check phase.
+    $supported = array_flip($supported);
 
     $nonCoreEntityTypes = [];
     $etm = $this->serviceFactory->getDrupalService('entity_type.manager');

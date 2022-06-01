@@ -1,5 +1,5 @@
 services:
-  _deafault:
+  _defaults:
     public: true
 
   http_client_factory.content_hub:
