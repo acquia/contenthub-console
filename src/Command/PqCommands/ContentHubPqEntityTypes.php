@@ -50,6 +50,14 @@ class ContentHubPqEntityTypes extends ContentHubPqCommandBase {
   /**
    * {@inheritdoc}
    */
+  protected function configure() {
+    parent::configure();
+    $this->setDescription('Checks after unsupported entity types');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     $unsupportedEntityTypes = $this->getAllUnsupportedEntityTypes();
     $kriName = 'Unsupported Entity Types';
@@ -83,7 +91,7 @@ class ContentHubPqEntityTypes extends ContentHubPqCommandBase {
    */
   public function getAllUnsupportedEntityTypes(): array {
     $modules = $this->moduleDiscoverer->getAvailableModules();
-    $supported = $modules['core'] + ModuleDiscoverer::getSupportedModules();
+    $supported = array_merge($modules['core'], ModuleDiscoverer::getSupportedModules());
     // Makes the process  more efficient at the check phase.
     $supported = array_flip($supported);
 

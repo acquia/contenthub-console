@@ -74,6 +74,7 @@ class ModuleDiscoverer {
       'entity_queue',
       'depcalc',
       's3fs',
+      'pathauto',
     ];
   }
 
