@@ -12,6 +12,11 @@ use Symfony\Component\Console\Input\InputInterface;
 class ContentHubPqEntityTypes extends ContentHubPqCommandBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected static $defaultName = 'ach:pq:entity-types';
+
+  /**
    * The module discoverer service.
    *
    * @var \Acquia\Console\ContentHub\Command\Helpers\ModuleDiscoverer
