@@ -3,7 +3,8 @@
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\ColorizedOutputTrait;
-use Symfony\Component\Console\Exception\InvalidOptionException;
+use EclipseGc\CommonConsole\Command\PlatformBootStrapCommandInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\Console\Output\StreamOutput;
 /**
  * Runs all ach:pq commands.
  */
-class ContentHubPqBundle extends ContentHubPqCommandBase {
+class ContentHubPqBundle extends Command implements PlatformBootStrapCommandInterface {
 
   use ColorizedOutputTrait;
 
@@ -24,12 +25,19 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
   /**
    * {@inheritdoc}
    */
+  public function getPlatformBootstrapType(): string {
+    return 'drupal8';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function configure() {
-    parent::configure();
     $this
       ->setDescription('Runs all the pre-qualification commands, or the ones specified by options.')
       ->addOption('exclude', 'e', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Exclude the provided checks')
-      ->addOption('checks', 'c', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Run the provided checks');
+      ->addOption('checks', 'c', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Run the provided checks')
+      ->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Output format <json|table>', 'table');
   }
 
   /**
@@ -39,9 +47,9 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
     try {
       [$commandList, $filterMode] = $this->getCommandListAndFilterMode($input);
     }
-    catch (InvalidOptionException $e) {
+    catch (PqCommandException $e) {
       $output->writeln($this->error($e->getMessage()));
-      return 1;
+      return $e->getCode();
     }
 
     $format = $input->getOption('format');
@@ -84,7 +92,10 @@ class ContentHubPqBundle extends ContentHubPqCommandBase {
     $checks = $input->getOption('checks');
 
     if ($exclude && $checks) {
-      throw new InvalidOptionException('The options "exclude" and "checks" cannot be used together');
+      throw ContentHubPqCommandErrors::newException(
+        ContentHubPqCommandErrors::$invalidOptionErrorWithContext,
+        ['"exclude" and "checks" cannot be used together'],
+      );
     }
 
     $filterMode = '';

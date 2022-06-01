@@ -3,7 +3,7 @@
 namespace Acquia\Console\ContentHub\Command\Helpers;
 
 /**
- * Class DrupalServiceFactory.
+ * Provides an adapter to access drupal related services.
  *
  * @package Acquia\Console\ContentHub\Command\Helpers
  */
@@ -22,6 +22,7 @@ class DrupalServiceFactory {
    */
   public function getDrupalService(string $serviceId): object {
     $this->checkDrupal();
+    // @codingStandardsIgnoreLine
     return \Drupal::service($serviceId);
   }
 
@@ -38,6 +39,7 @@ class DrupalServiceFactory {
    */
   public function hasDrupalService(string $serviceId): bool {
     $this->checkDrupal();
+    // @codingStandardsIgnoreLine
     return \Drupal::hasService($serviceId);
   }
 
@@ -101,13 +103,24 @@ class DrupalServiceFactory {
    * Get module version.
    *
    * @return int
-   *   2 if module 2.x version is available, otherwise returns 1. Returns 0 if Content Hub is not installed.
+   *   2 if module 2.x version is available, otherwise returns 1. Returns 0 if
+   *   Content Hub is not installed.
    *
    * @throws \Exception
    */
   public function getModuleVersion(): int {
     return $this->hasDrupalService('acquia_contenthub.client.factory') ? 2 :
       ($this->hasDrupalService('acquia_contenthub.client_manager') ? 1 : 0);
+  }
+
+  /**
+   * Returns the site's current Drupal version.
+   *
+   * @return string
+   *   The version string: major.minor.patch.
+   */
+  public function getDrupalVersion(): string {
+    return \Drupal::VERSION;
   }
 
 }

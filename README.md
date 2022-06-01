@@ -108,7 +108,15 @@ The following command will allow you to upgrade your sites from Content Hub 1.x 
 
     $./vendor/bin/commoncli ach:upgrade:start @sample-platform
    
-Where the platform "sample-platform" has been previously created. 
+Where the platform "sample-platform" has been previously created.
+
+## Documentation
+
+API documentation can be generated using [phpDocumentor v3](https://www.phpdoc.org/).  
+The fastest and easiest way to generate a documentation without pollution:
+```bash
+docker run -it --rm -v $(pwd):/data phpdoc/phpdoc:3 -t docs/api -d .
+```
 
 ## Copyright and license
 
