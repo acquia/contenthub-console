@@ -19,6 +19,9 @@ class VersionFetcher {
    *
    * Security covered releases are considered stable.
    *
+   * @param string $projectName
+   *   The name of the project to fetch information about.
+   *
    * @return string
    *   The version. This can be in multiple format, therefore it needs
    *   to be treated accordingly. Examples: major.minor.patch, 8.x-major.minor
