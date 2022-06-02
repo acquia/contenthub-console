@@ -5,7 +5,7 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 /**
  * Represents a key risk indicator.
  */
-class KeyRiskIndicator {
+class KeyRiskIndicator implements \JsonSerializable {
 
   /**
    * The name of the indicator.
@@ -67,6 +67,13 @@ class KeyRiskIndicator {
       'message' => $this->message,
       'risky' => $this->risky,
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function jsonSerialize() {
+    return $this->toArray();
   }
 
 }

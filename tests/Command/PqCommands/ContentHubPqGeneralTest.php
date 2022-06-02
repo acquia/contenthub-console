@@ -9,8 +9,9 @@ use Acquia\Console\ContentHub\Command\PqCommands\PqCommandResult;
 use Acquia\Console\ContentHub\Command\PqCommands\PqCommandResultViolations;
 use Acquia\Console\ContentHub\Tests\Drupal\DrupalServiceMockGeneratorTrait;
 use Acquia\Console\ContentHub\Tests\Helpers\TempFileGeneratorTrait;
-use EclipseGc\CommonConsole\Tests\CommonConsoleTestBase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -18,9 +19,10 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @group contenthub_console_pq_commands
  */
-class ContentHubPqGeneralTest extends CommonConsoleTestBase {
+class ContentHubPqGeneralTest extends TestCase {
 
   use DrupalServiceMockGeneratorTrait;
+  use ProphecyTrait;
   use TempFileGeneratorTrait;
 
   /**
