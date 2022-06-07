@@ -40,7 +40,7 @@ class ContentHubModuleChecker extends Command implements PlatformBootStrapComman
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $sub_module = $input->getOption('module');
     $module_name = 'acquia_contenthub';
     if (!$sub_module) {
@@ -51,6 +51,7 @@ class ContentHubModuleChecker extends Command implements PlatformBootStrapComman
     }
 
     $enabled ? $output->writeln('enabled') : $output->writeln('disabled');
+    return 0;
   }
 
   /**

@@ -46,7 +46,7 @@ class ContentHubMigrationPurgeAndDeleteWebhooks extends ContentHubCommandBase im
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Core\Extension\MissingDependencyException
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $ret = $this->purgeSubscription($output);
     $ret += $this->deleteWebhooks($output);
     return $ret;

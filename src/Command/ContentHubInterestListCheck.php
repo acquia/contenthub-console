@@ -32,7 +32,7 @@ class ContentHubInterestListCheck extends ContentHubCommandBase implements Platf
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!$this->achClientService->checkClient()) {
       $output->writeln('<error>Client connection to service is not healthy.</error>');
       return 1;

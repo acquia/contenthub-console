@@ -30,7 +30,7 @@ class ContentHubPanelizer extends ContentHubCommandBase implements PlatformBootS
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!\Drupal::getContainer()->get('extension.list.module')->exists('panelizer')) {
       $output->writeln('Panelizer module is not present.');
       return 0;

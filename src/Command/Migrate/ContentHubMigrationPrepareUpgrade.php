@@ -89,7 +89,7 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Core\Extension\MissingDependencyException
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Initiating Upgrade Process...');
     $this->handleModules($output, $input->getOption('uninstall-modules') ?? []);
     $this->removeRestResource($output);

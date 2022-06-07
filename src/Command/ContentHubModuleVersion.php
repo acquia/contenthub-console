@@ -33,7 +33,7 @@ class ContentHubModuleVersion extends ContentHubCommandBase implements PlatformB
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!$this->drupalServiceFactory->isModuleEnabled('acquia_contenthub')) {
       return 1;
     }

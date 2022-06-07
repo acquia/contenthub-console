@@ -38,7 +38,7 @@ class ContentHubInterestListDiff extends ContentHubCommandBase implements Platfo
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!$this->achClientService->checkClient()) {
       $output->writeln('Client connection to service is not healthy.');
       return 1;

@@ -32,7 +32,7 @@ class ContentHubLayoutBuilderDefaults extends ContentHubCommandBase implements P
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!\Drupal::moduleHandler()->moduleExists('layout_builder')) {
       $output->writeln('Layout Builder not installed.');
       return 0;

@@ -74,7 +74,7 @@ class ContentHubSubscriptionSet extends Command implements PlatformCommandInterf
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     do {
       $output->writeln('Please provide credentials for your Content Hub Subscription.');
       $helper = $this->getHelper('question');

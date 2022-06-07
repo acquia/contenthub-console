@@ -70,7 +70,7 @@ class ContentHubMigrateFilters extends ContentHubCommandBase implements Platform
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $module_handler = \Drupal::moduleHandler();
     if (!$module_handler->moduleExists('acquia_contenthub_subscriber')) {
       return 0;

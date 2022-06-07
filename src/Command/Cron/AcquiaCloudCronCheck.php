@@ -35,7 +35,7 @@ class AcquiaCloudCronCheck extends AcquiaCloudCommandBase {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $cron = new Crons($this->acquiaCloudClient);
     $filtered_crons = [];
     foreach ($this->getEnvironmentInfo() as $env_id) {
@@ -56,7 +56,7 @@ class AcquiaCloudCronCheck extends AcquiaCloudCommandBase {
       'Environment id',
       'Environment name',
       'Label',
-      'Cron ID'
+      'Cron ID',
     ]);
     $table->addRows($filtered_crons);
     $table->render();

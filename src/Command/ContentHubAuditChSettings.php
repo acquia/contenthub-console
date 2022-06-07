@@ -40,7 +40,7 @@ class ContentHubAuditChSettings extends ContentHubCommandBase implements Platfor
   /**
    * {@inheritDoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Running Content Hub config audit...');
     $attempt_fix = (bool) $input->getOption('fix');
     $config = $this->drupalServiceFactory->getDrupalService('config.factory')->getEditable('acquia_contenthub.admin_settings');

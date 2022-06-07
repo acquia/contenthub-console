@@ -85,7 +85,7 @@ class AcquiaCloudBackupDelete extends AcquiaCloudCommandBase {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('<warning>We are about to delete backups of all databases in this platform and a snapshot of the subscription.</warning>');
 
     $uri = $this->getUri($this->platform, $input, $output);

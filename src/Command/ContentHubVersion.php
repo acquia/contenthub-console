@@ -78,7 +78,7 @@ class ContentHubVersion extends Command implements PlatformCommandInterface {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Looking for 2.x version of Content Hub module');
     $ready = FALSE;
     $helper = $this->getHelper('question');
