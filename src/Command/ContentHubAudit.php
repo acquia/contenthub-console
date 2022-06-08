@@ -44,7 +44,7 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $return_early = $input->getOption('early-return');
     // CH 1.x hook implementations.
     $this->findDeprecatedHookImplementations($output);

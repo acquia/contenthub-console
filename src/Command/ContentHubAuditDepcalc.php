@@ -33,7 +33,7 @@ class ContentHubAuditDepcalc extends ContentHubCommandBase implements PlatformBo
   /**
    * {@inheritDoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!$this->drupalServiceFactory->isModulePresentInCodebase('depcalc')) {
       $output->writeln('<error>Depcalc module is missing from dependencies! Please run: composer require drupal/depcalc and deploy to your environment.</error>');
       return 2;

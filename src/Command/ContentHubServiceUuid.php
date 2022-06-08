@@ -32,7 +32,7 @@ class ContentHubServiceUuid extends ContentHubCommandBase implements PlatformBoo
   /**
    * {@inheritDoc}
    */
-  public function execute(InputInterface $input, OutputInterface $output) {
+  public function execute(InputInterface $input, OutputInterface $output): int {
     $module_version = $this->drupalServiceFactory->getModuleVersion();
     if ($module_version === 2) {
       $remote_settings = $this->achClientService->getRemoteSettings();

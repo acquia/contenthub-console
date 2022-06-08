@@ -43,7 +43,7 @@ class ContentHubAuditClients extends ContentHubCommandBase implements PlatformBo
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $clients = $this->achClientService->getClients();
     if ($input->getOption('count')) {
       $output->writeln($this->toJsonSuccess([

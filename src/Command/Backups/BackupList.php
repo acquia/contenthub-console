@@ -23,7 +23,7 @@ class BackupList extends Command {
   protected $configDir = [
     '.acquia',
     'contenthub',
-    'backups'
+    'backups',
   ];
 
   /**
@@ -63,7 +63,7 @@ class BackupList extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     /** @var \Consolidation\Config\Config[] $backup_configs */
     $backup_configs = $this->storage->loadAll($this->configDir);
     if (!$backup_configs) {
@@ -78,7 +78,7 @@ class BackupList extends Command {
       'Platform type',
       'Module version',
       'Site count',
-      'Created'
+      'Created',
     ]);
 
     $rows = [];

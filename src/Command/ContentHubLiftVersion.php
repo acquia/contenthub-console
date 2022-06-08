@@ -35,7 +35,7 @@ class ContentHubLiftVersion extends ContentHubCommandBase implements PlatformBoo
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $module_list = $this->drupalServiceFactory->getDrupalService('extension.list.module');
     if (!$module_list->exists('acquia_lift')) {
       return 1;

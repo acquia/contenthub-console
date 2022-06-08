@@ -111,7 +111,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $this->sendLogsToAmplitude('CHUC Upgrade process', 0, 'Upgrade process started.');
     $output->writeln('Welcome to the Acquia Content Hub Upgrade!');
     $output->writeln('This command line utility is designed to help you upgrade from Content Hub 1.x to 2.x.');
@@ -402,6 +402,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       $ready = TRUE;
       $platform->set('acquia.content_hub.upgrade.stage', 3)->save();
     }
+    return 0;
   }
 
   /**
@@ -660,6 +661,9 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
    *   The helper Question.
    * @param bool $execute
    *   TRUE if we need to execute this stage, false otherwise.
+   *
+   * @return int
+   *   Return code.
    */
   protected function executeValidateDefaultFiltersCommand(PlatformInterface $platform, InputInterface $input, OutputInterface $output, HelperInterface $helper, bool $execute) {
 
@@ -688,6 +692,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
       $ready = TRUE;
       $platform->set('acquia.content_hub.upgrade.stage', 11)->save();
     }
+    return 0;
   }
 
   /**

@@ -41,7 +41,7 @@ class ContentHubQueue extends Command implements PlatformBootStrapCommandInterfa
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if ($this->isModuleEnabled('acquia_contenthub_publisher')) {
       $export_queue = \Drupal::service('acquia_contenthub_publisher.acquia_contenthub_export_queue');
       $output->writeln($this->toJsonSuccess([
@@ -59,6 +59,7 @@ class ContentHubQueue extends Command implements PlatformBootStrapCommandInterfa
         'base_url' => $input->getOption('uri'),
       ]));
     }
+    return 0;
   }
 
 }

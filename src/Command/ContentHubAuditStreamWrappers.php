@@ -43,7 +43,7 @@ class ContentHubAuditStreamWrappers extends Command implements PlatformBootStrap
   /**
    * {@inheritDoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Auditing stream wrappers...');
     $stream_wrapper_mngr = \Drupal::service('stream_wrapper_manager');
     $wrappers = $stream_wrapper_mngr->getNames();
