@@ -30,6 +30,16 @@ final class ContentHubPqCommandErrors {
   ];
 
   /**
+   * Thrown when depcalc is not enabled on the site.
+   *
+   * @var array
+   */
+  public static $depcalcIsNotEnabledError = [
+    'code' => 3002,
+    'message' => 'Depcalc is not enabled on the site',
+  ];
+
+  /**
    * Returns a new PqCommandException.
    *
    * @param array $error
