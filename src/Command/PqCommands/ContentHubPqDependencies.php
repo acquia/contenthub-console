@@ -3,7 +3,10 @@
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
-use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Cache\DatabaseBackend;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\depcalc\DependencyStack;
 use Drupal\depcalc\DependentEntityWrapper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +15,13 @@ use Symfony\Component\Console\Input\InputInterface;
  * Runs checks against entity dependencies.
  */
 class ContentHubPqDependencies extends ContentHubPqCommandBase {
+
+  /**
+   * Entities that are not eligible for export directly.
+   */
+  public const EXCLUDED_CONTENT_ENTITIES = [
+    'paragraph',
+  ];
 
   /**
    * {@inheritdoc}
@@ -45,7 +55,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
   protected function configure() {
     parent::configure();
 
-    $this->setDescription('Checks the amount of dependencies and the overall dependency count');
+    $this->setDescription('Checks the amount of content entities and the overall dependency count');
   }
 
   /**
@@ -58,17 +68,30 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
 
     $content = $this->getExportEligibleContentEntities();
     $formatted = [];
-    array_walk($content, function ($val, $key) use ($formatted) {
-      $formatted[] = sprintf('%s: %s ', $val, $key);
-    });
+    foreach ($content as $key => $val) {
+      $formatted[] = sprintf('%s: %s ', $key, $val);
+    }
     $result->setIndicator(
       'Export Eligible Content Entities',
       implode("\n", $formatted),
-      'The following entity number should be expected of being exported. The list does not contain dependencies.'
+      'The following entities and their count should be expected to be exported. The list does not contain dependencies. Make sure to only export desired entities.'
     );
 
     $depCount = $this->calculateDependenciesForAllEligibleContentEntities();
-    $result->setIndicator('Dependencies', $depCount, 'The number of eligible dependencies. The overall entity count that would be exported.');
+    $result->setIndicator(
+      'Dependencies',
+      $depCount,
+      'The number of eligible dependencies. The overall entity count that would be exported, content and config entities included',
+    );
+
+    $rowsShouldBeIncreased = $depCount >= $this->getMaxRowsForDepcalcCache();
+    $message = 'The number of rows depcalc is allowed to cache ';
+    $result->setIndicator(
+      'Depcalc Cache Bin Max Rows',
+      $this->getMaxRowsForDepcalcCache(),
+      $rowsShouldBeIncreased ? $message . 'is too low!' : $message . 'is sufficient.',
+      $rowsShouldBeIncreased
+    );
 
     return 0;
   }
@@ -86,11 +109,11 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
     $entities = [];
     $defs = $entityTypeManager->getDefinitions();
     foreach ($defs as $entityType) {
-      $id = $entityType->id();
-      if (!$entityType instanceof ContentEntityType || in_array($id, $this->excludedContentEntities())) {
+      if (!$this->isEligible($entityType)) {
         continue;
       }
 
+      $id = $entityType->id();
       $entities[$id] = $entityTypeManager
         ->getStorage($id)
         ->getQuery()
@@ -116,11 +139,10 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
     $entityTypeManager = $this->drupalServiceFactory->getDrupalService('entity_type.manager');
     $defs = $entityTypeManager->getDefinitions();
     foreach ($defs as $entityType) {
-      $id = $entityType->id();
-      if (!$entityType instanceof ContentEntityType || in_array($id, $this->excludedContentEntities())) {
+      if (!$this->isEligible($entityType)) {
         continue;
       }
-      $entities = $entityTypeManager->getStorage($id)->loadByProperties();
+      $entities = $entityTypeManager->getStorage($entityType->id())->loadByProperties();
       $stack = new DependencyStack();
       foreach ($entities as $entity) {
         $wrapper = new DependentEntityWrapper($entity);
@@ -132,6 +154,23 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
   }
 
   /**
+   * Returns the maximum allowed rows in depcalc cache table.
+   *
+   * @return int
+   *   The max rows set for depcalc cache or the default rows.
+   */
+  public function getMaxRowsForDepcalcCache(): int {
+    $max_rows_settings = Settings::getInstance()->get('database_cache_max_rows');
+    if (isset($max_rows_settings['bins']['depcalc'])) {
+      return $max_rows_settings['bins']['depcalc'];
+    }
+    if (isset($max_rows_settings['default'])) {
+      return $max_rows_settings['default'];
+    }
+    return DatabaseBackend::DEFAULT_MAX_ROWS;
+  }
+
+  /**
    * Returns the number of dependencies from depcalc cache table.
    *
    * @return int
@@ -140,20 +179,22 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
    * @throws \Exception
    */
   protected function getDependencyNumberFromDepcalcCache(): int {
-    $database = $this->drupalServiceFactory->getDrupalService('connection');
-    return $database->select('cache_depcalc')->count()->execute();
+    $database = $this->drupalServiceFactory->getDrupalService('database');
+    return (int) $database->select('cache_depcalc')->countQuery()->execute()->fetchField();
   }
 
   /**
-   * Entities that are not eligible for export directly.
+   * Determines whether an entity is eligible for export or not.
    *
-   * @return string[]
-   *   The excluded content entities.
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entityType
+   *   The entity in question.
+   *
+   * @return bool
+   *   TRUE if it is eligible.
    */
-  protected function excludedContentEntities(): array {
-    return [
-      'paragraph',
-    ];
+  protected function isEligible(EntityTypeInterface $entityType) {
+    return $entityType instanceof ContentEntityTypeInterface &&
+      !in_array($entityType->id(), static::EXCLUDED_CONTENT_ENTITIES);
   }
 
   /**
