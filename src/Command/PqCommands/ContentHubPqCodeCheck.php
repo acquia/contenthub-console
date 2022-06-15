@@ -17,6 +17,27 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
   protected static $defaultName = 'ach:pq:code-check';
 
   /**
+   * The Drupal service factory service.
+   *
+   * @var \Acquia\Console\ContentHub\Command\Helpers\ModuleDiscoverer
+   */
+  protected $drupalServiceFactory;
+
+  /**
+   * Constructs a new ContentHubPqCodeCheck object.
+   *
+   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
+   *   The Drupal service factory service.
+   * @param string|null $name
+   *   The name of the command.
+   */
+  public function __construct(DrupalServiceFactory $drupalServiceFactory, string $name = NULL) {
+    parent::__construct($name);
+
+    $this->drupalServiceFactory = $drupalServiceFactory;
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
@@ -58,8 +79,7 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
    */
   public function getHookImplementation(): array {
     $hookImplementation = [];
-    $drupalServiceFactory = new DrupalServiceFactory();
-    $moduleHandler = $drupalServiceFactory->getDrupalService('module_handler');
+    $moduleHandler = $this->drupalServiceFactory->getDrupalService('module_handler');
     foreach (ContentHubAudit::V1_MODULE_HOOKS as $hook) {
       if (!empty($moduleList = $moduleHandler->getImplementations($hook))) {
         $hookImplementation[$hook] = $moduleList;

@@ -329,3 +329,4 @@ services:
     class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqCodeCheck
     tags:
       - { name: common_console_command }
+    arguments: ['@drupal_service_factory']
