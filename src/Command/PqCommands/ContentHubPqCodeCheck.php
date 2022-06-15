@@ -2,7 +2,7 @@
 
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
-use Acquia\Console\ContentHub\Command\ContentHubModuleFunctionExplorerTrait;
+use Acquia\Console\ContentHub\Command\ContentHubAudit;
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -10,8 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
  * Checks hook implementations available for the module.
  */
 class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
-
-  use ContentHubModuleFunctionExplorerTrait;
 
   /**
    * {@inheritdoc}
@@ -62,7 +60,7 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
     $hookImplementation = [];
     $drupalServiceFactory = new DrupalServiceFactory();
     $moduleHandler = $drupalServiceFactory->getDrupalService('module_handler');
-    foreach ($this->hooks as $hook) {
+    foreach (ContentHubAudit::V1_MODULE_HOOKS as $hook) {
       if (!empty($moduleList = $moduleHandler->getImplementations($hook))) {
         $hookImplementation[$hook] = $moduleList;
       }
