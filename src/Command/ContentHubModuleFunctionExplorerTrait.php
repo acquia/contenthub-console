@@ -5,22 +5,22 @@ namespace Acquia\Console\ContentHub\Command;
 /**
  * ContentHub audit command related functions.
  */
-trait ContentHubAuditTrait {
+trait ContentHubModuleFunctionExplorerTrait {
 
   /**
    * Hooks provided by CH 1.x module.
    *
    * @var array
    */
-  protected array $hooks = [
-    "acquia_contenthub_drupal_to_cdf_alter",
-    "acquia_contenthub_cdf_from_drupal_alter",
-    "acquia_contenthub_cdf_from_hub_alter",
-    "acquia_contenthub_drupal_from_cdf_alter",
-    "acquia_contenthub_exclude_fields_alter",
-    "acquia_contenthub_field_type_mapping_alter",
-    "acquia_contenthub_cdf_alter",
-    "acquia_contenthub_is_eligible_entity",
+  protected $hooks = [
+    'acquia_contenthub_drupal_to_cdf_alter',
+    'acquia_contenthub_cdf_from_drupal_alter',
+    'acquia_contenthub_cdf_from_hub_alter',
+    'acquia_contenthub_drupal_from_cdf_alter',
+    'acquia_contenthub_exclude_fields_alter',
+    'acquia_contenthub_field_type_mapping_alter',
+    'acquia_contenthub_cdf_alter',
+    'acquia_contenthub_is_eligible_entity',
   ];
 
   /**

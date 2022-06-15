@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ContentHubAudit extends Command implements PlatformBootStrapCommandInterface {
 
   use CommandExecutionTrait;
-  use ContentHubAuditTrait;
+  use ContentHubModuleFunctionExplorerTrait;
 
   /**
    * {@inheritdoc}
