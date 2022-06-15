@@ -38,4 +38,18 @@ final class PqCommandResultViolations {
    */
   public static $hookImplemented = 'You have module that contains hook implementations';
 
+  /**
+   * Dependency count is higher than the specified safety threshold.
+   *
+   * @var string
+   */
+  public static $dependencyCount = 'The number of eligible dependencies is high. Consider using a gradual export approach or decrease dependencies.';
+
+  /**
+   * The configured depcalc cache bin is lower than the actual number of deps.
+   *
+   * @var string
+   */
+  public static $depcalcCacheMaxRows = 'The number of rows depcalc is allowed to cache is too low! Please increase the configured amount!';
+
 }

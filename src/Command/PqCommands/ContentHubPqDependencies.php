@@ -97,7 +97,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
     $depCount = $this->calculateDependenciesForAllEligibleContentEntities($contentEntities);
     $messages = [
       'positive' => 'The number of eligible dependencies. The overall entity count that would be exported, content and config entities included.',
-      'negative' => 'The number of eligible dependencies is high. Consider using a gradual export approach or decrease dependencies.',
+      'negative' => PqCommandResultViolations::$dependencyCount,
     ];
     $high = $depCount >= 5000;
     $result->setIndicator(
@@ -110,7 +110,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
     $rowsShouldBeIncreased = $depCount >= $this->getMaxRowsForDepcalcCache();
     $messages = [
       'positive' => 'The configured maximum number of depcalc cache bin rows is sufficient.',
-      'negative' => 'The number of rows depcalc is allowed to cache is too low! Please increase the configured amount!',
+      'negative' => PqCommandResultViolations::$depcalcCacheMaxRows,
     ];
     $result->setIndicator(
       'Depcalc Cache Bin Max Rows',
