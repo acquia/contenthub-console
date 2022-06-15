@@ -30,6 +30,26 @@ final class ContentHubPqCommandErrors {
   ];
 
   /**
+   * Thrown when depcalc is not enabled on the site.
+   *
+   * @var array
+   */
+  public static $depcalcIsNotEnabledError = [
+    'code' => 3002,
+    'message' => 'Depcalc is not enabled on the site',
+  ];
+
+  /**
+   * Thrown when bundle was not found for the provided entity type.
+   *
+   * @var array
+   */
+  public static $bundleDoesNotExistErrorWithContext = [
+    'code' => 3003,
+    'message' => 'The provided bundle(s) "%s" for "%s" does not exist',
+  ];
+
+  /**
    * Returns a new PqCommandException.
    *
    * @param array $error
