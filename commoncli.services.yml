@@ -340,3 +340,8 @@ services:
     tags:
       - { name: common_console_command }
     arguments: ['@module_discoverer']
+  command.contenthub.pq.entity_structure:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqEntityStructure
+    tags:
+      - { name: common_console_command }
+    arguments: [ '@drupal_service_factory' ]

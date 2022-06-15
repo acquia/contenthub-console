@@ -24,7 +24,7 @@ final class PqCommandResultViolations {
   /**
    * Unsupported entity types violation.
    *
-   * This doens't necessarily mean that it imposes a blocker to the
+   * This doesn't necessarily mean that it imposes a blocker to the
    * implementation.
    *
    * @var string
