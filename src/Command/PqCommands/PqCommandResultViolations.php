@@ -31,4 +31,11 @@ final class PqCommandResultViolations {
    */
   public static $unsupportedEntityTypes = 'You have entity types that are not explicitly supported by Content Hub Team. This increases risk factor, should not be considered as a blocker.';
 
+  /**
+   * Hook implementaion violation.
+   *
+   * @var string
+   */
+  public static $hookImplemented = 'You have module that contains hook implementations';
+
 }

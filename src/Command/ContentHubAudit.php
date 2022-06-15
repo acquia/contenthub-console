@@ -24,6 +24,20 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
   protected static $defaultName = 'ach:audit:full';
 
   /**
+   * List CH 1.x hooks.
+   */
+  public const V1_MODULE_HOOKS = [
+    'acquia_contenthub_drupal_to_cdf_alter',
+    'acquia_contenthub_cdf_from_drupal_alter',
+    'acquia_contenthub_cdf_from_hub_alter',
+    'acquia_contenthub_drupal_from_cdf_alter',
+    'acquia_contenthub_exclude_fields_alter',
+    'acquia_contenthub_field_type_mapping_alter',
+    'acquia_contenthub_cdf_alter',
+    'acquia_contenthub_is_eligible_entity',
+  ];
+
+  /**
    * {@inheritdoc}
    */
   public function getPlatformBootstrapType(): string {
@@ -122,21 +136,10 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
       $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator("$directory/modules"));
       $regex = new \RegexIterator($iterator, '/^.+\.module$/i', \RecursiveRegexIterator::GET_MATCH);
 
-      $hooks = [
-        "acquia_contenthub_drupal_to_cdf_alter",
-        "acquia_contenthub_cdf_from_drupal_alter",
-        "acquia_contenthub_cdf_from_hub_alter",
-        "acquia_contenthub_drupal_from_cdf_alter",
-        "acquia_contenthub_exclude_fields_alter",
-        "acquia_contenthub_field_type_mapping_alter",
-        "acquia_contenthub_cdf_alter",
-        "acquia_contenthub_is_eligible_entity",
-      ];
-
       foreach ($regex as $module_file) {
         $functions = $this->getModuleFunctions($module_file[0]);
         $file_info = pathinfo($module_file[0]);
-        foreach ($hooks as $hook) {
+        foreach (self::V1_MODULE_HOOKS as $hook) {
           if (array_search("{$file_info['filename']}_$hook", $functions) !== FALSE) {
             $ok = FALSE;
             $output->writeln(sprintf("The %s module implements ContentHub 1.x hook %s and must be converted before upgrading to 2.x.", $file_info['filename'], $hook));
