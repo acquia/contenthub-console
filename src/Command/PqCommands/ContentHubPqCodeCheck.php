@@ -23,7 +23,6 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     $hooks_implemented = $this->getHookImplementation();
     $kriName = 'Hooks Implemented (hook_name : module_names)';
-    var_dump($hooks_implemented);
     if (!empty($hooks_implemented)) {
       foreach ($hooks_implemented as $hook => $module_names) {
         $result->setIndicator(
@@ -65,7 +64,6 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
       $kernel->getAppRoot(),
       "{$kernel->getAppRoot()}/{$kernel->getSitePath()}",
     ];
-
     foreach ($directories as $directory) {
       if (!file_exists("$directory/modules")) {
         continue;
