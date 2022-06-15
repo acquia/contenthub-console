@@ -56,7 +56,7 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
    * Returns number of hook implementation.
    *
    * @return array
-   *  The list of hook implementation.
+   *   The list of hook implementation.
    */
   public function getHookImplementation(): array {
     $hookImplementation = [];
@@ -86,4 +86,5 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
 
     return $hookImplementation;
   }
+
 }

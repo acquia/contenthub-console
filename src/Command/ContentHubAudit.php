@@ -140,5 +140,4 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
     }
   }
 
-
 }
