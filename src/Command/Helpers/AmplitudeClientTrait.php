@@ -43,7 +43,7 @@ trait AmplitudeClientTrait {
       $client_origin_uuid = $platform->get(self::SERVICE_UUID_KEY);
       if (!$client_origin_uuid) {
         $event = new ServiceClientUuidEvent($platform, $input, $output);
-        $this->dispatcher->dispatch(ContentHubConsoleEvents::GET_SERVICE_CLIENT_UUID, $event);
+        $this->dispatcher->dispatch($event, ContentHubConsoleEvents::GET_SERVICE_CLIENT_UUID);
         $client_origin_uuid = $event->getClientServiceUuid();
         if (empty($client_origin_uuid)) {
           throw new \Exception(sprintf('Service Subscription UUID missing.'));

@@ -71,7 +71,7 @@ class ContentHubClientCompare extends Command implements PlatformCommandInterfac
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Execution in progress...');
     /** @var \Acquia\Console\Cloud\Platform\AcquiaCloudPlatform $platform */
     $platform = $this->getPlatform('source');

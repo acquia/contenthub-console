@@ -35,10 +35,10 @@ class DrushWrapper extends Command {
   /**
    * {@inheritDoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $eligible_drush_paths = [
       './vendor/bin/drush',
-      '../vendor/bin/drush'
+      '../vendor/bin/drush',
     ];
 
     $path_to_drush = '';

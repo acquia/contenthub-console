@@ -1,9 +1,10 @@
 <?php
 
-namespace Acquia\Console\ContentHub\Tests;
+namespace Acquia\Console\ContentHub\Tests\Command;
 
 use Acquia\Console\ContentHub\Client\ContentHubServiceVersion2;
 use Acquia\Console\ContentHub\Command\ContentHubServiceUuid;
+use Acquia\Console\ContentHub\Tests\ContentHubCommandTestBase;
 use Prophecy\Argument;
 
 /**

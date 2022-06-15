@@ -63,7 +63,7 @@ class ContentHubCustomFields extends ContentHubCommandBase implements PlatformBo
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $manager = \Drupal::service('entity_field.manager');
     $field_types = [];
     foreach ($manager->getFieldMap() as $entity_fields) {

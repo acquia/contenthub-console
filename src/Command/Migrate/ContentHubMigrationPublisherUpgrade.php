@@ -67,7 +67,7 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
    *
    * @throws \Exception
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Initiating module upgrade process...');
     $drush_options = ['--drush_command' => 'cr'];
     if ($uri = $input->getOption('uri')) {
@@ -81,6 +81,7 @@ class ContentHubMigrationPublisherUpgrade extends ContentHubCommandBase implemen
       $this->setAcquiaLiftCdfVersion();
     }
     $this->upgradePublishers($output, $uri);
+    return 0;
   }
 
   /**

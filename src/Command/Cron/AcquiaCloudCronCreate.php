@@ -65,7 +65,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $helper = $this->getHelper('question');
     $job_count = $this->getQueueRunnersCount($input, $output, $helper);
 

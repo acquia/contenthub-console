@@ -46,7 +46,7 @@ class ContentHubQueueCheck extends ContentHubCommandBase implements PlatformBoot
   /**
    * {@inheritDoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $config = $this->drupalServiceFactory->getDrupalService('config.factory')->getEditable('acquia_contenthub.entity_config');
     $queue_values = [];
     if ($this->isPublisher($this->drupalServiceFactory)) {

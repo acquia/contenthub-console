@@ -38,7 +38,7 @@ class ContentHubAuditSslCertificate extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('Getting SSL certificate...');
     $url = $input->getOption('uri');
     if (!$url) {

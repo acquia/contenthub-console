@@ -82,7 +82,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>');
 
     $sites = $this->getPlatformSitesForRestore();

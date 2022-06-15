@@ -33,7 +33,7 @@ class ContentHubDiff extends ContentHubCommandBase implements PlatformBootStrapC
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $module_list = $this->drupalServiceFactory->getDrupalService('extension.list.module');
     if (!$module_list->exists('diff')) {
       $output->writeln($this->toJsonSuccess([

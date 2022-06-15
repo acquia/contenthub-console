@@ -60,7 +60,7 @@ class BackupDelete extends Command implements PlatformCommandInterface {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $platform = $this->getPlatform('source');
     $backup_command = NULL;
     switch ($platform->getPlatformId()) {

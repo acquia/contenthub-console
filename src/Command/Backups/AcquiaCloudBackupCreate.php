@@ -92,7 +92,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln('We are about to create a backup of all databases in this platform and a snapshot of the subscription.');
     $output->writeln('Please name this backup in order to restore it later (alphanumeric characters only)!');
 
