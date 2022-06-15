@@ -23,6 +23,9 @@ class ContentHubAudit extends Command implements PlatformBootStrapCommandInterfa
    */
   protected static $defaultName = 'ach:audit:full';
 
+  /**
+   * List CH 1.x hooks.
+   */
   public const V1_MODULE_HOOKS = [
     'acquia_contenthub_drupal_to_cdf_alter',
     'acquia_contenthub_cdf_from_drupal_alter',
