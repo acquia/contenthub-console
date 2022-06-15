@@ -39,6 +39,15 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
   protected $drupalServiceFactory;
 
   /**
+   * Contains the parsed input if there were passed any.
+   *
+   * Structure: entity_type => [bundle1, bundle2].
+   *
+   * @var array
+   */
+  private $entityTypesFilter = [];
+
+  /**
    * Constructs a new ContentHubPqDependencies object.
    *
    * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
@@ -71,9 +80,10 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
       throw ContentHubPqCommandErrors::newException(ContentHubPqCommandErrors::$depcalcIsNotEnabledError);
     }
 
-    $entityTypeFilters = $this->parseInput($input);
-    $contentEntities = $this->getExportEligibleContentEntities($entityTypeFilters);
-    $contentEntityCount = $this->countEligibleEntities($contentEntities, $entityTypeFilters);
+    $this->entityTypesFilter = $this->parseInput($input);
+
+    $contentEntities = $this->getExportEligibleContentEntities();
+    $contentEntityCount = $this->countEligibleEntities($contentEntities);
     $formatted = [];
     foreach ($contentEntityCount as $key => $val) {
       $formatted[] = sprintf('%s: %s ', $key, $val);
@@ -84,7 +94,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
       'The following entities and their count should be expected to be exported. The list does not contain dependencies. Make sure to only export desired entities.'
     );
 
-    $depCount = $this->calculateDependenciesForAllEligibleContentEntities($contentEntities, $entityTypeFilters);
+    $depCount = $this->calculateDependenciesForAllEligibleContentEntities($contentEntities);
     $messages = [
       'positive' => 'The number of eligible dependencies. The overall entity count that would be exported, content and config entities included.',
       'negative' => 'The number of eligible dependencies is high. Consider using a gradual export approach or decrease dependencies.',
@@ -115,19 +125,16 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
   /**
    * Returns an array of all export eligible content entities.
    *
-   * @param array $entityTypesFilter
-   *   The entity types to filter by: entity_type => [bundle1, bundle2].
-   *
    * @return array
    *   A list of eligible entities.
    *
    * @throws \Exception
    */
-  public function getExportEligibleContentEntities(array $entityTypesFilter = []): array {
+  public function getExportEligibleContentEntities(): array {
     $entityTypeManager = $this->drupalServiceFactory->getDrupalService('entity_type.manager');
     $entities = [];
     foreach ($entityTypeManager->getDefinitions() as $entityType) {
-      if (!$this->isEligible($entityType, array_keys($entityTypesFilter))) {
+      if (!$this->isEligible($entityType)) {
         continue;
       }
       $entities[] = $entityType;
@@ -141,18 +148,16 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
    *
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface[] $entities
    *   The eligible entities to count.
-   * @param array $entityTypesFilter
-   *   The entity types to filter by: entity_type => [bundle1, bundle2].
    *
    * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
    */
-  public function countEligibleEntities(array $entities, array $entityTypesFilter): array {
+  public function countEligibleEntities(array $entities): array {
     $bundleInfo = $this->drupalServiceFactory->getDrupalService('entity_type.bundle.info');
     $entityTypeManager = $this->drupalServiceFactory->getDrupalService('entity_type.manager');
     $count = [];
     foreach ($entities as $entityType) {
       $id = $entityType->id();
-      $count[$id] = $this->countEntitiesWithBundleFilter($bundleInfo, $entityTypeManager, $id, $entityTypesFilter);
+      $count[$id] = $this->countEntitiesWithBundleFilter($bundleInfo, $entityTypeManager, $id);
     }
     return $count;
   }
@@ -164,15 +169,13 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
    *
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface[] $entities
    *   The eligible entities to count.
-   * @param array $entityTypesFilter
-   *   The entity types to filter by: entity_type => [bundle1, bundle2].
    *
    * @return int
    *   The number of dependencies calculated.
    *
    * @throws \Exception
    */
-  public function calculateDependenciesForAllEligibleContentEntities(array $entities, array $entityTypesFilter = []): int {
+  public function calculateDependenciesForAllEligibleContentEntities(array $entities): int {
     $depcalc = $this->drupalServiceFactory->getDrupalService('entity.dependency.calculator');
     $entityTypeManager = $this->drupalServiceFactory->getDrupalService('entity_type.manager');
     $bundleInfo = $this->drupalServiceFactory->getDrupalService('entity_type.bundle.info');
@@ -180,12 +183,12 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
 
     foreach ($entities as $entityType) {
       $id = $entityType->id();
-      if (!$this->bundleFilterIsSet($entityTypesFilter, $id)) {
+      if (!$this->bundleFilterIsSet($id)) {
         $entities = $entityTypeManager->getStorage($id)->loadByProperties();
       }
       else {
-        $this->validateBundles($id, $entityTypesFilter[$id], $bundleInfo);
-        $entities = $entityTypeManager->getStorage($id)->loadByProperties(['type' => $entityTypesFilter[$id]]);
+        $this->validateBundles($id, $bundleInfo);
+        $entities = $entityTypeManager->getStorage($id)->loadByProperties(['type' => $this->entityTypesFilter[$id]]);
       }
 
       $stack = new DependencyStack();
@@ -207,8 +210,6 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
    *   The entity type manager.
    * @param string $id
    *   The entity type id.
-   * @param array $entityTypesFilter
-   *   The entity types to filter by: entity_type => [bundle1, bundle2].
    *
    * @return int
    *   The number of available entities.
@@ -217,8 +218,8 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function countEntitiesWithBundleFilter(EntityTypeBundleInfoInterface $bundleInfo, EntityTypeManagerInterface $entityTypeManager, string $id, array $entityTypesFilter = []): int {
-    if (!$this->bundleFilterIsSet($entityTypesFilter, $id)) {
+  public function countEntitiesWithBundleFilter(EntityTypeBundleInfoInterface $bundleInfo, EntityTypeManagerInterface $entityTypeManager, string $id): int {
+    if (!$this->bundleFilterIsSet($id)) {
       return $entityTypeManager
         ->getStorage($id)
         ->getQuery()
@@ -226,52 +227,14 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
         ->execute();
     }
 
-    $this->validateBundles($id, $entityTypesFilter[$id], $bundleInfo);
+    $this->validateBundles($id, $bundleInfo);
 
     return $entityTypeManager
       ->getStorage($id)
       ->getQuery()
-      ->condition('type', $entityTypesFilter[$id], 'IN')
+      ->condition('type', $this->entityTypesFilter[$id], 'IN')
       ->count()
       ->execute();
-  }
-
-  /**
-   * Checks if a bundle is set for the entity based on the user input.
-   *
-   * @param array $entityTypesFilter
-   *   The entity types to filter by: entity_type => [bundle1, bundle2].
-   * @param string $id
-   *   The entity type id.
-   *
-   * @return bool
-   *   TRUE if set.
-   */
-  protected function bundleFilterIsSet(array $entityTypesFilter, string $id): bool {
-    return isset($entityTypesFilter[$id]) && !empty($entityTypesFilter[$id]);
-  }
-
-  /**
-   * Validates the filterable bundles against existing ones.
-   *
-   * @param string $id
-   *   The entity type id.
-   * @param array $bundlesToCheck
-   *   The bundles to validate.
-   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo
-   *   The bundle info service.
-   *
-   * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
-   */
-  protected function validateBundles(string $id, array $bundlesToCheck, EntityTypeBundleInfoInterface $bundleInfo): void {
-    $bundles = array_keys($bundleInfo->getBundleInfo($id));
-    $missing = array_diff($bundlesToCheck, $bundles);
-    if (!empty($missing)) {
-      throw ContentHubPqCommandErrors::newException(
-        ContentHubPqCommandErrors::$bundleDoesNotExistErrorWithContext,
-        [implode(', ', $missing), $id]
-      );
-    }
   }
 
   /**
@@ -300,6 +263,40 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
       $parsed[$typeAndBundle[0]][] = $typeAndBundle[1];
     }
     return $parsed;
+  }
+
+  /**
+   * Checks if a bundle is set for the entity based on the user input.
+   *
+   * @param string $id
+   *   The entity type id.
+   *
+   * @return bool
+   *   TRUE if set.
+   */
+  protected function bundleFilterIsSet(string $id): bool {
+    return isset($this->entityTypesFilter[$id]) && !empty($this->entityTypesFilter[$id]);
+  }
+
+  /**
+   * Validates the filterable bundles against existing ones.
+   *
+   * @param string $id
+   *   The entity type id.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo
+   *   The bundle info service.
+   *
+   * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
+   */
+  protected function validateBundles(string $id, EntityTypeBundleInfoInterface $bundleInfo): void {
+    $bundles = array_keys($bundleInfo->getBundleInfo($id));
+    $missing = array_diff($this->entityTypesFilter[$id], $bundles);
+    if (!empty($missing)) {
+      throw ContentHubPqCommandErrors::newException(
+        ContentHubPqCommandErrors::$bundleDoesNotExistErrorWithContext,
+        [implode(', ', $missing), $id]
+      );
+    }
   }
 
   /**
@@ -347,13 +344,11 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entityType
    *   The entity in question.
-   * @param array $entityTypesFilter
-   *   The entity types to filter by: entity_type => [bundle1, bundle2].
    *
    * @return bool
    *   TRUE if it is eligible.
    */
-  protected function isEligible(EntityTypeInterface $entityType, array $entityTypesFilter = []): bool {
+  protected function isEligible(EntityTypeInterface $entityType): bool {
     if (!$entityType instanceof ContentEntityTypeInterface) {
       return FALSE;
     }
@@ -361,8 +356,8 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
       return FALSE;
     }
 
-    if (!empty($entityTypesFilter)) {
-      return in_array($entityType->id(), $entityTypesFilter);
+    if (!empty($this->entityTypesFilter)) {
+      return in_array($entityType->id(), array_keys($this->entityTypesFilter));
     }
 
     return TRUE;
