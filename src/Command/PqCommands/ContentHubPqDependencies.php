@@ -149,6 +149,9 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface[] $entities
    *   The eligible entities to count.
    *
+   * @return array
+   *   The entities with their respective amount: entity => amount.
+   *
    * @throws \Acquia\Console\ContentHub\Command\PqCommands\PqCommandException
    */
   public function countEligibleEntities(array $entities): array {
