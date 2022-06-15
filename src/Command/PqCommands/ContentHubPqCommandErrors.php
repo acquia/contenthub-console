@@ -40,6 +40,16 @@ final class ContentHubPqCommandErrors {
   ];
 
   /**
+   * Thrown when bundle was not found for the provided entity type.
+   *
+   * @var array
+   */
+  public static $bundleDoesNotExistErrorWithContext = [
+    'code' => 3003,
+    'message' => 'The provided bundle(s) "%s" for "%s" does not exist',
+  ];
+
+  /**
    * Returns a new PqCommandException.
    *
    * @param array $error
