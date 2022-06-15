@@ -34,7 +34,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
   /**
    * The Drupal service factory service.
    *
-   * @var \Acquia\Console\ContentHub\Command\Helpers\ModuleDiscoverer
+   * @var \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
    */
   protected $drupalServiceFactory;
 
