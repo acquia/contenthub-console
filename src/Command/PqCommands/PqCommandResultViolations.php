@@ -53,13 +53,6 @@ final class PqCommandResultViolations {
   public static $depcalcCacheMaxRows = 'The number of rows depcalc is allowed to cache is too low! Please increase the configured amount!';
 
   /**
-   * A module is unsupported because of the reason included.
-   *
-   * @var string
-   */
-  public static $unsupportedModule = '%s module is unsupported. Reason: %s';
-
-  /**
    * Risky bundles violation.
    *
    * This doesn't necessarily mean that it imposes a blocker to the
@@ -67,18 +60,8 @@ final class PqCommandResultViolations {
    *
    * @var string
    */
-  public static $riskyBundles = 'These content types have complex fields like entity reference and entity reference revisions' . PHP_EOL . 'and can increase dependency calculation time.';
-
-  /**
-   * Bundles with paragraph violation.
-   *
-   * This doesn't necessarily mean that it imposes a blocker to the
-   * implementation.
-   *
-   * @var string
-   */
-  public static $paragraphBundles = 'You have content types which have paragraph fields which can make dependency calculation complex and circular.'
-  . PHP_EOL
-  . 'This increases risk factor, should not be considered as a blocker.';
+  public static $riskyBundles = 'Bundle and the number entity reference and entity reference revisions fields.' . PHP_EOL
+  . 'Content Entity Type complexity is heavily influenced by these fields and can increase dependency calculation time.' . PHP_EOL
+  . 'Bundles marked with red are paragraph references and should be handled with caution.';
 
 }

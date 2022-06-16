@@ -89,33 +89,33 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
         $bundles[$entityType] = $entityTypeLabel;
       }
       $fieldData = $this->getFieldTypes($entityType, array_keys($bundles));
-      $kriName = 'Content Type:' . $entityTypeLabel;
+      $kriName = 'Content Entity Type: ' . $entityTypeLabel;
       $riskyBundles = $this->analyseFieldData($bundles, $fieldData);
 
       $formatted = [];
       foreach ($fieldData as $bundleId => $bundleData) {
-        $formatted[$bundleData['complex_fields']['count'] ?? 0] = sprintf('%s: %s ', $bundles[$bundleId], $bundleData['complex_fields']['count'] ?? 0);
+        $count = $bundleData['complex_fields']['count'] ?? 0;
+        if (isset($riskyBundles[$bundleId])) {
+          $formatString = $this->toRed('%s: %s');
+        }
+        else {
+          $formatString = '%s: %s';
+        }
+        $formatted[] = sprintf($formatString, $bundles[$bundleId], $count);
       }
+
       ksort($formatted);
 
       $kriMessage = !empty($formatted) ? PqCommandResultViolations::$riskyBundles : 'Content structure is fine, safe to proceed';
       $result->setIndicator(
         $kriName,
         implode("\n", $formatted),
-        $kriMessage
+        $kriMessage,
+        !empty($riskyBundles)
       );
-
-      if (!empty($riskyBundles)) {
-        $result->setIndicator(
-          'Content type:' . $entityTypeLabel . ' with paragraphs',
-          implode("\n", $riskyBundles),
-          PqCommandResultViolations::$paragraphBundles,
-          TRUE
-        );
-      }
     }
-    return 0;
 
+    return 0;
   }
 
   /**
