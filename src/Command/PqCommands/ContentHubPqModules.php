@@ -66,16 +66,10 @@ class ContentHubPqModules extends ContentHubPqCommandBase {
    */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     $modules = $this->moduleDiscoverer->getAvailableModules();
-    $nonSupportedModules = array_diff($modules['non-core'], ModuleDiscoverer::getSupportedModules());
-    $messages = [
-      'positive' => 'All the modules you currently have are supported by Content Hub Team',
-      'negative' => 'The following modules are not explicitly supported by Content Hub Team.',
-    ];
     $result->setIndicator(
-      'Non-Supported Modules',
-      implode(', ', $nonSupportedModules),
-      empty($nonSupportedModules) ? $messages['positive'] : $messages['negative'],
-      !empty($nonSupportedModules)
+      'Supported Modules',
+      implode(', ', ModuleDiscoverer::getSupportedModules()),
+      'The following module are supported by Content Hub Team.',
     );
 
     $this->executeModuleCheckers($modules, $result);
@@ -96,6 +90,26 @@ class ContentHubPqModules extends ContentHubPqCommandBase {
       'Module: Layout Builder',
       'supported',
       "Translation specific layouts (provided by layout_builder_at) are not supported until it is enabled by core layout_builder. \nFor workaround contact the Content Hub Team.",
+    );
+  }
+
+  /**
+   * Handles panelizer special case.
+   *
+   * @param \Acquia\Console\ContentHub\Command\PqCommands\PqCommandResult $result
+   *   The pq command result object used to set KRI.
+   *
+   * @module panelizer
+   */
+  public function moduleCheckerPanelizer(PqCommandResult $result): void {
+    $result->setIndicator(
+      'Module: Panelizer',
+      'not supported',
+      sprintf(
+        PqCommandResultViolations::$unsupportedModule,
+        'panelizer', 'incompatiblity'
+      ),
+      TRUE
     );
   }
 
