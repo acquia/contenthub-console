@@ -11,6 +11,16 @@ use Symfony\Component\Console\Input\InputInterface;
 class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
 
   /**
+   * Entity reference field type.
+   */
+  public const ENTITY_REF = 'entity_reference';
+
+  /**
+   * Entity reference revision field type.
+   */
+  public const ENTITY_REF_REV = 'entity_reference_revisions';
+
+  /**
    * Formatted text field types.
    */
   public const FORMATTED_TEXT_FIELDS = [
@@ -59,12 +69,13 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
    */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     $bundles = $this->getNodeBundles();
-    $fieldData = $this->getFieldTypes($bundles);
+    $fieldData = $this->getFieldTypes(array_keys($bundles));
     $kriName = 'Unsupported Entity Types';
-    if (!empty($unsupportedEntityTypes)) {
+    $riskyBundles = $this->analyseFieldData($bundles, $fieldData);
+    if (!empty($riskyBundles)) {
       $result->setIndicator(
         $kriName,
-        implode(', ', $unsupportedEntityTypes),
+        implode(', ', array_values($riskyBundles)),
         PqCommandResultViolations::$unsupportedEntityTypes,
         TRUE,
       );
@@ -95,7 +106,7 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
     $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
     $bundles = $etm->getStorage('node_type')->loadMultiple();
     foreach ($bundles as $bundle) {
-      $bundleIds[] = $bundle->id();
+      $bundleIds[$bundle->id()] = $bundle->label();
     }
     return $bundleIds;
   }
@@ -121,7 +132,7 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
       $data = [];
       foreach ($fieldDefinitions as $fieldName => $fieldDefinition) {
         $fieldType = $fieldDefinition->getType();
-        if ($fieldType === 'entity_reference' || $fieldType === 'entity_reference_revisions') {
+        if ($fieldType === self::ENTITY_REF || $fieldType === self::ENTITY_REF_REV) {
           $data[$fieldType]['count']++;
           $settings = $fieldDefinition->getSettings();
           $handler = $settings['handler'];
@@ -143,6 +154,60 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
       $fieldData[$bundle] = $data;
     }
     return $fieldData;
+  }
+
+  /**
+   * Analyses field data for each bundle and identifies risky ones.
+   *
+   * @param array $bundles
+   *   Bundle list.
+   * @param array $fieldData
+   *   Array of field data keyed by bundle id.
+   *
+   * @return array
+   *   List of bundles which are risky.
+   */
+  protected function analyseFieldData(array $bundles, array &$fieldData): array {
+    $riskyBundles = [];
+    foreach ($bundles as $bundleId => $bundleLabel) {
+      $bundleData = $fieldData[$bundleId];
+      $entityRefFieldData = $bundleData[self::ENTITY_REF] ?? [];
+      $this->checkRiskiness($riskyBundles, $fieldData, $entityRefFieldData, $bundleId, $bundleLabel);
+      $entityRefRevFieldData = $bundleData[self::ENTITY_REF_REV] ?? [];
+      $this->checkRiskiness($riskyBundles, $fieldData, $entityRefRevFieldData, $bundleId, $bundleLabel);
+    }
+    return $riskyBundles;
+  }
+
+  /**
+   * Iterates over each field and checks whether bundle is risky.
+   *
+   * @param array $riskyBundles
+   *   Array of risky bundles.
+   * @param array $fieldData
+   *   Overall field data for all bundles.
+   * @param array $entityFieldData
+   *   Field data for corresponding entity ref or entity ref rev field.
+   * @param string $bundleId
+   *   Bundle Id.
+   * @param string $bundleLabel
+   *   Bundle Label.
+   */
+  protected function checkRiskiness(array &$riskyBundles, array &$fieldData, array $entityFieldData, string $bundleId, string $bundleLabel): void {
+    $entityFieldCount = $entityFieldData ? $entityFieldData['count'] : 0;
+    if ($entityFieldCount > 0) {
+      unset($entityFieldData['count']);
+      $complexEntityFieldsExist = $entityFieldData ? count($entityFieldData) : 0;
+      if ($complexEntityFieldsExist) {
+        foreach ($entityFieldData as $entityRefField) {
+          $fieldData[$bundleId]['complex_fields']['count']++;
+          // A bundle has a field which can reference to same bundle itself.
+          if (in_array($bundleId, $entityRefField['target_bundles'], TRUE)) {
+            $riskyBundles[$bundleId] = $bundleLabel;
+          }
+        }
+      }
+    }
   }
 
 }
