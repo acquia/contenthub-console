@@ -95,6 +95,11 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
       $formatted = [];
       foreach ($fieldData as $bundleId => $bundleData) {
         $count = $bundleData['complex_fields']['count'] ?? 0;
+        if ($count === 0) {
+          continue;
+        }
+        // Visual emphasis on content entity types which utilises paragraphs
+        // fields.
         if (isset($riskyBundles[$bundleId])) {
           $formatString = $this->toRed('%s: %s');
         }
@@ -135,11 +140,13 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
     $bundleIds = [];
     $entityDefinition = $etm->getDefinition($entityType);
     $bundleStorage = $entityDefinition->getBundleEntityType();
-    if ($bundleStorage) {
-      $bundles = $etm->getStorage($bundleStorage)->loadMultiple();
-      foreach ($bundles as $bundle) {
-        $bundleIds[$bundle->id()] = $bundle->label();
-      }
+    if (!$bundleStorage) {
+      return $bundleIds;
+    }
+
+    $bundles = $etm->getStorage($bundleStorage)->loadMultiple();
+    foreach ($bundles as $bundle) {
+      $bundleIds[$bundle->id()] = $bundle->label();
     }
     return $bundleIds;
   }
@@ -231,20 +238,24 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
    */
   protected function checkRiskiness(array &$riskyBundles, array &$fieldData, array $entityFieldData, string $bundleId, string $bundleLabel): void {
     $entityFieldCount = $entityFieldData ? $entityFieldData['count'] : 0;
-    if ($entityFieldCount > 0) {
-      unset($entityFieldData['count']);
-      $complexEntityFieldsExist = $entityFieldData ? count($entityFieldData) : 0;
-      if ($complexEntityFieldsExist > 0) {
-        foreach ($entityFieldData as $entityField) {
-          $fieldData[$bundleId]['complex_fields']['count']++;
-          // If a bundle has a paragraph field which can
-          // ultimately increase complexity.
-          if ($entityField['target_entity'] === self::PARAGRAPH_FIELD) {
-            $riskyBundles[$bundleId] = $bundleLabel;
-          }
-        }
+    if ($entityFieldCount < 0) {
+      return;
+    }
+    unset($entityFieldData['count']);
+    $complexEntityFieldsExist = $entityFieldData ? count($entityFieldData) : 0;
+    if ($complexEntityFieldsExist < 0) {
+      return;
+    }
+
+    foreach ($entityFieldData as $entityField) {
+      $fieldData[$bundleId]['complex_fields']['count']++;
+      // If a bundle has a paragraph field which can
+      // ultimately increase complexity.
+      if ($entityField['target_entity'] === self::PARAGRAPH_FIELD) {
+        $riskyBundles[$bundleId] = $bundleLabel;
       }
     }
+
   }
 
   /**
@@ -262,10 +273,7 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
    */
   protected function getEntityTypeLabel(string $entityType, EntityTypeManagerInterface $entityTypeManager): string {
     $entityDefinition = $entityTypeManager->getDefinition($entityType);
-    if ($entityDefinition) {
-      return $entityDefinition->getLabel()->__toString();
-    }
-    return '';
+    return !$entityDefinition ? '' : $entityDefinition->getLabel()->__toString();
   }
 
 }
