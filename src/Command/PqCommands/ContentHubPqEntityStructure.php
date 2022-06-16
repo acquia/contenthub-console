@@ -3,7 +3,9 @@
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Runs a check against entity types with possibly complex structure.
@@ -65,6 +67,8 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
   protected function configure() {
     parent::configure();
     $this->setDescription('Analyses content type structure and sorts bundles based on their complexity.');
+    $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks for the provided entity type. Example node,user,paragraph', 'node');
+    $this->addUsage('ach:pq:dependencies --entity-type "node,user,paragraph"');
   }
 
   /**
@@ -73,53 +77,69 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
    * @throws \Exception
    */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
-    $bundles = $this->getNodeBundles();
-    $fieldData = $this->getFieldTypes(array_keys($bundles));
-    $kriName = 'Risky Content Types';
-    $riskyBundles = $this->analyseFieldData($bundles, $fieldData);
+    $entityTypeOption = $input->getOption('entity-type');
+    $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
+    $entityTypes = explode(',', $entityTypeOption);
+    foreach ($entityTypes as $entityType) {
+      $entityTypeLabel = $this->getEntityTypeLabel($entityType, $etm);
+      $bundles = $this->getBundles($entityType, $etm);
+      // Entity type itself acts as a bundle
+      // in this case to get field definition.
+      if (empty($bundles)) {
+        $bundles[$entityType] = $entityTypeLabel;
+      }
+      $fieldData = $this->getFieldTypes($entityType, array_keys($bundles));
+      $kriName = 'Content Type:' . $entityTypeLabel;
+      $riskyBundles = $this->analyseFieldData($bundles, $fieldData);
 
-    $formatted = [];
-    foreach ($fieldData as $bundleId => $bundleData) {
-      $formatted[$bundleData['complex_fields']['count'] ?? 0] = sprintf('%s: %s ', $bundles[$bundleId], $bundleData['complex_fields']['count'] ?? 0);
-    }
-    ksort($formatted);
+      $formatted = [];
+      foreach ($fieldData as $bundleId => $bundleData) {
+        $formatted[$bundleData['complex_fields']['count'] ?? 0] = sprintf('%s: %s ', $bundles[$bundleId], $bundleData['complex_fields']['count'] ?? 0);
+      }
+      ksort($formatted);
 
-    $formatted = array_merge(['Content Type: Number of Complex fields'], $formatted);
-
-    $kriMessage = PqCommandResultViolations::$riskyBundles;
-    $result->setIndicator(
-      $kriName,
-      implode("\n", $formatted),
-      $kriMessage
-    );
-
-    if (!empty($riskyBundles)) {
+      $kriMessage = !empty($formatted) ? PqCommandResultViolations::$riskyBundles : 'Content structure is fine, safe to proceed';
       $result->setIndicator(
-        'Content types with paragraphs',
-        implode("\n", $riskyBundles),
-        PqCommandResultViolations::$paragraphBundles,
-        TRUE
+        $kriName,
+        implode("\n", $formatted),
+        $kriMessage
       );
+
+      if (!empty($riskyBundles)) {
+        $result->setIndicator(
+          'Content type:' . $entityTypeLabel . ' with paragraphs',
+          implode("\n", $riskyBundles),
+          PqCommandResultViolations::$paragraphBundles,
+          TRUE
+        );
+      }
     }
     return 0;
 
   }
 
   /**
-   * Returns node bundles.
+   * Returns bundles for entity type.
+   *
+   * @param string $entityType
+   *   Entity type id.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $etm
+   *   Entity type manager.
    *
    * @return array
-   *   The list of bundle ids.
+   *   The list of bundles.
    *
    * @throws \Exception
    */
-  public function getNodeBundles(): array {
+  public function getBundles(string $entityType, EntityTypeManagerInterface $etm): array {
     $bundleIds = [];
-    /** @var \Drupal\Core\Entity\EntityTypeManager $etm */
-    $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
-    $bundles = $etm->getStorage('node_type')->loadMultiple();
-    foreach ($bundles as $bundle) {
-      $bundleIds[$bundle->id()] = $bundle->label();
+    $entityDefinition = $etm->getDefinition($entityType);
+    $bundleStorage = $entityDefinition->getBundleEntityType();
+    if ($bundleStorage) {
+      $bundles = $etm->getStorage($bundleStorage)->loadMultiple();
+      foreach ($bundles as $bundle) {
+        $bundleIds[$bundle->id()] = $bundle->label();
+      }
     }
     return $bundleIds;
   }
@@ -127,6 +147,8 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
   /**
    * Returns list of fields for each bundle.
    *
+   * @param string $entityType
+   *   Entity type id.
    * @param array $bundles
    *   Array of bundle ids.
    *
@@ -136,10 +158,8 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
    *
    * @throws \Exception
    */
-  public function getFieldTypes(array $bundles): array {
+  public function getFieldTypes(string $entityType, array $bundles): array {
     $fieldData = [];
-    // @todo Change this to be dynamic in Phase 2.
-    $entityType = 'node';
     /** @var \Drupal\Core\Entity\EntityFieldManager $fieldManager */
     $fieldManager = $this->serviceFactory->getDrupalService('entity_field.manager');
     foreach ($bundles as $bundle) {
@@ -225,6 +245,27 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
         }
       }
     }
+  }
+
+  /**
+   * Returns entity type label.
+   *
+   * @param string $entityType
+   *   Entity type id.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Entity type manager.
+   *
+   * @return string
+   *   Entity type label.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function getEntityTypeLabel(string $entityType, EntityTypeManagerInterface $entityTypeManager): string {
+    $entityDefinition = $entityTypeManager->getDefinition($entityType);
+    if ($entityDefinition) {
+      return $entityDefinition->getLabel()->__toString();
+    }
+    return '';
   }
 
 }
