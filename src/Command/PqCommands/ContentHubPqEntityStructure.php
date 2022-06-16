@@ -139,11 +139,11 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
   public function getFieldTypes(array $bundles): array {
     $fieldData = [];
     // @todo Change this to be dynamic in Phase 2.
-    $entity_type = 'node';
+    $entityType = 'node';
     /** @var \Drupal\Core\Entity\EntityFieldManager $fieldManager */
     $fieldManager = $this->serviceFactory->getDrupalService('entity_field.manager');
     foreach ($bundles as $bundle) {
-      $fieldDefinitions = $fieldManager->getFieldDefinitions($entity_type, $bundle);
+      $fieldDefinitions = $fieldManager->getFieldDefinitions($entityType, $bundle);
       $data = [];
       foreach ($fieldDefinitions as $fieldName => $fieldDefinition) {
         $fieldType = $fieldDefinition->getType();
@@ -156,10 +156,10 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
           // e.g. uid, revision uid etc.
           // which means it's not risky.
           if ($handler !== 'default') {
-            $target_entity = $settings['target_type'];
-            $target_bundles = array_keys($settings['handler_settings']['target_bundles']);
-            $data[$fieldType][$fieldName]['target_entity'] = $target_entity;
-            $data[$fieldType][$fieldName]['target_bundles'] = $target_bundles;
+            $targetEntity = $settings['target_type'];
+            $targetBundles = array_keys($settings['handler_settings']['target_bundles']);
+            $data[$fieldType][$fieldName]['target_entity'] = $targetEntity;
+            $data[$fieldType][$fieldName]['target_bundles'] = $targetBundles;
           }
           continue;
         }
