@@ -6,6 +6,9 @@ use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
+/**
+ * Checks avalable languages and translation count.
+ */
 class ContentHubPqLanguages extends ContentHubPqCommandBase {
 
   /**
@@ -81,7 +84,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
 
     $entityTypes = $entityTypeManager->getDefinitions();
     foreach ($entityTypes as $id => $type) {
-      if($type->entityClassImplements(ContentEntityInterface::class) && $type->isTranslatable()) {
+      if ($type->entityClassImplements(ContentEntityInterface::class) && $type->isTranslatable()) {
         foreach ($langcodeList as $langCode) {
           $count = $databaseConnection->select($type->getDataTable())
             ->condition('langcode', $langCode)
