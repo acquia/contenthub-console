@@ -107,7 +107,7 @@ class ContentHubPqModules extends ContentHubPqCommandBase {
       'not supported',
       sprintf(
         PqCommandResultViolations::$unsupportedModule,
-        'panelizer', 'incompatiblity'
+        'panelizer', 'incompatibility'
       ),
       TRUE
     );
