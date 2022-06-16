@@ -6,7 +6,7 @@ use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
- * Runs a check against possibly unsupported entity types.
+ * Runs a check against entity types with possibly complex structure.
  */
 class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
 
