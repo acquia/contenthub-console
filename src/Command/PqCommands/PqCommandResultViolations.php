@@ -32,7 +32,7 @@ final class PqCommandResultViolations {
   public static $unsupportedEntityTypes = 'You have entity types that are not explicitly supported by Content Hub Team. This increases risk factor, should not be considered as a blocker.';
 
   /**
-   * Hook implementaion violation.
+   * Hook implementation violation.
    *
    * @var string
    */
@@ -58,5 +58,27 @@ final class PqCommandResultViolations {
    * @var string
    */
   public static $unsupportedModule = '%s module is unsupported. Reason: %s';
+
+  /**
+   * Risky bundles violation.
+   *
+   * This doesn't necessarily mean that it imposes a blocker to the
+   * implementation.
+   *
+   * @var string
+   */
+  public static $riskyBundles = 'These content types have complex fields like entity reference and entity reference revisions' . PHP_EOL . 'and can increase dependency calculation time.';
+
+  /**
+   * Bundles with paragraph violation.
+   *
+   * This doesn't necessarily mean that it imposes a blocker to the
+   * implementation.
+   *
+   * @var string
+   */
+  public static $paragraphBundles = 'You have content types which have paragraph fields which can make dependency calculation complex and circular.'
+  . PHP_EOL
+  . 'This increases risk factor, should not be considered as a blocker.';
 
 }

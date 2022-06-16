@@ -11,6 +11,11 @@ use Symfony\Component\Console\Input\InputInterface;
 class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
 
   /**
+   * Paragraph field type.
+   */
+  public const PARAGRAPH_FIELD = 'paragraph';
+
+  /**
    * Entity reference field type.
    */
   public const ENTITY_REF = 'entity_reference';
@@ -70,24 +75,32 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     $bundles = $this->getNodeBundles();
     $fieldData = $this->getFieldTypes(array_keys($bundles));
-    $kriName = 'Unsupported Entity Types';
+    $kriName = 'Risky Content Types';
     $riskyBundles = $this->analyseFieldData($bundles, $fieldData);
-    if (!empty($riskyBundles)) {
-      $result->setIndicator(
-        $kriName,
-        implode(', ', array_values($riskyBundles)),
-        PqCommandResultViolations::$unsupportedEntityTypes,
-        TRUE,
-      );
-      return 0;
-    }
 
+    $formatted = [];
+    foreach ($fieldData as $bundleId => $bundleData) {
+      $formatted[$bundleData['complex_fields']['count'] ?? 0] = sprintf('%s: %s ', $bundles[$bundleId], $bundleData['complex_fields']['count'] ?? 0);
+    }
+    ksort($formatted);
+
+    $formatted = array_merge(['Content Type: Number of Complex fields'], $formatted);
+
+    $kriMessage = PqCommandResultViolations::$riskyBundles;
     $result->setIndicator(
       $kriName,
-      '',
-      'No unsupported entity types detected!'
+      implode("\n", $formatted),
+      $kriMessage
     );
 
+    if (!empty($riskyBundles)) {
+      $result->setIndicator(
+        'Content types with paragraphs',
+        implode("\n", $riskyBundles),
+        PqCommandResultViolations::$paragraphBundles,
+        TRUE
+      );
+    }
     return 0;
 
   }
@@ -120,13 +133,15 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
    * @return array
    *   Array containing field info for each bundle.
    *   ['article' => [], 'page' => []].
+   *
+   * @throws \Exception
    */
   public function getFieldTypes(array $bundles): array {
     $fieldData = [];
     // @todo Change this to be dynamic in Phase 2.
     $entity_type = 'node';
     /** @var \Drupal\Core\Entity\EntityFieldManager $fieldManager */
-    $fieldManager = \Drupal::service('entity_field.manager');
+    $fieldManager = $this->serviceFactory->getDrupalService('entity_field.manager');
     foreach ($bundles as $bundle) {
       $fieldDefinitions = $fieldManager->getFieldDefinitions($entity_type, $bundle);
       $data = [];
@@ -137,7 +152,8 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
           $settings = $fieldDefinition->getSettings();
           $handler = $settings['handler'];
           // Default handler means it's a standard field with
-          // no target configuration for fields like uid, revision uid etc
+          // no target configuration for fields
+          // e.g. uid, revision uid etc.
           // which means it's not risky.
           if ($handler !== 'default') {
             $target_entity = $settings['target_type'];
@@ -198,11 +214,12 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
     if ($entityFieldCount > 0) {
       unset($entityFieldData['count']);
       $complexEntityFieldsExist = $entityFieldData ? count($entityFieldData) : 0;
-      if ($complexEntityFieldsExist) {
-        foreach ($entityFieldData as $entityRefField) {
+      if ($complexEntityFieldsExist > 0) {
+        foreach ($entityFieldData as $entityField) {
           $fieldData[$bundleId]['complex_fields']['count']++;
-          // A bundle has a field which can reference to same bundle itself.
-          if (in_array($bundleId, $entityRefField['target_bundles'], TRUE)) {
+          // If a bundle has a paragraph field which can
+          // ultimately increase complexity.
+          if ($entityField['target_entity'] === self::PARAGRAPH_FIELD) {
             $riskyBundles[$bundleId] = $bundleLabel;
           }
         }
