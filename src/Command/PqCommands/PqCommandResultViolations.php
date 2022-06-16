@@ -36,7 +36,7 @@ final class PqCommandResultViolations {
    *
    * @var string
    */
-  public static $hookImplemented = 'You have module that contains hook implementations';
+  public static $hookImplemented = 'You have module that contains CH 1.x hook implementations.';
 
   /**
    * Dependency count is higher than the specified safety threshold.
@@ -53,6 +53,13 @@ final class PqCommandResultViolations {
   public static $depcalcCacheMaxRows = 'The number of rows depcalc is allowed to cache is too low! Please increase the configured amount!';
 
   /**
+   * A module is unsupported because of the reason included.
+   *
+   * @var string
+   */
+  public static $unsupportedModule = '%s module is unsupported. Reason: %s';
+  
+  /**
    * Risky bundles violation.
    *
    * This doesn't necessarily mean that it imposes a blocker to the
@@ -63,5 +70,12 @@ final class PqCommandResultViolations {
   public static $riskyBundles = 'Bundle and the number entity reference and entity reference revisions fields.' . PHP_EOL
   . 'Content Entity Type complexity is heavily influenced by these fields and can increase dependency calculation time.' . PHP_EOL
   . 'Bundles marked with red are paragraph references and should be handled with caution.';
+  
+  /**
+   * Multiple enabled languages violations.
+   *
+   * @var string
+   */
+  public static $enabledLanguages = 'Multiple enabled laguages and tarnslations increases dependency number.';
 
 }
