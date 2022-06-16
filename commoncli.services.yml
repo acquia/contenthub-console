@@ -335,3 +335,8 @@ services:
     tags:
       - { name: common_console_command }
     arguments: ['@drupal_service_factory']
+  command.contenthub.pq.modules:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqModules
+    tags:
+      - { name: common_console_command }
+    arguments: ['@module_discoverer', '@drupal_service_factory']
