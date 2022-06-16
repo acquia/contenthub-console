@@ -52,4 +52,11 @@ final class PqCommandResultViolations {
    */
   public static $depcalcCacheMaxRows = 'The number of rows depcalc is allowed to cache is too low! Please increase the configured amount!';
 
+  /**
+   * A module is unsupported because of the reason included.
+   *
+   * @var string
+   */
+  public static $unsupportedModule = '%s module is unsupported. Reason: %s';
+
 }
