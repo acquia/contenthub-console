@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
-use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Acquia\Console\ContentHub\Command\Helpers\ModuleDiscoverer;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -30,27 +29,17 @@ class ContentHubPqModules extends ContentHubPqCommandBase {
   protected $moduleDiscoverer;
 
   /**
-   * The Drupal service factory service.
-   *
-   * @var \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
-   */
-  protected $serviceFactory;
-
-  /**
    * Constructs a new ContentHubPqModules object.
    *
    * @param \Acquia\Console\ContentHub\Command\Helpers\ModuleDiscoverer $moduleDiscoverer
    *   The module discoverer service.
-   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
-   *   The Drupal service factory service.
    * @param string|null $name
    *   The name of this command.
    */
-  public function __construct(ModuleDiscoverer $moduleDiscoverer, DrupalServiceFactory $drupalServiceFactory, string $name = NULL) {
+  public function __construct(ModuleDiscoverer $moduleDiscoverer, string $name = NULL) {
     parent::__construct($name);
 
     $this->moduleDiscoverer = $moduleDiscoverer;
-    $this->serviceFactory = $drupalServiceFactory;
   }
 
   /**
