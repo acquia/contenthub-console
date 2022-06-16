@@ -68,7 +68,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
     parent::configure();
 
     $this->setDescription('Checks the amount of content entities and the overall dependency count');
-    $this->addOption('entity-type', 'et', InputOption::VALUE_OPTIONAL, 'Run checks only for the provided entity type. Specify bundle if needed. Example: {entity_type}:{bundle},{entity_type2}.', '');
+    $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks only for the provided entity type. Specify bundle if needed. Example: {entity_type}:{bundle},{entity_type2}.', '');
     $this->addUsage('ach:pq:dependencies --entity-type "node:article,node:page,block_content"');
   }
 

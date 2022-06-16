@@ -24,7 +24,7 @@ final class PqCommandResultViolations {
   /**
    * Unsupported entity types violation.
    *
-   * This doens't necessarily mean that it imposes a blocker to the
+   * This doesn't necessarily mean that it imposes a blocker to the
    * implementation.
    *
    * @var string
@@ -32,7 +32,7 @@ final class PqCommandResultViolations {
   public static $unsupportedEntityTypes = 'You have entity types that are not explicitly supported by Content Hub Team. This increases risk factor, should not be considered as a blocker.';
 
   /**
-   * Hook implementaion violation.
+   * Hook implementation violation.
    *
    * @var string
    */
@@ -53,10 +53,15 @@ final class PqCommandResultViolations {
   public static $depcalcCacheMaxRows = 'The number of rows depcalc is allowed to cache is too low! Please increase the configured amount!';
 
   /**
-   * A module is unsupported because of the reason included.
+   * Risky bundles violation.
+   *
+   * This doesn't necessarily mean that it imposes a blocker to the
+   * implementation.
    *
    * @var string
    */
-  public static $unsupportedModule = '%s module is unsupported. Reason: %s';
+  public static $riskyBundles = 'Bundle and the number entity reference and entity reference revisions fields.' . PHP_EOL
+  . 'Content Entity Type complexity is heavily influenced by these fields and can increase dependency calculation time.' . PHP_EOL
+  . 'Bundles marked with red are paragraph references and should be handled with caution.';
 
 }
