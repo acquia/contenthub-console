@@ -4,6 +4,9 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
@@ -83,8 +86,9 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
     $databaseConnection = $this->drupalServiceFactory->getDrupalService('database');
 
     $entityTypes = $entityTypeManager->getDefinitions();
-    foreach ($entityTypes as $id => $type) {
-      if ($type->entityClassImplements(ContentEntityInterface::class) && $type->isTranslatable()) {
+    foreach ($entityTypes as $type) {
+      if ($type->entityClassImplements(ContentEntityInterface::class) && $type->isTranslatable() && $type->id() == 'node') {
+        $this->isConfiguredCorrect($type);
         foreach ($langcodeList as $langCode) {
           $count = $databaseConnection->select($type->getDataTable())
             ->condition('langcode', $langCode)
@@ -98,4 +102,42 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
     return $languagesData;
   }
 
+  /**
+   * @param EntityTypeInterface $entityType
+   * @return bool
+   */
+  protected function isConfiguredCorrect(EntityTypeInterface $entityType): bool {
+    /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo */
+    $bundleInfo = $this->drupalServiceFactory->getDrupalService('entity_type.bundle.info');
+    /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $fieldManager */
+    $fieldManager = $this->drupalServiceFactory->getDrupalService('entity_field.manager');
+
+
+    $fieldMap = $fieldManager->getFieldMapByFieldType('entity_reference_revisions');
+    foreach ($fieldMap as $type => $fields) {
+      foreach ($fields as $fieldName => $field) {
+        /** @var \Drupal\field\FieldStorageConfigInterface $config */
+        $config = FieldStorageConfig::loadByName($type, $fieldName);
+        if (!empty($config) && $config->getSetting('target_type') == 'paragraph') {
+          echo 'hi';
+        }
+
+      }
+    }
+
+
+//    $entityTypeId = $entityType->id();
+//    $bundles = $bundleInfo->getBundleInfo($entityTypeId);
+//    foreach ($bundles as $bundleId => $bundle) {
+//      if (!$bundle['tarnslatable']) {
+//        continue;
+//      }
+//      /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+//      $fields = $fieldManager->getFieldDefinitions($entityTypeId, $bundle);
+//      $fields['nid']->getLabel();
+//    }
+//    $entityType;
+
+    return TRUE;
+  }
 }
