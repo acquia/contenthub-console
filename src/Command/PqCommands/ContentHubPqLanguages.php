@@ -5,14 +5,23 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
- * Checks avalable languages and translation count.
+ * Checks available languages, translation count and risky paragraph fields.
  */
 class ContentHubPqLanguages extends ContentHubPqCommandBase {
+
+  /**
+   * Paragraph field type.
+   */
+  public const PARAGRAPH_FIELD = 'paragraph';
+
+  /**
+   * Entity reference revision field type.
+   */
+  public const ENTITY_REF_REV = 'entity_reference_revisions';
 
   /**
    * {@inheritdoc}
@@ -54,17 +63,32 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
       $result->setIndicator(
         $kriName,
         trim($kriValue),
-        PqCommandResultViolations::$enabledLanguages,
-        count($languageData) > 1 ? TRUE : FALSE,
+        'Multiple enabled laguages and translations increases dependency number.',
       );
-      return 0;
     }
 
-    $result->setIndicator(
+    $incorrectParaConfigFields = $this->checkMultilingualParagraphConfiguredCorrect();
+    $kriName = 'List of incorrectly configured referenced paragraph fields.';
+    if (!empty($incorrectParaConfigFields)) {
+      $kriValue = '';
+      foreach ($incorrectParaConfigFields as $incorrectParaFields) {
+        $kriValue .= $incorrectParaFields . PHP_EOL;
+      }
+      $result->setIndicator(
+        $kriName,
+        trim($kriValue),
+        PqCommandResultViolations::$paragraphConfiguration,
+        TRUE,
+      );
+    }
+    else {
+      $result->setIndicator(
       $kriName,
       '',
-      'No enabled languages and and trnaslations detected!'
-    );
+      'No incorrectly configured referenced paragraph fields.'
+      );
+    }
+
     return 0;
   }
 
@@ -87,8 +111,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
 
     $entityTypes = $entityTypeManager->getDefinitions();
     foreach ($entityTypes as $type) {
-      if ($type->entityClassImplements(ContentEntityInterface::class) && $type->isTranslatable() && $type->id() == 'node') {
-        $this->isConfiguredCorrect($type);
+      if ($type->entityClassImplements(ContentEntityInterface::class) && $type->isTranslatable()) {
         foreach ($langcodeList as $langCode) {
           $count = $databaseConnection->select($type->getDataTable())
             ->condition('langcode', $langCode)
@@ -103,41 +126,57 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
   }
 
   /**
-   * @param EntityTypeInterface $entityType
-   * @return bool
+   * Checks if multilingual paragraphs are configured properly.
+   *
+   * @return array
+   *   Array of incorrect configured paragraph fields
    */
-  protected function isConfiguredCorrect(EntityTypeInterface $entityType): bool {
+  protected function checkMultilingualParagraphConfiguredCorrect(): array {
     /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo */
     $bundleInfo = $this->drupalServiceFactory->getDrupalService('entity_type.bundle.info');
     /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $fieldManager */
     $fieldManager = $this->drupalServiceFactory->getDrupalService('entity_field.manager');
 
-
-    $fieldMap = $fieldManager->getFieldMapByFieldType('entity_reference_revisions');
+    $configuration = [];
+    $fieldMap = $fieldManager->getFieldMapByFieldType(self::ENTITY_REF_REV);
     foreach ($fieldMap as $type => $fields) {
+      // Skipping reference revision fields inside paragraphs.
+      if ($type == self::PARAGRAPH_FIELD) {
+        continue;
+      }
+      $sourceBundles = $bundleInfo->getBundleInfo($type);
       foreach ($fields as $fieldName => $field) {
         /** @var \Drupal\field\FieldStorageConfigInterface $config */
         $config = FieldStorageConfig::loadByName($type, $fieldName);
-        if (!empty($config) && $config->getSetting('target_type') == 'paragraph') {
-          echo 'hi';
+        $bundles = array_keys($field['bundles']);
+        if (!empty($config) && $config->getSetting('target_type') === self::PARAGRAPH_FIELD && !empty($bundles)) {
+          foreach ($bundles as $bundle) {
+            if (!$sourceBundles[$bundle]['translatable']) {
+              continue;
+            }
+            /** @var \Drupal\Core\Field\FieldDefinitionInterface $fieldDef */
+            $fieldDef = $fieldManager->getFieldDefinitions($type, $bundle)[$fieldName];
+            // Referencing field of paragraph should not be translatable.
+            if ($fieldDef->isTranslatable()) {
+              $configuration[] = $type . ':' . $bundle . ':' . $fieldName;
+              continue;
+            }
+            // Target paragraph bundles should be translatable.
+            $targetBundles = array_keys($fieldDef->getSetting('handler_settings')['target_bundles']);
+            if (!empty($targetBundles)) {
+              $paragraphBundles = $bundleInfo->getBundleInfo(self::PARAGRAPH_FIELD);
+              foreach ($targetBundles as $targetBundle) {
+                if (!$paragraphBundles[$targetBundle]['translatable']) {
+                  $configuration[] = $type . ':' . $bundle . ':' . $fieldName;
+                  break;
+                }
+              }
+            }
+          }
         }
-
       }
     }
-
-
-//    $entityTypeId = $entityType->id();
-//    $bundles = $bundleInfo->getBundleInfo($entityTypeId);
-//    foreach ($bundles as $bundleId => $bundle) {
-//      if (!$bundle['tarnslatable']) {
-//        continue;
-//      }
-//      /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
-//      $fields = $fieldManager->getFieldDefinitions($entityTypeId, $bundle);
-//      $fields['nid']->getLabel();
-//    }
-//    $entityType;
-
-    return TRUE;
+    return $configuration;
   }
+
 }

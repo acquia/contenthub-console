@@ -58,7 +58,7 @@ final class PqCommandResultViolations {
    * @var string
    */
   public static $unsupportedModule = '%s module is unsupported. Reason: %s';
-  
+
   /**
    * Risky bundles violation.
    *
@@ -70,12 +70,12 @@ final class PqCommandResultViolations {
   public static $riskyBundles = 'Bundle and the number entity reference and entity reference revisions fields.' . PHP_EOL
   . 'Content Entity Type complexity is heavily influenced by these fields and can increase dependency calculation time.' . PHP_EOL
   . 'Bundles marked with red are paragraph references and should be handled with caution.';
-  
+
   /**
-   * Multiple enabled languages violations.
+   * Incorrect paragraph configuration violations.
    *
    * @var string
    */
-  public static $enabledLanguages = 'Multiple enabled laguages and tarnslations increases dependency number.';
+  public static $paragraphConfiguration = 'Multilingual paragraphs are not configured properly.';
 
 }
