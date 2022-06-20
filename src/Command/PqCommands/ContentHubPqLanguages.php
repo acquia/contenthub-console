@@ -4,7 +4,6 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Symfony\Component\Console\Input\InputInterface;
 
