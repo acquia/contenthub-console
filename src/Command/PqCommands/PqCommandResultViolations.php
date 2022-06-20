@@ -76,6 +76,8 @@ final class PqCommandResultViolations {
    *
    * @var string
    */
-  public static $paragraphConfiguration = 'Multilingual paragraphs are not configured properly.';
+  public static $paragraphConfiguration = 'Multilingual paragraphs are not configured properly.' . PHP_EOL
+  . 'Please enable translations for fields inside paragraph bundle except nested paragraph fields. ' . PHP_EOL
+  . 'Follow https://www.drupal.org/docs/contributed-modules/paragraphs/multilingual-paragraphs-configuration for more information.';
 
 }

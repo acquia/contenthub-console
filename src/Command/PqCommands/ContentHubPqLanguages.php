@@ -63,7 +63,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
       $result->setIndicator(
         $kriName,
         trim($kriValue),
-        'Multiple enabled laguages and translations increases dependency number.',
+        'Multiple enabled languages and translations increases dependency count.',
       );
     }
 
@@ -93,6 +93,14 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function configure() {
+    parent::configure();
+    $this->setDescription('Checks available languages, translation count and risky paragraph fields.');
+  }
+
+  /**
    * Check enabled languages and translations count.
    *
    * @return array
@@ -102,7 +110,8 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
     $languagesData = [];
     /** @var \Drupal\Core\Language\LanguageManagerInterface $languageManager */
     $languageManager = $this->drupalServiceFactory->getDrupalService('language_manager');
-    $langcodeList = array_keys($languageManager->getLanguages());
+    $languages = $languageManager->getLanguages();
+    $langcodeList = array_keys($languages);
 
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager */
     $entityTypeManager = $this->drupalServiceFactory->getDrupalService('entity_type.manager');
@@ -118,7 +127,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
             ->countQuery()
             ->execute()
             ->fetchField();
-          $languagesData[$langCode] += $count;
+          $languagesData[$languages[$langCode]->getName()] += $count;
         }
       }
     }
@@ -140,10 +149,6 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
     $configuration = [];
     $fieldMap = $fieldManager->getFieldMapByFieldType(self::ENTITY_REF_REV);
     foreach ($fieldMap as $type => $fields) {
-      // Skipping reference revision fields inside paragraphs.
-      if ($type == self::PARAGRAPH_FIELD) {
-        continue;
-      }
       $sourceBundles = $bundleInfo->getBundleInfo($type);
       foreach ($fields as $fieldName => $field) {
         /** @var \Drupal\field\FieldStorageConfigInterface $config */
@@ -159,18 +164,6 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
             // Referencing field of paragraph should not be translatable.
             if ($fieldDef->isTranslatable()) {
               $configuration[] = $type . ':' . $bundle . ':' . $fieldName;
-              continue;
-            }
-            // Target paragraph bundles should be translatable.
-            $targetBundles = array_keys($fieldDef->getSetting('handler_settings')['target_bundles']);
-            if (!empty($targetBundles)) {
-              $paragraphBundles = $bundleInfo->getBundleInfo(self::PARAGRAPH_FIELD);
-              foreach ($targetBundles as $targetBundle) {
-                if (!$paragraphBundles[$targetBundle]['translatable']) {
-                  $configuration[] = $type . ':' . $bundle . ':' . $fieldName;
-                  break;
-                }
-              }
             }
           }
         }
