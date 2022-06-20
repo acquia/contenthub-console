@@ -36,6 +36,14 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
   protected $drupalServiceFactory;
 
   /**
+   * {@inheritdoc}
+   */
+  protected function configure() {
+    parent::configure();
+    $this->setDescription('Checks available languages, translation count and risky paragraph fields.');
+  }
+
+  /**
    * Constructs a new ContentHubPqLanguages object.
    *
    * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
@@ -54,7 +62,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
    */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     $languageData = $this->getEnabledLanguagesData();
-    $kriName = 'List of enabled laguages and respective translation count.';
+    $kriName = 'List of enabled languages and respective translation count.';
     if (!empty($languageData)) {
       $kriValue = '';
       foreach ($languageData as $langCode => $count) {
@@ -63,7 +71,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
       $result->setIndicator(
         $kriName,
         trim($kriValue),
-        'Multiple enabled languages and translations increases dependency count.',
+        'Multiple enabled languages and translations increase dependency count.',
       );
     }
 
@@ -90,14 +98,6 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
     }
 
     return 0;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function configure() {
-    parent::configure();
-    $this->setDescription('Checks available languages, translation count and risky paragraph fields.');
   }
 
   /**
