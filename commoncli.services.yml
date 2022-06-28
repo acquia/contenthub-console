@@ -1,39 +1,40 @@
 services:
+  _defaults:
+    public: true
 
   http_client_factory.content_hub:
     class: Acquia\Console\ContentHub\Client\ContentHubClientFactory
-    public: true
   drupal_service_factory:
     class: Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory
-    public: true
+  version_fetcher:
+    class: Acquia\Console\ContentHub\Command\Helpers\VersionFetcher
   contenthub_service_uuid_setter:
     class: Acquia\Console\ContentHub\EventSubscriber\SetClientServiceUuid
     arguments: ['@platform_command_executioner']
     tags:
       - { name: kernel.event_subscriber }
+  module_discoverer:
+    class: Acquia\Console\ContentHub\Command\Helpers\ModuleDiscoverer
+    arguments: ['@drupal_service_factory']
 
   #  Commands
   command.contenthub.backup.list:
     class: Acquia\Console\ContentHub\Command\Backups\BackupList
-    public: true
     arguments: ['@config.storage']
     tags:
       - { name: common_console_command }
   command.contenthub.backup.create:
     class: Acquia\Console\ContentHub\Command\Backups\BackupCreate
-    public: true
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
   command.contenthub.backup.delete:
     class: Acquia\Console\ContentHub\Command\Backups\BackupDelete
-    public: true
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
   command.contenthub.backup.restore:
     class: Acquia\Console\ContentHub\Command\Backups\BackupRestore
-    public: true
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
@@ -75,19 +76,16 @@ services:
       - { name: common_console_command }
   command.contenthub.ace.cron_check:
     class: Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCheck
-    public: true
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
   command.contenthub.ace.cron_create:
     class: Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate
-    public: true
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.ace_multi.cron_create:
     class: Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreateMultiSite
-    public: true
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
@@ -111,52 +109,43 @@ services:
       - { name: common_console_command }
   command.contenthub.acsf.cron_create:
     class: Acquia\Console\ContentHub\Command\Cron\AcsfCronCreate
-    public: true
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.acsf.cron_check:
     class: Acquia\Console\ContentHub\Command\Cron\AcsfCronCheck
-    public: true
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
   command.contenthub.upgrade_start:
     class: Acquia\Console\ContentHub\Command\ContentHubUpgradeStart
-    public: true
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.subscription_set:
     class: Acquia\Console\ContentHub\Command\ContentHubSubscriptionSet
-    public: true
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
   command.contenthub.audit:
     class: Acquia\Console\ContentHub\Command\ContentHubAudit
-    public: true
     tags:
       - { name: common_console_command }
   command.drush.version:
     class: Acquia\Console\ContentHub\Command\DrushVersionCheck
-    public: true
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.audit.config_uuid:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditCheckUuid
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.audit.tmp_files:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditTmpFiles
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.audit.clients:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditClients
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.audit.client-compare:
@@ -177,22 +166,18 @@ services:
       - { name: common_console_command }
   command.contenthub.audit.content_hub_settings:
     class: Acquia\Console\ContentHub\Command\ContentHubAuditChSettings
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.module_checker:
     class: Acquia\Console\ContentHub\Command\Helpers\ContentHubModuleChecker
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.webhook_status:
     class: Acquia\Console\ContentHub\Command\ContentHubWebhookStatus
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.health_check.webhook_status:
     class: Acquia\Console\ContentHub\Command\ContentHubHealthCheckWebhookStatus
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.audit.stream_wrappers:
@@ -212,12 +197,10 @@ services:
       - { name: common_console_command }
   command.contenthub.health_check.interest_diff:
     class: Acquia\Console\ContentHub\Command\ContentHubInterestListDiff
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.helper.drush:
     class: Acquia\Console\ContentHub\Command\Helpers\DrushWrapper
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.verify.default_filters:
@@ -227,22 +210,18 @@ services:
       - { name: common_console_command }
   command.contenthub.verify_current_site_webhook:
     class: Acquia\Console\ContentHub\Command\ContentHubVerifyCurrentSiteWebhook
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.panelizer:
     class: Acquia\Console\ContentHub\Command\ContentHubPanelizer
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.custom_field:
     class: Acquia\Console\ContentHub\Command\ContentHubCustomFields
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.layout_builder_defaults:
     class: Acquia\Console\ContentHub\Command\ContentHubLayoutBuilderDefaults
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.diff_module:
@@ -252,22 +231,18 @@ services:
       - { name: common_console_command }
   command.contenthub.verify_publisher_queues:
     class: Acquia\Console\ContentHub\Command\ContentHubVerifyPublisherQueue
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.get_snapshot:
     class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubGetSnapshots
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.create_snapshot:
     class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubCreateSnapshot
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.delete_snapshot:
     class: Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubDeleteSnapshot
-    public: true
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
@@ -285,13 +260,11 @@ services:
   # Migration commands
   command.contenthub.migrate.filters:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateFilters
-    public: true
     arguments: ['@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.migrate.publisher_upgrade:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPublisherUpgrade
-    public: true
     arguments: ['@platform_command_executioner']
     tags:
       - { name: common_console_command }
@@ -302,18 +275,15 @@ services:
       - { name: common_console_command }
   command.contenthub.migrate.enable_unsubscribe:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrateEnableUnsubscribe
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.migrate.prepare_upgrade:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPrepareUpgrade
-    public: true
     arguments: ['@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.migrate.purge_del_webhooks:
     class: Acquia\Console\ContentHub\Command\Migrate\ContentHubMigrationPurgeAndDeleteWebhooks
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.module_exist:
@@ -328,17 +298,55 @@ services:
       - { name: common_console_command }
   command.contenthub.lift_module_version:
     class: Acquia\Console\ContentHub\Command\ContentHubLiftVersion
-    public: true
     tags:
       - { name: common_console_command }
   command.contenthub.module_version:
     class: Acquia\Console\ContentHub\Command\ContentHubVersion
-    public: true
     arguments: ['@event_dispatcher', '@platform_command_executioner']
     tags:
       - { name: common_console_command }
   command.contenthub.helper.with_queue:
     class: Acquia\Console\ContentHub\Command\Helpers\ContentHubQueueCheck
-    public: true
     tags:
       - { name: common_console_command }
+
+  # Pre-qualification commands
+  command.contenthub.pq.all:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqBundle
+    tags:
+      - { name: common_console_command }
+  command.contenthub.pq.general:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqGeneral
+    tags:
+      - { name: common_console_command }
+    arguments: ['@drupal_service_factory', '@version_fetcher']
+  command.contenthub.pq.entity_types:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqEntityTypes
+    tags:
+      - { name: common_console_command }
+    arguments: ['@module_discoverer', '@drupal_service_factory']
+  command.contenthub.pq.code_check:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqCodeCheck
+    tags:
+      - { name: common_console_command }
+    arguments: ['@drupal_service_factory']
+  command.contenthub.pq.dependencies:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqDependencies
+    tags:
+      - { name: common_console_command }
+    arguments: ['@drupal_service_factory']
+  command.contenthub.pq.modules:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqModules
+    tags:
+      - { name: common_console_command }
+    arguments: ['@module_discoverer']
+  command.contenthub.pq.entity_structure:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqEntityStructure
+    tags:
+      - { name: common_console_command }
+    arguments: [ '@drupal_service_factory' ]
+  command.contenthub.pq.languages:
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqLanguages
+    tags:
+      - { name: common_console_command }
+    arguments: ['@drupal_service_factory']

@@ -13,6 +13,7 @@
     "require": {
         "acquia/acsf-contenthub-console": "dev-main",
         "ext-json": "*",
+        "ext-simplexml": "*",
         "spatie/ssl-certificate": "1.21|1.22.1",
         "zumba/amplitude-php": "^1"
     },
@@ -25,15 +26,17 @@
         "psr-4": {
             "Acquia\\Console\\ContentHub\\Tests\\": "tests",
             "Acquia\\Console\\Cloud\\Tests\\": "vendor/acquia/cloud-contenthub-console/tests",
-            "Acquia\\Console\\Acsf\\Tests\\": "vendor/acquia/acsf-contenthub-console/tests"
+            "Acquia\\Console\\Acsf\\Tests\\": "vendor/acquia/acsf-contenthub-console/tests",
+            "EclipseGc\\CommonConsole\\Tests\\": "vendor/eclipsegc/common-console/tests"
         }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "phpunit/phpunit": "^8",
+        "phpunit/phpunit": "^9",
         "squizlabs/php_codesniffer": "^3.5",
         "php-coveralls/php-coveralls": "^2.4",
-        "drupal/coder": "dev-8.x-3.x"
+        "drupal/coder": "dev-8.x-3.x",
+        "phpspec/prophecy-phpunit": "^2.0"
     }
 }
