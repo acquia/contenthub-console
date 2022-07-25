@@ -107,14 +107,16 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
       $high
     );
 
-    $rowsShouldBeIncreased = $depCount >= $this->getMaxRowsForDepcalcCache();
+    $maxRows = $this->getMaxRowsForDepcalcCache();
+
+    $rowsShouldBeIncreased = $maxRows !== DatabaseBackend::MAXIMUM_NONE && $depCount >= $maxRows;
     $messages = [
       'positive' => 'The configured maximum number of depcalc cache bin rows is sufficient.',
       'negative' => PqCommandResultViolations::$depcalcCacheMaxRows,
     ];
     $result->setIndicator(
       'Depcalc Cache Bin Max Rows',
-      $this->getMaxRowsForDepcalcCache(),
+      $maxRows,
       $rowsShouldBeIncreased ? $messages['negative'] : $messages['positive'],
       $rowsShouldBeIncreased
     );
