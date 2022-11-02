@@ -68,7 +68,7 @@ class ContentHubPqEntityStructure extends ContentHubPqCommandBase {
     parent::configure();
     $this->setDescription('Analyses content type structure and sorts bundles based on their complexity.');
     $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks for the provided entity type. Example node,user,paragraph', 'node');
-    $this->addUsage('ach:pq:dependencies --entity-type "node,user,paragraph"');
+    $this->addUsage('ach:pq:entity-structure --entity-type "node,user,paragraph"');
   }
 
   /**
