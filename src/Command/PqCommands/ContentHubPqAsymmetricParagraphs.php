@@ -48,6 +48,7 @@ class ContentHubPqAsymmetricParagraphs extends ContentHubPqCommandBase {
   protected function configure() {
     parent::configure();
     $this->setDescription('Analyses paragraphs and checks whether they are asymmetric based on site\'s default language.');
+    $this->setAliases(['ach-pq-ap']);
   }
 
   /**
