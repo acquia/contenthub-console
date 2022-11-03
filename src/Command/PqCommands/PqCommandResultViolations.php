@@ -72,6 +72,16 @@ final class PqCommandResultViolations {
   . 'Bundles marked with red are paragraph references and should be handled with caution.';
 
   /**
+   * Risky asmmetric paragraphs voilation.
+   *
+   * This imposes blocker to selective language imports for subscribers.
+   *
+   * @var string
+   */
+  public static $asymmetricParagraphs = 'There are asymmetric paragraphs which don\'t work well when working with acquia_contenthub_translations module when using selective language import.' . PHP_EOL
+  . 'Please create translations for such paragraphs so that these paragraphs are symmetric.';
+
+  /**
    * Incorrect paragraph configuration violations.
    *
    * @var string
