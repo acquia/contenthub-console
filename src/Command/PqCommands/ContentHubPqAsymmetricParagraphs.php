@@ -5,7 +5,6 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Runs check against paragraphs which could be asymmetric and lists them down.
@@ -15,7 +14,7 @@ class ContentHubPqAsymmetricParagraphs extends ContentHubPqCommandBase {
   /**
    * Paragraph storage.
    */
-  const PARAGRAPH_STORAGE = 'paragraph';
+  protected const PARAGRAPH_STORAGE = 'paragraph';
 
   /**
    * The Drupal service factory service.
@@ -36,6 +35,8 @@ class ContentHubPqAsymmetricParagraphs extends ContentHubPqCommandBase {
    *   The Drupal service factory service.
    * @param string|null $name
    *   The name of this command.
+   *
+   * @throws \Exception
    */
   public function __construct(DrupalServiceFactory $drupalServiceFactory, string $name = NULL) {
     parent::__construct($name);
@@ -53,11 +54,22 @@ class ContentHubPqAsymmetricParagraphs extends ContentHubPqCommandBase {
 
   /**
    * {@inheritDoc}
+   *
+   * @throws \Exception
    */
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $etm */
     $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
     $bundles = $this->getBundles(self::PARAGRAPH_STORAGE, $etm);
+    $kriName = 'Asymmetric Paragraphs';
+    if (empty($bundles)) {
+      $result->setIndicator(
+        $kriName,
+        '',
+        'No asymmetric paragraphs detected!'
+      );
+      return 0;
+    }
 
     /** @var \Drupal\Core\Language\LanguageManagerInterface $languageManager */
     $languageManager = $this->serviceFactory->getDrupalService('language_manager');
@@ -66,12 +78,11 @@ class ContentHubPqAsymmetricParagraphs extends ContentHubPqCommandBase {
     $asymmetricParagraphs = [];
     foreach ($paragraphs as $paragraph) {
       $languages = array_keys($paragraph->getTranslationLanguages());
-      if (in_array($defaultLanguage, $languages)) {
+      if (in_array($defaultLanguage, $languages, TRUE)) {
         continue;
       }
       $asymmetricParagraphs[$paragraph->bundle()]['count']++;
     }
-    $kriName = 'Asymmetric Paragraphs';
     $formatted = [];
     foreach ($asymmetricParagraphs as $bundleId => $bundle) {
       $formatString = $this->toRed('%s: %s');
@@ -104,11 +115,11 @@ class ContentHubPqAsymmetricParagraphs extends ContentHubPqCommandBase {
    */
   public function getBundles(string $entityType, EntityTypeManagerInterface $etm): array {
     $bundleIds = [];
-    $entityDefinition = $etm->getDefinition($entityType);
-    $bundleStorage = $entityDefinition->getBundleEntityType();
-    if (!$bundleStorage) {
+    $entityDefinition = $etm->getDefinition($entityType, FALSE);
+    if (!$entityDefinition) {
       return $bundleIds;
     }
+    $bundleStorage = $entityDefinition->getBundleEntityType();
 
     $bundles = $etm->getStorage($bundleStorage)->loadMultiple();
     foreach ($bundles as $bundle) {
@@ -129,13 +140,12 @@ class ContentHubPqAsymmetricParagraphs extends ContentHubPqCommandBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getParagraphs(EntityTypeManagerInterface $etm) {
+  protected function getParagraphs(EntityTypeManagerInterface $etm): array {
     $paragraph_storage = $etm->getStorage(self::PARAGRAPH_STORAGE);
     // If paragraph storage is null then paragraph module is not installed.
     if (is_null($paragraph_storage)) {
       return [];
     }
-    /** @var \Drupal\Core\Entity\ContentEntityInterface[] $paragraphs */
     return $paragraph_storage->loadByProperties();
   }
 
