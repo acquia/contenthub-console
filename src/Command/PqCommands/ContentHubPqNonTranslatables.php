@@ -3,6 +3,8 @@
 namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -44,10 +46,10 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
    */
   protected function configure() {
     parent::configure();
-    $this->setDescription('Analyses non-translatable antities and entity types.');
+    $this->setDescription('Analyzes non-translatable entities and bundles.');
     $this->setAliases(['ach-pq-nt']);
     $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks for the provided entity type. Example node,user,paragraph', 'node');
-    $this->addUsage('ach:pq:non-translatables --entity-type "node,user,paragraph"');
+    $this->addUsage('ach:pq:non-translatables --entity-type "node,paragraph"');
   }
 
   /**
@@ -59,12 +61,15 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
     $entityTypeOption = $input->getOption('entity-type');
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $etm */
     $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
+    /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info */
+    $bundle_info = $this->serviceFactory->getDrupalService('entity_type.bundle.info');
     $entityTypes = explode(',', $entityTypeOption);
+    $entity_type_definitions = $etm->getDefinitions();
     foreach ($entityTypes as $entityType) {
-//      $entityTypeLabel = $this->getEntityTypeLabel($entityType, $etm);
-      $bundles = $this->getBundles($entityType, $etm);
-      $kriName = 'Non-translatable bundles';
-      if (empty($bundles)) {
+      $entityTypeLabel = $this->getEntityTypeLabel($entityType, $etm);
+      $bundles = $this->getBundles($entityType, $bundle_info);
+      $kriName = 'Entity Type: ' . $entityTypeLabel;
+      if (empty($bundles) || $entity_type_definitions[$entityType]->entityClassImplements(ConfigEntityInterface::class)) {
         $result->setIndicator(
           $kriName,
           '',
@@ -85,7 +90,7 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
         $formatted[] = sprintf($formatString, $bundles[$bundleId], $bundle['count']);
       }
 
-      $kriMessage = !empty($formatted) ? PqCommandResultViolations::$asymmetricParagraphs : 'Content structure is fine, safe to proceed';
+      $kriMessage = !empty($formatted) ? PqCommandResultViolations::$nonTranslatables : 'No non-translatable entities.';
       $result->setIndicator(
         $kriName,
         implode("\n", $formatted),
@@ -93,18 +98,19 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
         !empty($formatted)
       );
     }
-
     return 0;
   }
 
   /**
-   * Loads all the paragraphs and returns them.
+   * Loads all the entities and returns them.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $etm
    *   Entity type manager.
+   * @param string $entityType
+   *   The entity type.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface[]
-   *   Paragraph entities.
+   *   Entities of given entity type.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -122,27 +128,39 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
    *
    * @param string $entityType
    *   Entity type id.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $etm
-   *   Entity type manager.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info
+   *   Bundle information.
    *
    * @return array
    *   The list of bundles.
    *
    * @throws \Exception
    */
-  public function getBundles(string $entityType, EntityTypeManagerInterface $etm): array {
+  public function getBundles(string $entityType, EntityTypeBundleInfoInterface $bundle_info): array {
     $bundleIds = [];
-    $entityDefinition = $etm->getDefinition($entityType, FALSE);
-    if (!$entityDefinition) {
-      return $bundleIds;
-    }
-    $bundleStorage = $entityDefinition->getBundleEntityType();
-
-    $bundles = $etm->getStorage($bundleStorage)->loadMultiple();
-    foreach ($bundles as $bundle) {
-      $bundleIds[$bundle->id()] = $bundle->label();
+    $bundles = $bundle_info->getBundleInfo($entityType);
+    foreach ($bundles as $bundle_id => $bundle) {
+      $bundleIds[$bundle_id] = $bundle['label'];
     }
     return $bundleIds;
+  }
+
+  /**
+   * Returns entity type label.
+   *
+   * @param string $entityType
+   *   Entity type id.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Entity type manager.
+   *
+   * @return string
+   *   Entity type label.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function getEntityTypeLabel(string $entityType, EntityTypeManagerInterface $entityTypeManager): string {
+    $entityDefinition = $entityTypeManager->getDefinition($entityType);
+    return !$entityDefinition ? '' : $entityDefinition->getLabel()->__toString();
   }
 
 }
