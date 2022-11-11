@@ -48,7 +48,7 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
     parent::configure();
     $this->setDescription('Analyzes non-translatable entities and bundles.');
     $this->setAliases(['ach-pq-nt']);
-    $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks for the provided entity type. Example node,user,paragraph', 'node');
+    $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks for the provided content entity type. Example node,user,paragraph');
     $this->addUsage('ach:pq:non-translatables --entity-type "node,paragraph"');
   }
 
@@ -63,33 +63,32 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
     $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
     /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info */
     $bundle_info = $this->serviceFactory->getDrupalService('entity_type.bundle.info');
-    $entityTypes = explode(',', $entityTypeOption);
     $entity_type_definitions = $etm->getDefinitions();
+    $entityTypes = empty($entityTypeOption) ? array_keys($entity_type_definitions) : explode(',', $entityTypeOption);
     foreach ($entityTypes as $entityType) {
+      // Skip config entity types.
+      if (array_key_exists($entityType, $entity_type_definitions) && $entity_type_definitions[$entityType]->entityClassImplements(ConfigEntityInterface::class)) {
+        continue;
+      }
       $entityTypeLabel = $this->getEntityTypeLabel($entityType, $etm);
       $bundles = $this->getBundles($entityType, $bundle_info);
-      $kriName = 'Entity Type: ' . $entityTypeLabel;
-      if (empty($bundles) || $entity_type_definitions[$entityType]->entityClassImplements(ConfigEntityInterface::class)) {
+      $kriName = 'Content Entity Type: ' . $entityTypeLabel;
+      if (empty($bundles)) {
         $result->setIndicator(
           $kriName,
           '',
           'No non-translatable entities detected.'
         );
-        return 0;
-      }
-      $entities = $this->loadEntities($etm, $entityType);
-      $nonTranslatables = [];
-      foreach ($entities as $entity) {
-        if (!$entity->isTranslatable()) {
-          $nonTranslatables[$entity->bundle()]['count']++;
-        }
-      }
-      $formatted = [];
-      foreach ($nonTranslatables as $bundleId => $bundle) {
-        $formatString = $this->toRed('%s: %s');
-        $formatted[] = sprintf($formatString, $bundles[$bundleId], $bundle['count']);
+        continue;
       }
 
+      $formatted = [];
+      foreach ($bundles as $bundleId => $bundle) {
+        if (!$bundle['translatable']) {
+          $formatString = $this->toRed('%s: %s');
+          $formatted[] = sprintf($formatString, $bundle['label'], 'Non-translatable');
+        }
+      }
       $kriMessage = !empty($formatted) ? PqCommandResultViolations::$nonTranslatables : 'No non-translatable entities.';
       $result->setIndicator(
         $kriName,
@@ -99,28 +98,6 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
       );
     }
     return 0;
-  }
-
-  /**
-   * Loads all the entities and returns them.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $etm
-   *   Entity type manager.
-   * @param string $entityType
-   *   The entity type.
-   *
-   * @return \Drupal\Core\Entity\ContentEntityInterface[]
-   *   Entities of given entity type.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  protected function loadEntities(EntityTypeManagerInterface $etm, string $entityType): array {
-    $entity_storage = $etm->getStorage($entityType);
-    if (is_null($entity_storage)) {
-      return [];
-    }
-    return $entity_storage->loadByProperties();
   }
 
   /**
@@ -140,7 +117,8 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
     $bundleIds = [];
     $bundles = $bundle_info->getBundleInfo($entityType);
     foreach ($bundles as $bundle_id => $bundle) {
-      $bundleIds[$bundle_id] = $bundle['label'];
+      $bundleIds[$bundle_id]['label'] = $bundle['label'];
+      $bundleIds[$bundle_id]['translatable'] = $bundle['translatable'];
     }
     return $bundleIds;
   }
