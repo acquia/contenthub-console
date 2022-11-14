@@ -27,6 +27,13 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
   protected static $defaultName = 'ach:pq:non-translatables';
 
   /**
+   * List of handled entity types.
+   *
+   * @var string[]
+   */
+  protected $handledEntities = ['path_alias', 'file', 'redirect'];
+
+  /**
    * Constructs a new ContentHubPqNonTranslatables object.
    *
    * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
@@ -65,6 +72,11 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
     $bundle_info = $this->serviceFactory->getDrupalService('entity_type.bundle.info');
     $entity_type_definitions = $etm->getDefinitions();
     $entityTypes = empty($entityTypeOption) ? array_keys($entity_type_definitions) : explode(',', $entityTypeOption);
+    if ($this->serviceFactory->hasDrupalService('acquia_contenthub_translations.nt_entity_handler.registry')) {
+      /** @var \Drupal\acquia_contenthub_translations\EntityHandler\HandlerRegistry $entity_handler_registery */
+      $entity_handler_registery = $this->serviceFactory->getDrupalService('acquia_contenthub_translations.nt_entity_handler.registry');
+      $this->handledEntities = array_merge($this->handledEntities, array_keys($entity_handler_registery->getHandlerMapping()));
+    }
     foreach ($entityTypes as $entityType) {
       // Skip config entity types.
       if (array_key_exists($entityType, $entity_type_definitions) && $entity_type_definitions[$entityType]->entityClassImplements(ConfigEntityInterface::class)) {
@@ -83,9 +95,11 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
       }
 
       $formatted = [];
+      $risk_flag = FALSE;
       foreach ($bundles as $bundleId => $bundle) {
         if (!$bundle['translatable']) {
-          $formatString = $this->toRed('%s: %s');
+          $risk_flag = !in_array($entityType, $this->handledEntities);
+          $formatString = $risk_flag ? $this->toRed('%s: %s') : $this->toYellow('%s: %s');
           $formatted[] = sprintf($formatString, $bundle['label'], 'Non-translatable');
         }
       }
@@ -94,7 +108,7 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
         $kriName,
         implode("\n", $formatted),
         $kriMessage,
-        !empty($formatted)
+        $risk_flag
       );
     }
     return 0;
