@@ -90,4 +90,13 @@ final class PqCommandResultViolations {
   . 'Please enable translations for fields inside paragraph bundle except nested paragraph fields. ' . PHP_EOL
   . 'Follow https://www.drupal.org/docs/contributed-modules/paragraphs/multilingual-paragraphs-configuration for more information.';
 
+  /**
+   * Risky non-translatable entities and bundles.
+   *
+   * @var string
+   */
+  public static $nonTranslatables = 'There are non-translatable entities and bundles, only path_alias, file and redirect entities will be handled automatically, ' . PHP_EOL
+  . 'any non-translatable entites other then these needs custom entity handler. ' . PHP_EOL
+  . 'Follow https://docs.acquia.com/contenthub/enhanced-language-capabilities/#non-translatable-entities for more information.';
+
 }
