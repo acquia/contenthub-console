@@ -68,22 +68,22 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
     $entityTypeOption = $input->getOption('entity-type');
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $etm */
     $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
-    /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info */
-    $bundle_info = $this->serviceFactory->getDrupalService('entity_type.bundle.info');
-    $entity_type_definitions = $etm->getDefinitions();
-    $entityTypes = empty($entityTypeOption) ? array_keys($entity_type_definitions) : explode(',', $entityTypeOption);
+    /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo */
+    $bundleInfo = $this->serviceFactory->getDrupalService('entity_type.bundle.info');
+    $entityTypeDefinitions = $etm->getDefinitions();
+    $entityTypes = empty($entityTypeOption) ? array_keys($entityTypeDefinitions) : explode(',', $entityTypeOption);
     if ($this->serviceFactory->hasDrupalService('acquia_contenthub_translations.nt_entity_handler.registry')) {
-      /** @var \Drupal\acquia_contenthub_translations\EntityHandler\HandlerRegistry $entity_handler_registery */
-      $entity_handler_registery = $this->serviceFactory->getDrupalService('acquia_contenthub_translations.nt_entity_handler.registry');
-      $this->handledEntities = array_merge($this->handledEntities, array_keys($entity_handler_registery->getHandlerMapping()));
+      /** @var \Drupal\acquia_contenthub_translations\EntityHandler\HandlerRegistry $entityHandlerRegistry */
+      $entityHandlerRegistry = $this->serviceFactory->getDrupalService('acquia_contenthub_translations.nt_entity_handler.registry');
+      $this->handledEntities = array_merge($this->handledEntities, array_keys($entityHandlerRegistry->getHandlerMapping()));
     }
     foreach ($entityTypes as $entityType) {
       // Skip config entity types.
-      if (array_key_exists($entityType, $entity_type_definitions) && $entity_type_definitions[$entityType]->entityClassImplements(ConfigEntityInterface::class)) {
+      if (array_key_exists($entityType, $entityTypeDefinitions) && $entityTypeDefinitions[$entityType]->entityClassImplements(ConfigEntityInterface::class)) {
         continue;
       }
       $entityTypeLabel = $this->getEntityTypeLabel($entityType, $etm);
-      $bundles = $this->getBundles($entityType, $bundle_info);
+      $bundles = $this->getBundles($entityType, $bundleInfo);
       $kriName = 'Content Entity Type: ' . $entityTypeLabel;
       if (empty($bundles)) {
         $result->setIndicator(
@@ -95,11 +95,11 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
       }
 
       $formatted = [];
-      $risk_flag = FALSE;
+      $riskFlag = FALSE;
       foreach ($bundles as $bundleId => $bundle) {
         if (!$bundle['translatable']) {
-          $risk_flag = !in_array($entityType, $this->handledEntities);
-          $formatString = $risk_flag ? $this->toRed('%s: %s') : $this->toYellow('%s: %s');
+          $riskFlag = !in_array($entityType, $this->handledEntities);
+          $formatString = $riskFlag ? $this->toRed('%s: %s') : $this->toYellow('%s: %s');
           $formatted[] = sprintf($formatString, $bundle['label'], 'Non-translatable');
         }
       }
@@ -108,7 +108,7 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
         $kriName,
         implode("\n", $formatted),
         $kriMessage,
-        $risk_flag
+        $riskFlag
       );
     }
     return 0;
@@ -119,7 +119,7 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
    *
    * @param string $entityType
    *   Entity type id.
-   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo
    *   Bundle information.
    *
    * @return array
@@ -127,12 +127,12 @@ class ContentHubPqNonTranslatables extends ContentHubPqCommandBase {
    *
    * @throws \Exception
    */
-  public function getBundles(string $entityType, EntityTypeBundleInfoInterface $bundle_info): array {
+  public function getBundles(string $entityType, EntityTypeBundleInfoInterface $bundleInfo): array {
     $bundleIds = [];
-    $bundles = $bundle_info->getBundleInfo($entityType);
-    foreach ($bundles as $bundle_id => $bundle) {
-      $bundleIds[$bundle_id]['label'] = $bundle['label'];
-      $bundleIds[$bundle_id]['translatable'] = $bundle['translatable'];
+    $bundles = $bundleInfo->getBundleInfo($entityType);
+    foreach ($bundles as $bundleId => $bundle) {
+      $bundleIds[$bundleId]['label'] = $bundle['label'];
+      $bundleIds[$bundleId]['translatable'] = $bundle['translatable'];
     }
     return $bundleIds;
   }
