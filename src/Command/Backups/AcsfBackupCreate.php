@@ -70,7 +70,7 @@ class AcsfBackupCreate extends AcquiaCloudBackupCreate {
     $raw = $this->runAcsfBackupCreateCommand($platform, $input);
 
     if ($raw->getReturnCode() !== 0) {
-      throw new \Exception('Database backup creation failed.');
+      throw new \Exception(sprintf('Database backup creation failed. Exit code: %s, Reason: %s', $raw->getReturnCode(), $raw->__toString()));
     }
 
     $list_after = $this->runAcsfBackupListCommand($platform, $output);
