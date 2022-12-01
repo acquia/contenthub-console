@@ -99,13 +99,15 @@ class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
       foreach ($entities as $entity) {
         if ($entity->isTranslatable() && count($entity->getTranslationLanguages()) === 1) {
           $singleTranslation[$entity->bundle()]['count']++;
+          $singleTranslation[$entity->bundle()]['langcode'] = $entity->language()->getId();
+
         }
       }
 
       $formatted = [];
       foreach ($singleTranslation as $bundleId => $bundle) {
-        $formatString = $this->toYellow('%s: %s');
-        $formatted[] = sprintf($formatString, $bundles[$bundleId]['label'], $bundle['count']);
+        $formatString = $this->toYellow('%s: %s: %s');
+        $formatted[] = sprintf($formatString, $bundles[$bundleId]['label'], $bundle['langcode'], $bundle['count']);
       }
 
       $kriMessage = !empty($formatted) ? PqCommandResultViolations::$singleTranslation : 'No single-translation entities.';
