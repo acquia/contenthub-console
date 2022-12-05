@@ -99,12 +99,4 @@ final class PqCommandResultViolations {
   . 'any non-translatable entites other then these needs custom entity handler. ' . PHP_EOL
   . 'Follow https://docs.acquia.com/contenthub/enhanced-language-capabilities/#non-translatable-entities for more information.';
 
-  /**
-   * Single translation entities.
-   *
-   * @var string
-   */
-  public static $singleTranslation = 'There are single translation entites for this entity type,' . PHP_EOL
-  . 'this can lead to enabling of language on susbscriber site.';
-
 }

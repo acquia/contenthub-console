@@ -12,7 +12,13 @@ use Symfony\Component\Console\Input\InputOption;
 /**
  * Runs check against single translation entities.
  */
-class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
+class ContentHubPqDiscoverTranslations extends ContentHubPqCommandBase {
+
+  /**
+   * The KRI message for descovering translations..
+   */
+  public const KRI_MESSAGE = 'There are single translation entites for this entity type,' . PHP_EOL
+  . 'this can lead to enabling of language on susbscriber site.';
 
   /**
    * The Drupal service factory service.
@@ -24,10 +30,10 @@ class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'ach:pq:single-translation';
+  protected static $defaultName = 'ach:pq:discover-translations';
 
   /**
-   * Constructs a new ContentHubPqSingleTranslation object.
+   * Constructs a new ContentHubPqDiscoverTranslations object.
    *
    * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $drupalServiceFactory
    *   The Drupal service factory service.
@@ -47,9 +53,9 @@ class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
   protected function configure() {
     parent::configure();
     $this->setDescription('Analyzes single translations entities and bundles.');
-    $this->setAliases(['ach-pq-st']);
+    $this->setAliases(['ach-pq-dt']);
     $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks for the provided content entity type. Example node,user,paragraph');
-    $this->addUsage('ach:pq:non-translatables --entity-type "node,paragraph"');
+    $this->addUsage('ach:pq:discover-translations --entity-type "node,paragraph"');
   }
 
   /**
@@ -63,7 +69,7 @@ class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
     $languages = $languageManager->getLanguages();
     if (count($languages) < 2) {
       $result->setIndicator(
-        'Single translated entites',
+        'Single translated entities',
         '',
         'No multiple languages detected.'
       );
@@ -88,7 +94,7 @@ class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
       if (empty($bundles)) {
         $result->setIndicator(
           $kriName,
-          '',
+          'Defauld language:' . $languageManager->getDefaultLanguage()->getId(),
           'No non-translatable entities detected.'
         );
         continue;
@@ -98,19 +104,17 @@ class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
       $singleTranslation = [];
       foreach ($entities as $entity) {
         if ($entity->isTranslatable() && count($entity->getTranslationLanguages()) === 1) {
-          $singleTranslation[$entity->bundle()]['count']++;
           $singleTranslation[$entity->bundle()]['langcode'] = $entity->language()->getId();
-
         }
       }
 
       $formatted = [];
       foreach ($singleTranslation as $bundleId => $bundle) {
-        $formatString = $this->toYellow('%s: %s: %s');
-        $formatted[] = sprintf($formatString, $bundles[$bundleId]['label'], $bundle['langcode'], $bundle['count']);
+        $formatString = $this->toYellow('%s: %s');
+        $formatted[] = sprintf($formatString, $bundles[$bundleId]['label'], $bundle['langcode']);
       }
 
-      $kriMessage = !empty($formatted) ? PqCommandResultViolations::$singleTranslation : 'No single-translation entities.';
+      $kriMessage = !empty($formatted) ? self::KRI_MESSAGE : 'No single-translation entities.';
       $result->setIndicator(
         $kriName,
         implode("\n", $formatted),
@@ -178,9 +182,6 @@ class ContentHubPqSingleTranslation extends ContentHubPqCommandBase {
    */
   protected function loadEntities(EntityTypeManagerInterface $etm, string $entityType): array {
     $entity_storage = $etm->getStorage($entityType);
-    if (is_null($entity_storage)) {
-      return [];
-    }
     return $entity_storage->loadByProperties();
   }
 

@@ -361,7 +361,7 @@ services:
       - { name: common_console_command }
     arguments: ['@drupal_service_factory']
   command.contenthub.pq.single_translation:
-    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqSingleTranslation
+    class: Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqDiscoverTranslations
     tags:
       - { name: common_console_command }
     arguments: ['@drupal_service_factory']
