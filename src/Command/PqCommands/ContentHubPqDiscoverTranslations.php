@@ -84,7 +84,7 @@ class ContentHubPqDiscoverTranslations extends ContentHubPqCommandBase {
       if (empty($bundles)) {
         $result->setIndicator(
           $kriName,
-          'Defauld language:' . $languageManager->getDefaultLanguage()->getId(),
+          'Default language:' . $languageManager->getDefaultLanguage()->getId(),
           'No non-translatable entities detected.'
         );
         continue;
