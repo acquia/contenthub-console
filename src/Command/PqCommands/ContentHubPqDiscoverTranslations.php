@@ -52,7 +52,7 @@ class ContentHubPqDiscoverTranslations extends ContentHubPqCommandBase {
    */
   protected function configure() {
     parent::configure();
-    $this->setDescription('Analyzes single translations entities and bundles.');
+    $this->setDescription('Analyzes entities by translation.');
     $this->setAliases(['ach-pq-dt']);
     $this->addOption('entity-type', 'e', InputOption::VALUE_OPTIONAL, 'Run checks for the provided content entity type. Example node,user,paragraph');
     $this->addUsage('ach:pq:discover-translations --entity-type "node,paragraph"');
@@ -66,16 +66,6 @@ class ContentHubPqDiscoverTranslations extends ContentHubPqCommandBase {
   protected function runCommand(InputInterface $input, PqCommandResult $result): int {
     /** @var \Drupal\Core\Language\LanguageManagerInterface $languageManager */
     $languageManager = $this->serviceFactory->getDrupalService('language_manager');
-    $languages = $languageManager->getLanguages();
-    if (count($languages) < 2) {
-      $result->setIndicator(
-        'Single translated entities',
-        '',
-        'No multiple languages detected.'
-      );
-      return 0;
-    }
-
     $entityTypeOption = $input->getOption('entity-type');
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $etm */
     $etm = $this->serviceFactory->getDrupalService('entity_type.manager');
