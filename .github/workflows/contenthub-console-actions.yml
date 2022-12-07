@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '7.4' ]
+        php-version: [ '7.4', '8.1' ]
     steps:
       # This step checks out a copy of your repository.
       - name: Checkout
@@ -35,3 +35,6 @@ jobs:
 
       - name: Run Coveralls
         run: ./vendor/bin/php-coveralls -v
+
+      - name: Run phpstan
+        run: ./vendor/bin/phpstan analyse ./src ./tests --level=1
