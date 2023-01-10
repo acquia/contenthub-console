@@ -37,4 +37,4 @@ jobs:
         run: ./vendor/bin/php-coveralls -v
 
       - name: Run phpstan
-        run: ./vendor/bin/phpstan analyse ./src ./tests --level=1
+        run: ./vendor/bin/phpstan analyse -c ./phpstan.neon
