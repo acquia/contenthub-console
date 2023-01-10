@@ -76,7 +76,7 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
         continue;
       }
 
-      foreach ($data as $backup) {
+      foreach (get_object_vars($data) as $backup) {
         $db_backup_list[$backup->backup_id] = [
           'environment_id' => $backup->env_id,
           'database_name' => $backup->database,

@@ -43,10 +43,8 @@ class BackupList extends Command {
    *
    * @param \EclipseGc\CommonConsole\Config\ConfigStorage $configStorage
    *   Config storage.
-   * @param string|null $name
-   *   Command name.
    */
-  public function __construct(ConfigStorage $configStorage, string $name = NULL) {
+  public function __construct(ConfigStorage $configStorage) {
     parent::__construct();
 
     $this->storage = $configStorage;

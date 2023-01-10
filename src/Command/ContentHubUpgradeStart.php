@@ -521,6 +521,7 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     while ($status !== 0 && $execute) {
       $quest = new ConfirmationQuestion('We are about to create scheduled jobs to run the queues.. Press a key when ready.');
       $helper->ask($input, $output, $quest);
+      $scheduled_jobs = '';
       switch ($platform_type) {
         case AcquiaCloudPlatform::PLATFORM_NAME:
           $scheduled_jobs = $application->find(AcquiaCloudCronCreate::getDefaultName());

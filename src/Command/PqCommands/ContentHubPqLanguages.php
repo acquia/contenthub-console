@@ -114,7 +114,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
 
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager */
     $entityTypeManager = $this->drupalServiceFactory->getDrupalService('entity_type.manager');
-    /** @var \Drupal\Core\Database\Connection $databaseManager */
+    /** @var \Drupal\Core\Database\Connection $databaseConnection */
     $databaseConnection = $this->drupalServiceFactory->getDrupalService('database');
 
     $entityTypes = $entityTypeManager->getDefinitions();
@@ -153,6 +153,7 @@ class ContentHubPqLanguages extends ContentHubPqCommandBase {
         /** @var \Drupal\field\FieldStorageConfigInterface $config */
         $config = FieldStorageConfig::loadByName($type, $fieldName);
         $bundles = array_keys($field['bundles']);
+        // @phpstan-ignore-next-line
         if (!empty($config) && $config->getSetting('target_type') === self::PARAGRAPH_FIELD && !empty($bundles)) {
           foreach ($bundles as $bundle) {
             if (!$sourceBundles[$bundle]['translatable']) {
