@@ -71,8 +71,11 @@ class KeyRiskIndicator implements \JsonSerializable {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array
+   *   The converted object as an array.
    */
-  public function jsonSerialize() {
+  public function jsonSerialize(): array {
     return $this->toArray();
   }
 

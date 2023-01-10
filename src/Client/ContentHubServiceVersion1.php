@@ -16,7 +16,7 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
   /**
    * The Content Hub client version 1.x.
    *
-   * @var \Acquia\ContentHubClient\ContentHub
+   * @var \Acquia\ContentHubClient\ContentHubClient
    */
   protected $client;
 
@@ -49,7 +49,7 @@ class ContentHubServiceVersion1 implements ContentHubServiceInterface {
         'origin' => $config->get('origin'),
       ]);
     }
-    return new self($client_manager->getConnection());
+    return new static($client_manager->getConnection());
   }
 
   /**
