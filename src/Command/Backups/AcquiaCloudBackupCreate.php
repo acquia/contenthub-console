@@ -132,6 +132,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       // In case there is an exception while creating the snapshot,
       // database backup needs to be deleted.
       $snapshot_failed = TRUE;
+      $snapshot = [];
       try {
         $snapshot = $this->runSnapshotCreateCommand($input, $output);
         $snapshot_failed = empty($snapshot);
@@ -231,7 +232,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
         continue;
       }
 
-      foreach ($data as $backup) {
+      foreach (get_object_vars($data) as $backup) {
         $db_backup_list[$backup->backup_id] = [
           'environment_id' => $backup->env_id,
           'database_name' => $backup->database,

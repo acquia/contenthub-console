@@ -18,7 +18,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   /**
    * The Content Hub client version 2.x.
    *
-   * @var \Acquia\ContentHubClient\ContentHubClient
+   * @var \GuzzleHttp\ClientInterface
    */
   protected $client;
 
@@ -42,7 +42,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
     if (!$client) {
       throw new \Exception("The client was not instantiated. Your credentials are likely missing. Please register this site with ContentHub before continuing.");
     }
-    return new self($client);
+    return new static($client);
   }
 
   /**

@@ -98,7 +98,7 @@ class ContentHubDeleteSnapshot extends Command implements PlatformCommandInterfa
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output.
    *
-   * @return array
+   * @return int|array
    *   Snapshots list.
    */
   protected function listSnapshots(OutputInterface $output) {

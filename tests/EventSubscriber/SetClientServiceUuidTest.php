@@ -94,9 +94,10 @@ class SetClientServiceUuidTest extends TestCase {
       ->willReturn($this->runWithMemoryOutputMocks($output));
 
     $this->clientUuidSetter = new SetClientServiceUuid($this->executioner->reveal());
-    $input = $this->prophesize(InputInterface::class)->reveal();
+    $input = $this->prophesize(InputInterface::class);
+    $input->hasOption(Argument::any())->willReturn(FALSE);
     $output = $this->prophesize(OutputInterface::class)->reveal();
-    $event = new ServiceClientUuidEvent($this->platform, $input, $output);
+    $event = new ServiceClientUuidEvent($this->platform, $input->reveal(), $output);
     $this->clientUuidSetter->getClientServiceUuid($event);
     $service_uuid = $event->getClientServiceUuid();
     $this->assertEquals($expected_service_uuid, $service_uuid);

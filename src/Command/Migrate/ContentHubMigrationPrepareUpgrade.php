@@ -155,6 +155,7 @@ class ContentHubMigrationPrepareUpgrade extends ContentHubCommandBase implements
   protected function removeRestResource(OutputInterface $output): void {
     $output->writeln('Removing Content Hub Filter rest resource configurations...');
     $entity_type_manager = \Drupal::entityTypeManager();
+    $rest_storage = '';
     try {
       $rest_storage = $entity_type_manager->getStorage('rest_resource_config');
     }

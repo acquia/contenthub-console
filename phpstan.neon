@@ -1,0 +1,18 @@
+parameters:
+  level: 3
+  paths:
+    - ./src
+  ignoreErrors:
+    - '#Call to [a-zA-Z0-9\\_:@\(\).]*#'
+    - '#PHPDoc tag @var for variable [a-zA-Z0-9_\$]* contains unknown class [a-zA-Z0-9\\_:@\(\).]*#'
+    - '#PHPDoc tag @throws with type [a-zA-Z0-9\\_:@\(\)|]* is not subtype of Throwable#'
+    - '#Class [a-zA-Z0-9\\_:@\(\)]* not found.#'
+    - '#Parameter [a-zA-Z0-9_\$]* of method [a-zA-Z0-9\\_:@\(\)]* has invalid type [a-zA-Z0-9\\_:@\(\).]*#'
+    - '#Method [a-zA-Z0-9\\_:@\(\)]* has invalid return type [a-zA-Z0-9\\_:@\(\).]*#'
+    - '#Instantiated class [a-zA-Z0-9\\_:@\(\).]*#'
+    - '#Unsafe usage of new static\(\).#'
+    - '#Access to constant [a-zA-Z0-9_\$]* on an unknown class [a-zA-Z0-9\\_:@\(\).]*#'
+    - '#Caught class [a-zA-Z0-9\\_:@\(\)]* not found.#'
+    - '#Throwing object of an unknown class [a-zA-Z0-9\\_:@\(\).]*#'
+  excludePaths:
+  	- test/

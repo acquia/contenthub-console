@@ -37,6 +37,7 @@
         "squizlabs/php_codesniffer": "^3.5",
         "php-coveralls/php-coveralls": "^2.4",
         "drupal/coder": "dev-8.x-3.x",
-        "phpspec/prophecy-phpunit": "^2.0"
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/phpstan": "^1.8"
     }
 }
