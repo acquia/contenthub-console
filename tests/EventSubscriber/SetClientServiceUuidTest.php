@@ -9,7 +9,6 @@ use Acquia\Console\ContentHub\Event\ServiceClientUuidEvent;
 use Acquia\Console\ContentHub\EventSubscriber\SetClientServiceUuid;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\PlatformInterface;
-use Phan\Language\Type\FalseType;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;

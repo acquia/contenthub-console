@@ -18,7 +18,7 @@ class ContentHubServiceVersion2 implements ContentHubServiceInterface {
   /**
    * The Content Hub client version 2.x.
    *
-   * @var \Acquia\ContentHubClient\ContentHubClient
+   * @var \GuzzleHttp\ClientInterface
    */
   protected $client;
 
