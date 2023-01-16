@@ -49,9 +49,19 @@ class DrupalServiceFactory {
    * @throws \Exception
    */
   protected function checkDrupal(): void {
-    if (!class_exists('Drupal')) {
+    if (!$this->isDrupalEnv()) {
       throw new \Exception('No Drupal instance found.');
     }
+  }
+
+  /**
+   * Checks if the command being run in a Drupal environment.
+   *
+   * @return bool
+   *   True if the command is running in a Drupal environment.
+   */
+  public function isDrupalEnv(): bool {
+    return class_exists('Drupal');
   }
 
   /**

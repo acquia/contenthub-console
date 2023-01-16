@@ -14,7 +14,7 @@ class ContentHubClientFactory {
   /**
    * Returns the applicable Content Hub Client.
    *
-   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory $factory
+   * @param \Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory|null $factory
    *   Drupal Service Factory to use Drupal static functions.
    *
    * @return \Acquia\Console\ContentHub\Client\ContentHubServiceInterface
@@ -22,7 +22,11 @@ class ContentHubClientFactory {
    *
    * @throws \Exception
    */
-  public function getClient(DrupalServiceFactory $factory): ContentHubServiceInterface {
+  public function getClient(?DrupalServiceFactory $factory = NULL): ContentHubServiceInterface {
+    if (is_null($factory) || !$factory->isDrupalEnv()) {
+      return LocalContentHubService::new();
+    }
+
     if (!$factory->isModuleEnabled('acquia_contenthub')) {
       throw new \Exception('No ContentHub version found in your Drupal instance.');
     }
