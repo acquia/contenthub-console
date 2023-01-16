@@ -55,7 +55,7 @@ class ContentHubEntityScanOrphaned extends Command implements PlatformCommandInt
   }
 
   /**
-   * ContentHubVersion constructor.
+   * Constructs a new object.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The dispatcher service.

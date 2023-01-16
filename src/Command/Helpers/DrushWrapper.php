@@ -112,10 +112,10 @@ class DrushWrapper extends Command {
    * @param bool $json
    *   If true, formats the output into a json string.
    *
-   * @return string
+   * @return mixed
    *   The formatted output.
    */
-  protected function formatOutput(string $output, bool $json): string {
+  protected function formatOutput(string $output, bool $json) {
     return $json ?
       json_decode($output, TRUE) :
       $output;
