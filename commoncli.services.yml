@@ -366,6 +366,10 @@ services:
       - { name: common_console_command }
     arguments: ['@drupal_service_factory']
 
+  content_hub.client.local:
+    class:  Acquia\Console\ContentHub\Client\LocalContentHubService
+    factory: http_client_factory.content_hub:getClient
+
   command.contenthub.entity_scan.orphaned:
     class: Acquia\Console\ContentHub\Command\ContentHubEntityScanOrphaned
     arguments: ['@event_dispatcher', '@platform_command_executioner']

@@ -42,6 +42,17 @@ interface ContentHubServiceInterface {
   public function register(string $name, string $api_key, string $secret_key, string $hostname);
 
   /**
+   * Delete a registered client by its name.
+   *
+   * @param string $name
+   *   The name of the client.
+   *
+   * @return array
+   *   The response array.
+   */
+  public function deleteClientByName(string $name): array;
+
+  /**
    * Gathers Acquia ContentHub subscription clients.
    *
    * @return array
