@@ -50,6 +50,7 @@ class ContentHubEntityScanOrphaned extends Command implements PlatformCommandInt
     $this->addOption('json', '', InputOption::VALUE_NONE, 'Return output as json');
     $this->addOption('with-db', '', InputOption::VALUE_NONE, 'Check if the orphaned entities are present in DB. If yes exclude them from the result.');
     $this->addOption('with-interest-list', '', InputOption::VALUE_NONE, 'Check if the orphaned entities are present on the interest list. If yes exclude them from the result.');
+    $this->addOption('only-uuids', '', InputOption::VALUE_NONE, 'Returns only uuids in a non-formatted way, 1 by line. (Omits json flag)');
     $this->setAliases(['ach-eso']);
   }
 
@@ -110,7 +111,7 @@ class ContentHubEntityScanOrphaned extends Command implements PlatformCommandInt
     });
 
     $entities = array_column($orphanedEntities, 'entity');
-    $this->displayOrphanedEntities($entities, $output, $input->getOption('json'));
+    $this->displayOrphanedEntities($entities, $output, $input);
     if ($input->getOption('delete')) {
       $this->deleteEntities($entities);
     }
@@ -125,10 +126,16 @@ class ContentHubEntityScanOrphaned extends Command implements PlatformCommandInt
    *   The list of entities to display.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The output object.
-   * @param bool $json
-   *   Whether to use json as the output format.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   Retrieves different options from input e.g. output formats.
    */
-  protected function displayOrphanedEntities(array $entities, OutputInterface $output, bool $json): void {
+  protected function displayOrphanedEntities(array $entities, OutputInterface $output, InputInterface $input): void {
+    if ($input->getOption('only-uuids')) {
+      $output->writeln(array_column($entities, 0));
+      return;
+    }
+
+    $json = $input->getOption('json');
     $headers = [
       'Uuid', 'Origin', 'Content Hub Entity Type', 'Drupal Entity Type',
     ];
