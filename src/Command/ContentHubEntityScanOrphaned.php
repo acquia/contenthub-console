@@ -85,16 +85,18 @@ class ContentHubEntityScanOrphaned extends Command implements PlatformCommandInt
 
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(DrushWrapper::$defaultName, $this->getPlatform('source'), $drushOptions);
     $data = $this->extractAndAggregateJson($raw);
-    $flattened = [];
+    $orphanedEntities = [];
     foreach ($data as $datum) {
-      $json = $datum['drush_output']['orphaned_entities'];
-      foreach ($json as $entity) {
-        if (isset($flattened[$entity[1]]['entity'])) {
-          $flattened[$entity[1]]['occurrence']++;
+      $entities = $datum['drush_output']['orphaned_entities'];
+      foreach ($entities as $entity) {
+        $uuid = $entity[1];
+        if (isset($orphanedEntities[$uuid]['entity'])) {
+          $orphanedEntities[$uuid]['occurrence']++;
         }
         else {
-          $flattened[$entity[1]] = [
-            'entity' => [$entity[1], $entity[2], $entity[3], $entity[4]],
+          $orphanedEntities[$uuid] = [
+            // Uuid, origin, CH type, Drupal entity type.
+            'entity' => [$uuid, $entity[2], $entity[3], $entity[4]],
             'occurrence' => 1,
           ];
         }
@@ -103,11 +105,11 @@ class ContentHubEntityScanOrphaned extends Command implements PlatformCommandInt
     $numberOfSites = count($data);
     // Ensure the entity is listed. If the occurrence does not equal the number
     // of sites it means the entity was filtered from one or more of the sites.
-    $flattened = array_filter($flattened, function ($item) use ($numberOfSites) {
+    $orphanedEntities = array_filter($orphanedEntities, function ($item) use ($numberOfSites) {
       return $numberOfSites === $item['occurrence'];
     });
 
-    $entities = array_column($flattened, 'entity');
+    $entities = array_column($orphanedEntities, 'entity');
     $this->displayOrphanedEntities($entities, $output, $input->getOption('json'));
     if ($input->getOption('delete')) {
       $this->deleteEntities($entities);
