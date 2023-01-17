@@ -365,3 +365,9 @@ services:
     tags:
       - { name: common_console_command }
     arguments: ['@drupal_service_factory']
+
+  command.contenthub.entity_scan.orphaned:
+    class: Acquia\Console\ContentHub\Command\ContentHubEntityScanOrphaned
+    arguments: ['@event_dispatcher', '@platform_command_executioner']
+    tags:
+      - { name: common_console_command }

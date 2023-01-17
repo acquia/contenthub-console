@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
 /**
- * Class DrushWrapper.
+ * Responsible for wrapping executable drush commands.
  */
 class DrushWrapper extends Command {
 
@@ -29,6 +29,7 @@ class DrushWrapper extends Command {
       ->setDescription("A wrapper for running Drush commands.")
       ->addOption('drush_command', 'cmd', InputOption::VALUE_OPTIONAL, "The drush command to run", "list")
       ->addOption('drush_args', 'da', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "Any additional drush command arguments.", [])
+      ->addOption('json', '', InputOption::VALUE_NONE, 'Format the drush command output into json')
       ->setAliases(['drush']);
   }
 
@@ -53,11 +54,12 @@ class DrushWrapper extends Command {
       throw new \Exception('Drush executable not found!');
     }
 
-    // This can be removed if we leverage DrushVersionCheck command in migration start command.
+    // This can be removed if we leverage DrushVersionCheck command in
+    // migration start command.
     $check_drush_version_process = new Process([
       $path_to_drush,
       'version',
-      '--format=string'
+      '--format=string',
     ]);
     $check_drush_version_process->run();
     $version = $check_drush_version_process->getOutput();
@@ -85,9 +87,13 @@ class DrushWrapper extends Command {
         $this->toJsonSuccess(
           [
             // Actual drush command output.
-            'drush_output' => $process->getOutput(),
-            // This needs to be done because drush cr prints the output in getErrorOutput().
-            'drush_error' => $process->getErrorOutput()
+            'drush_output' => $this->formatOutput(
+              $process->getOutput(),
+              $input->getOption('json')
+            ),
+            // This needs to be done because drush cr prints the output in
+            // getErrorOutput().
+            'drush_error' => $process->getErrorOutput(),
           ]
         ))
         : $output->writeln(
@@ -96,6 +102,23 @@ class DrushWrapper extends Command {
         ));
 
     return $exit_code;
+  }
+
+  /**
+   * Returns the output in the specified format.
+   *
+   * @param string $output
+   *   The output to format.
+   * @param bool $json
+   *   If true, formats the output into a json string.
+   *
+   * @return mixed
+   *   The formatted output.
+   */
+  protected function formatOutput(string $output, bool $json) {
+    return $json ?
+      json_decode($output, TRUE) :
+      $output;
   }
 
 }
