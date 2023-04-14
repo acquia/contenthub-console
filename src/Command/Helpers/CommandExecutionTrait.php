@@ -45,7 +45,7 @@ trait CommandExecutionTrait {
     foreach ($options as $option) {
       $name = $option->getName();
       if ($input->hasOption($name)) {
-        $args["--${name}"] = $input->getOption($name);
+        $args["--{$name}"] = $input->getOption($name);
       }
     }
 
