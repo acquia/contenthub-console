@@ -11,6 +11,7 @@ use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\PlatformInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +27,7 @@ class SetClientServiceUuidTest extends TestCase {
 
   use PlatformCommandTestHelperTrait;
   use TestFixtureHelperTrait;
+  use ProphecyTrait;
 
   /**
    * Platform Instance.

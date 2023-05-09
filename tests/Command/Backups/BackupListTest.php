@@ -7,6 +7,7 @@ use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -19,6 +20,8 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @package Acquia\Console\ContentHub\Tests\Command\Backups
  */
 class BackupListTest extends TestCase {
+
+  use ProphecyTrait;
 
   /**
    * Tests backup list.

@@ -6,6 +6,7 @@ use Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqBundle;
 use Acquia\Console\ContentHub\Command\PqCommands\ContentHubPqCommandErrors;
 use EclipseGc\CommonConsole\Tests\CommonConsoleTestBase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -17,6 +18,8 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @group contenthub_console_pq_commands
  */
 class ContentHubPqBundleTest extends CommonConsoleTestBase {
+
+  use ProphecyTrait;
 
   /**
    * The command to test.
