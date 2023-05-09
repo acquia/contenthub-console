@@ -10,6 +10,7 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
 use Acquia\Console\Cloud\Tests\Command\PlatformCommandTestHelperTrait;
 use AcquiaCloudApi\Connector\Client;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use EclipseGc\CommonConsole\Platform\PlatformStorage;
 use EclipseGc\CommonConsole\PlatformInterface;
@@ -26,6 +27,7 @@ abstract class AcsfBackupTestBase extends TestCase {
 
   use CommandTestHelperTrait;
   use PlatformCommandTestHelperTrait;
+  use ProphecyTrait;
 
   /**
    * Returns a command tester instance.
