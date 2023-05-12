@@ -6,7 +6,6 @@ use Acquia\Console\ContentHub\Command\Backups\AcsfBackupCreate;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class AcsfBackupCreateTest.
@@ -18,8 +17,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
  * @package Acquia\Console\Acsf\Tests\Command\Backups
  */
 class AcsfBackupCreateTest extends AcsfBackupTestBase {
-
-  use ProphecyTrait;
 
   /**
    * Test coverage for Acsf Backup Creation operation.

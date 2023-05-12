@@ -6,7 +6,6 @@ use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class AcquiaCloudBackupCreateTest.
@@ -18,8 +17,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
  * @package Acquia\Console\ContentHub\Tests\Command\Backups
  */
 class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
-
-  use ProphecyTrait;
 
   /**
    * Tests backup list.

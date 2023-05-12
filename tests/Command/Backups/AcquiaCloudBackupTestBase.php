@@ -9,6 +9,7 @@ use Acquia\Console\Cloud\Tests\TestFixtureHelperTrait;
 use EclipseGc\CommonConsole\PlatformInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 /**
@@ -21,6 +22,7 @@ abstract class AcquiaCloudBackupTestBase extends TestCase {
   use TestFixtureHelperTrait;
   use PlatformCommandTestHelperTrait;
   use CommandTestHelperTrait;
+  use ProphecyTrait;
 
   /**
    * Returns command tester instance.
