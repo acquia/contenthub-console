@@ -7,6 +7,7 @@ use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\DrushVersionCheck;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -21,6 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class DrushVersionCheckTest extends TestCase {
 
   use CommandTestHelperTrait;
+  use ProphecyTrait;
 
   /**
    * Platform Command Executioner double.

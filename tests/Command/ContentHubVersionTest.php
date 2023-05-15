@@ -7,6 +7,7 @@ use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\ContentHubVersion;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -22,6 +23,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ContentHubVersionTest extends TestCase {
 
   use CommandTestHelperTrait;
+  use ProphecyTrait;
 
   /**
    * Platform Command Executioner double.
