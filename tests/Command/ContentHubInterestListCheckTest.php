@@ -6,7 +6,6 @@ use Acquia\Console\ContentHub\Client\ContentHubServiceVersion2;
 use Acquia\Console\ContentHub\Command\ContentHubInterestListCheck;
 use Acquia\Console\ContentHub\Tests\ContentHubCommandTestBase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class ContentHubInterestListCheckTest.
@@ -18,8 +17,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
  * @package Acquia\Console\ContentHub\Tests\Command
  */
 class ContentHubInterestListCheckTest extends ContentHubCommandTestBase {
-
-  use ProphecyTrait;
 
   /**
    * Test Content Hub interest list.

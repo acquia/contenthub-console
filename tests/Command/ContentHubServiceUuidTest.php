@@ -6,7 +6,6 @@ use Acquia\Console\ContentHub\Client\ContentHubServiceVersion2;
 use Acquia\Console\ContentHub\Command\ContentHubServiceUuid;
 use Acquia\Console\ContentHub\Tests\ContentHubCommandTestBase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class ContentHubServiceUuidTest.
@@ -18,8 +17,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
  * @package Acquia\Console\ContentHub\Tests\Command
  */
 class ContentHubServiceUuidTest extends ContentHubCommandTestBase {
-
-  use ProphecyTrait;
 
   /**
    * Test Content Hub Service Uuid Command.

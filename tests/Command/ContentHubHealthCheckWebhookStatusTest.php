@@ -12,7 +12,6 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\StreamOutput;
 
@@ -26,8 +25,6 @@ use Symfony\Component\Console\Output\StreamOutput;
  * @package Acquia\Console\ContentHub\Tests\Command
  */
 class ContentHubHealthCheckWebhookStatusTest extends ContentHubCommandTestBase {
-
-  use ProphecyTrait;
 
   /**
    * Output stream.
