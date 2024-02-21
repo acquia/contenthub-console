@@ -228,6 +228,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
       return $entityTypeManager
         ->getStorage($id)
         ->getQuery()
+        ->accessCheck(FALSE)
         ->count()
         ->execute();
     }
@@ -238,6 +239,7 @@ class ContentHubPqDependencies extends ContentHubPqCommandBase {
       ->getStorage($id)
       ->getQuery()
       ->condition('type', $this->entityTypesFilter[$id], 'IN')
+      ->accessCheck(FALSE)
       ->count()
       ->execute();
   }
