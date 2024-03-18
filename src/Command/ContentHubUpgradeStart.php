@@ -9,8 +9,6 @@ use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreate;
 use Acquia\Console\ContentHub\Command\Cron\AcquiaCloudCronCreateMultiSite;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
-use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientInterface;
-use Acquia\Console\ContentHub\Command\Helpers\AmplitudeClientTrait;
 use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
@@ -38,11 +36,10 @@ use Symfony\Component\Console\Input\ArrayInput;
  *
  * @package Acquia\Console\ContentHub\Command
  */
-class ContentHubUpgradeStart extends Command implements PlatformCommandInterface, AmplitudeClientInterface {
+class ContentHubUpgradeStart extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
   use PlatformCmdOutputFormatterTrait;
-  use AmplitudeClientTrait;
   use PlatformGroupTrait;
 
   /**
@@ -101,18 +98,9 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public function initialize(InputInterface $input, OutputInterface $output) {
-    // Initialize the Amplitude Client.
-    $this->initializeAmplitudeClient($input, $output);
-  }
-
-  /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 0, 'Upgrade process started.');
     $output->writeln('Welcome to the Acquia Content Hub Upgrade!');
     $output->writeln('This command line utility is designed to help you upgrade from Content Hub 1.x to 2.x.');
     $output->writeln('If you encounter any issues, please file a ticket with Acquia Support.');
@@ -125,7 +113,6 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     // Reset stage tracking if restart option is used.
     if ($input->getOption('restart')) {
       $platform->set('acquia.content_hub.upgrade.stage', 0)->save();
-      $this->sendLogsToAmplitude('CHUC Upgrade process', 0, 'Upgrade process restarted.');
     }
 
     // Set Content Hub Credentials for Upgrade.
@@ -136,22 +123,18 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     // Running Content Hub Audit in the current platform.
     $pass = $this->executeStage($stage, 0);
     $this->executeContentHubAuditCommand($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 1, 'Content Hub Audit completed.');
 
     // Generate Database Backups and service snapshot.
     $pass = $this->executeStage($stage, 1);
     $this->executeDatabaseBackups($application, $platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 2, 'Database and Service Snapshot completed.');
 
     // Purge Subscription and delete Webhooks.
     $pass = $this->executeStage($stage, 2);
     $this->purgeSubscriptionDeleteWebhooks($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 3, 'Subscription purged and Webhooks deleted');
 
     // Prepare Upgrade Command.
     $pass = $this->executeStage($stage, 3);
     $this->executePrepareUpgradeCommand($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 4, 'Upgrade preparation completed.');
 
     // Make sure Content Hub version 2 is deployed in all sites.
     $is_lift_customer = $platform->get(ContentHubLiftVersion::ACQUIA_LIFT_USAGE);
@@ -161,17 +144,14 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     }
     $helper->ask($input, $output, $quest);
     $this->executeContentHubVersionCheck($application, $platform, $input, $output);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 4.1, 'Content Hub Version checked. Found version 2');
 
     // Run Publisher Upgrade Command.
     $pass = $this->executeStage($stage, 4);
     $this->executePublisherUpgradeCommand($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 5, 'Publisher Upgrade completed');
 
     // Creates Scheduled Jobs for Publisher/Subscriber Queues.
     $pass = $this->executeStage($stage, 5);
     $this->createContentHubScheduledJobs($application, $platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 6, 'Scheduled jobs created');
 
     $quest = new ConfirmationQuestion('Please wait until ALL publisher queues have finished exporting data. Press a key when ready.');
     $helper->ask($input, $output, $quest);
@@ -179,38 +159,31 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     // Run validations on the publisher queues.
     $pass = $this->executeStage($stage, 6);
     $this->executeValidatePublisherQueues($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 7, 'Publisher queues validated.');
 
     // Run Subscriber Upgrade Command.
     $pass = $this->executeStage($stage, 7);
     $this->executeSubscriberUpgradeCommand($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 8, 'Subscriber upgrade completed.');
 
     // Enable Unsubscribe module if there are imported entities with local changes / auto-update disabled.
     $pass = $this->executeStage($stage, 8);
     $this->executeEnableUnsubscribeCommand($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 9, 'Unsubscribe module check finished.');
 
     // Run Validations on the upgraded subscription.
     $pass = $this->executeStage($stage, 9);
     $this->executeValidateSiteWebhooksCommand($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 10, 'Site webhooks validated.');
 
     // Validate that default filters are attached to webhooks and all filters have been upgraded.
     $pass = $this->executeStage($stage, 10);
     $this->executeValidateDefaultFiltersCommand($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 11, 'Default filter validation completed.');
 
     // Run validations on the interest list diff.
     $pass = $this->executeStage($stage, 11);
     $this->executeValidateInterestListDiff($platform, $input, $output, $helper, $pass);
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 12, 'Validations for interest list differences completed.');
 
     // Finalize process.
     $output->writeln('<warning>The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.</warning>');
     $output->writeln('<info>Content Hub Upgrade process has been completed successfully. Please check your sites.</info>');
     $output->writeln('<warning>The Diff module is no longer required by Content Hub and may not be required by your application. Please check and remove if applicable.</warning>');
-    $this->sendLogsToAmplitude('CHUC Upgrade process', 13, 'Upgrade process completed.');
     $this->amplitudeClient->logEvent('CHUC Upgrade process completed', $this->userDetails);
     return 0;
   }
