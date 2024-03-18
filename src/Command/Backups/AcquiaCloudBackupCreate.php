@@ -222,7 +222,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       '--silent' => TRUE,
     ];
 
-    $raw = $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupList::$defaultName, $platform, $cmd_input);
+    $raw = $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupList::getDefaultName(), $platform, $cmd_input);
 
     $db_backup_list = [];
     $lines = explode(PHP_EOL, trim($raw));
