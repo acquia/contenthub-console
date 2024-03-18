@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\ContentHub\Tests\Command\Backups;
 
-use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupList;
 use Acquia\Console\ContentHub\Command\Backups\AcquiaCloudBackupCreate;
 use Acquia\Console\Helpers\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
@@ -218,9 +217,6 @@ class AcquiaCloudBackupCreateTest extends AcquiaCloudBackupTestBase {
         $this->runLocallyWithMemoryOutputMocks($arr['local_data'][1]),
         $this->runLocallyWithMemoryOutputMocks($arr['local_data'][2])
       );
-    $db_backupList = $this->prophesize(AcquiaCloudDatabaseBackupList::class);
-    $db_backupList->getDefaultName()->willReturn('');
-    $db_backupList->reveal();
 
     $platform_command
       ->runWithMemoryOutput(Argument::any(), Argument::any(), Argument::any())
