@@ -184,7 +184,6 @@ class ContentHubUpgradeStart extends Command implements PlatformCommandInterface
     $output->writeln('<warning>The Curation module has been enabled on publisher sites. You can manually enable it on subscriber sites if desired.</warning>');
     $output->writeln('<info>Content Hub Upgrade process has been completed successfully. Please check your sites.</info>');
     $output->writeln('<warning>The Diff module is no longer required by Content Hub and may not be required by your application. Please check and remove if applicable.</warning>');
-    $this->amplitudeClient->logEvent('CHUC Upgrade process completed', $this->userDetails);
     return 0;
   }
 
