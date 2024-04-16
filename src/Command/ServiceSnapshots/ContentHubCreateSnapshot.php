@@ -26,6 +26,13 @@ class ContentHubCreateSnapshot extends ContentHubCommandBase implements Platform
   /**
    * {@inheritdoc}
    */
+  public static function getDefaultName(): string {
+    return self::$defaultName;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getPlatformBootstrapType(): string {
     return 'drupal8';
   }
