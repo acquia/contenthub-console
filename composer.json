@@ -14,7 +14,8 @@
         "acquia/acsf-contenthub-console": "dev-main",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "spatie/ssl-certificate": "1.21|1.22.1|^2"
+        "spatie/ssl-certificate": "1.21|1.22.1|^2",
+        "symfony/console": "^4 || ^5 || ^6"
     },
     "autoload": {
         "psr-4": {
