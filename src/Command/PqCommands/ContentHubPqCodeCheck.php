@@ -79,10 +79,23 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
    */
   public function getHookImplementation(): array {
     $hookImplementation = [];
+    /** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
     $moduleHandler = $this->drupalServiceFactory->getDrupalService('module_handler');
     foreach (ContentHubAudit::V1_MODULE_HOOKS as $hook) {
-      if (!empty($moduleList = $moduleHandler->getImplementations($hook))) {
-        $hookImplementation[$hook] = $moduleList;
+      if (method_exists($moduleHandler, 'invokeAllWith')) {
+        $moduleHandler->invokeAllWith(
+          $hook,
+          function (callable $hook, string $module) use (&$hookImplementation) {
+            if (!empty($module)) {
+              $hookImplementation[$hook][] = $module;
+            }
+          }
+        );
+      }
+      else {
+        if (!empty($moduleList = $moduleHandler->getImplementations($hook))) {
+          $hookImplementation[$hook] = $moduleList;
+        }
       }
     }
     return $hookImplementation;
