@@ -4,6 +4,7 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\ContentHubAudit;
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
@@ -79,25 +80,39 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
    */
   public function getHookImplementation(): array {
     $hookImplementation = [];
-    /** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
     $moduleHandler = $this->drupalServiceFactory->getDrupalService('module_handler');
     foreach (ContentHubAudit::V1_MODULE_HOOKS as $hook) {
-      if (method_exists($moduleHandler, 'invokeAllWith')) {
-        $moduleHandler->invokeAllWith(
-          $hook,
-          function (callable $hook, string $module) use (&$hookImplementation) {
-            if (!empty($module)) {
-              $hookImplementation[$hook][] = $module;
-            }
-          }
-        );
-      }
-      else {
-        if (!empty($moduleList = $moduleHandler->getImplementations($hook))) {
-          $hookImplementation[$hook] = $moduleList;
-        }
+      $moduleList = method_exists($moduleHandler, 'invokeAllWith')
+        ? $this->invokeAllWithHook($moduleHandler, $hook)
+        : $moduleHandler->getImplementations($hook);
+      if (!empty($moduleList)) {
+        $hookImplementation[$hook] = $moduleList;
       }
     }
+    return $hookImplementation;
+  }
+
+  /**
+   * Invokes all hooks with hook.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
+   * @param string $hook
+   *   The hook name.
+   *
+   * @return array
+   *   The list of hook implementation.
+   */
+  private function invokeAllWithHook(ModuleHandlerInterface $moduleHandler, string $hook): array {
+    $hookImplementation = [];
+    $moduleHandler->invokeAllWith(
+      $hook,
+      function (callable $hook, string $module) use (&$hookImplementation) {
+        if (!empty($module)) {
+          $hookImplementation[] = $module;
+        }
+      }
+    );
     return $hookImplementation;
   }
 
