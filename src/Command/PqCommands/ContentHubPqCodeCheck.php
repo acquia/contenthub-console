@@ -4,6 +4,7 @@ namespace Acquia\Console\ContentHub\Command\PqCommands;
 
 use Acquia\Console\ContentHub\Command\ContentHubAudit;
 use Acquia\Console\ContentHub\Command\Helpers\DrupalServiceFactory;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
@@ -81,10 +82,37 @@ class ContentHubPqCodeCheck extends ContentHubPqCommandBase {
     $hookImplementation = [];
     $moduleHandler = $this->drupalServiceFactory->getDrupalService('module_handler');
     foreach (ContentHubAudit::V1_MODULE_HOOKS as $hook) {
-      if (!empty($moduleList = $moduleHandler->getImplementations($hook))) {
+      $moduleList = method_exists($moduleHandler, 'invokeAllWith')
+        ? $this->invokeAllWithHook($moduleHandler, $hook)
+        : $moduleHandler->getImplementations($hook);
+      if (!empty($moduleList)) {
         $hookImplementation[$hook] = $moduleList;
       }
     }
+    return $hookImplementation;
+  }
+
+  /**
+   * Invokes all hooks with hook.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
+   * @param string $hook
+   *   The hook name.
+   *
+   * @return array
+   *   The list of hook implementation.
+   */
+  private function invokeAllWithHook(ModuleHandlerInterface $moduleHandler, string $hook): array {
+    $hookImplementation = [];
+    $moduleHandler->invokeAllWith(
+      $hook,
+      function (callable $hook, string $module) use (&$hookImplementation) {
+        if (!empty($module)) {
+          $hookImplementation[] = $module;
+        }
+      }
+    );
     return $hookImplementation;
   }
 
